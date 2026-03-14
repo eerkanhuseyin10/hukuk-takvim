@@ -1023,7 +1023,13 @@ function titleCase(str){
 }
 function formatDate(s){if(!s)return'—';const d=new Date(s+'T12:00:00');return d.toLocaleDateString('tr-TR',{day:'2-digit',month:'short',year:'numeric'});}
 function formatDateLong(s){if(!s)return'—';const d=new Date(s+'T12:00:00');return d.toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}
-function typeLabel(t){return{durusma:'Duruşma / Randevu',sure:'Süreli İş',genel:'Genel İş',tekrar:'Tekrarlayan İş'}[t]||t;}
+function typeLabel(t,dal){
+  if(t==='durusma'){
+    const ozel={tahkim:'Tahkim',arabuluculuk:'Arabuluculuk',randevu:'Randevu',kesif:'Keşif'};
+    return ozel[dal]||'Duruşma';
+  }
+  return{sure:'Süreli İş',genel:'Genel İş',tekrar:'Tekrarlayan'}[t]||t;
+}
 function dalLabel(d){return{ceza:'Ceza',hukuk:'Hukuk',idare:'İdare',icra:'İcra',tahkim:'Tahkim',arabuluculuk:'Arabuluculuk',randevu:'Randevu',kesif:'Keşif'}[d]||'—';}
 function tebligLabel(t){return{etebligat:'E-Tebligat',tefhim:'Tefhim',fiziki:'Fiziki tebligat'}[t]||t||'—';}
 function getBaslik(r){return r.baslik||r.istipi||r.not||'—';}
