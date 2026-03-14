@@ -395,7 +395,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
         </div>
         <div class="cal-grid" id="cal-grid" ontouchstart="calTouchStart(event)" ontouchend="calTouchEnd(event)"></div>
         <div class="cal-legend">
-          <span><div class="cal-legend-dot" style="background:var(--blue-light)"></div>Duruşma</span>
+          <span><div class="cal-legend-dot" style="background:var(--blue-light)"></div>Duruşma / Randevu</span>
           <span><div class="cal-legend-dot" style="background:#ef4444"></div>Süreli İş</span>
           <span><div class="cal-legend-dot" style="background:var(--green-light)"></div>Genel İş</span>
           <span><div class="cal-legend-dot" style="background:#fbbf24"></div>Tekrarlayan</span>
@@ -1363,6 +1363,71 @@ function getTatil(dateStr){
   const md = dateStr.slice(5);
   if(TATILLER_FALLBACK[md]) return TATILLER_FALLBACK[md];
   return null;
+}
+
+// ── SÜRÜKLEME (mouse events) ──────────────────────────────────────
+let _drag = {active:false, recId:null, ghost:null, startX:0, startY:0};
+
+function calDragStart(e, id){
+  if(e.button !== 0) return;
+  _drag.recId = id;
+  _drag.startX = e.clientX;
+  _drag.startY = e.clientY;
+  _drag.active = false;
+
+  const ghost = document.createElement('div');
+  const rec = records.find(r=>r.id===id);
+  ghost.textContent = rec ? (rec.muvekkil||getBaslik(rec)) : '';
+  ghost.style.cssText = 'position:fixed;padding:6px 12px;background:var(--navy);color:#fff;border-radius:8px;font-size:12px;pointer-events:none;z-index:9999;opacity:0;transition:opacity .1s;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+  document.body.appendChild(ghost);
+  _drag.ghost = ghost;
+
+  document.addEventListener('mousemove', calMouseMove);
+  document.addEventListener('mouseup', calMouseUp);
+  e.preventDefault();
+}
+
+function calMouseMove(e){
+  if(!_drag.recId) return;
+  const dx = Math.abs(e.clientX - _drag.startX);
+  const dy = Math.abs(e.clientY - _drag.startY);
+  if(!_drag.active && (dx > 5 || dy > 5)){
+    _drag.active = true;
+    _drag.ghost.style.opacity = '0.95';
+  }
+  if(_drag.active && _drag.ghost){
+    _drag.ghost.style.left = (e.clientX + 12) + 'px';
+    _drag.ghost.style.top = (e.clientY - 16) + 'px';
+    document.querySelectorAll('.cal-cell.drag-over').forEach(x=>x.classList.remove('drag-over'));
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    const cell = el && el.closest('.cal-cell');
+    if(cell && cell.dataset.date) cell.classList.add('drag-over');
+  }
+}
+
+async function calMouseUp(e){
+  document.removeEventListener('mousemove', calMouseMove);
+  document.removeEventListener('mouseup', calMouseUp);
+  document.querySelectorAll('.cal-cell.drag-over').forEach(x=>x.classList.remove('drag-over'));
+  if(_drag.ghost){ _drag.ghost.remove(); _drag.ghost = null; }
+
+  if(_drag.active && _drag.recId){
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    const cell = el && el.closest('.cal-cell');
+    const dateStr = cell && cell.dataset.date;
+    if(dateStr){
+      const rec = records.find(r=>r.id===_drag.recId);
+      if(rec && rec.date !== dateStr){
+        if(rec.tekrarAnaId){ alert('Otomatik tekrar kayıtları taşınamaz.'); }
+        else {
+          const{error} = await sb.from('kayitlar').update({date:dateStr}).eq('id',_drag.recId);
+          if(error) alert('Taşıma hatası: '+error.message);
+          else await loadRecords();
+        }
+      }
+    }
+  }
+  _drag = {active:false, recId:null, ghost:null, startX:0, startY:0};
 }
 
 // ── TAKVİM SWIPE ─────────────────────────────────────────────────
