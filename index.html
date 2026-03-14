@@ -1155,45 +1155,39 @@ function renderCalDetail(){
   }
   const typeDot={sure:'#ef4444',durusma:'#3b82f6',genel:'#22c55e',tekrar:'#f59e0b'};
   let html=evs.map(r=>{
-    const isExp=_calDetailExpanded===r.id;
     const dot=typeDot[r.type]||'#9aa0ac';
     const tStyle=r.tamamlandi?'opacity:0.5;':'';
     const d=r.hesapDetay;
-    let expHTML='';
-    if(isExp){
-      let detHTML='';
-      if(r.type==='sure'&&d) detHTML=`<div style="margin-top:8px;border-radius:8px;overflow:hidden;border:1px solid var(--border);">${buildHesapHTML(d)}</div>`;
-      expHTML=`<div style="padding:10px 14px 14px;border-top:1px solid var(--border);background:var(--surface);">
-        ${r.muvekkil?`<div style="font-size:12px;color:var(--text2);margin-bottom:4px;"><b>Müvekkil:</b> ${r.muvekkil}</div>`:''}
-        ${r.mahkeme?`<div style="font-size:12px;color:var(--text2);margin-bottom:4px;"><b>Mahkeme:</b> ${r.mahkeme}</div>`:''}
-        ${r.dava?`<div style="font-size:12px;color:var(--text2);margin-bottom:4px;"><b>Dava No:</b> ${r.dava}</div>`:''}
-        ${r.not?`<div style="font-size:12px;color:var(--text2);margin-bottom:4px;"><b>Not:</b> ${r.not}</div>`:''}
+    let detHTML='';
+    if(r.type==='sure'&&d) detHTML=`<div style="margin-top:8px;border-radius:8px;overflow:hidden;border:1px solid var(--border);">${buildHesapHTML(d)}</div>`;
+    return `<div style="border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:10px;${tStyle}">
+      <div style="padding:12px 14px;background:var(--surface2);display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);">
+        <div style="width:10px;height:10px;border-radius:50%;background:${dot};flex-shrink:0;"></div>
+        <span class="badge badge-${r.type==='tekrar'?'tekrar-type':r.type}" style="font-size:11px;">${typeLabel(r.type)}</span>
+        ${r.dal?`<span style="font-size:11px;color:var(--text2);">${dalLabel(r.dal)}</span>`:''}
+        ${r.saat?`<span style="font-size:12px;font-weight:600;color:var(--navy);">⏰ ${r.saat}</span>`:''}
+      </div>
+      <div style="padding:12px 14px;">
+        <div style="font-size:15px;font-weight:600;margin-bottom:8px;">${r.tamamlandi?'✓ ':''}${getBaslik(r)}</div>
+        ${r.muvekkil?`<div style="font-size:13px;color:var(--text2);margin-bottom:4px;"><b>Müvekkil:</b> ${r.muvekkil}</div>`:''}
+        ${r.mahkeme?`<div style="font-size:13px;color:var(--text2);margin-bottom:4px;"><b>Mahkeme:</b> ${r.mahkeme}</div>`:''}
+        ${r.dava?`<div style="font-size:13px;color:var(--text2);margin-bottom:4px;"><b>Dava No:</b> ${r.dava}</div>`:''}
+        ${r.not?`<div style="font-size:13px;color:var(--text2);margin-bottom:4px;"><b>Not:</b> ${r.not}</div>`:''}
         ${detHTML}
         ${r.tekrarTipi?`<div style="margin-top:8px;padding:5px 10px;background:#fef3c7;border-radius:6px;font-size:11px;color:#92400e;display:flex;justify-content:space-between;">
           <span>↻ ${tekrarTipiLabel(r.tekrarTipi)}${r.tekrarBitis?' · Bitiş: '+formatDate(r.tekrarBitis):''}</span>
           <button style="background:none;border:none;cursor:pointer;color:#dc2626;font-size:11px;font-family:inherit;" onclick="deleteTekrarHepsi(${r.id})">Tümünü sil</button>
         </div>`:''}
         ${r.tekrarAnaId?`<div style="margin-top:8px;padding:5px 10px;background:#fef3c7;border-radius:6px;font-size:11px;color:#92400e;">↻ Tekrarlayan iş</div>`:''}
-        <div style="display:flex;gap:7px;margin-top:10px;">
+        <div style="display:flex;gap:7px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">
           <button class="icon-btn" style="${r.tamamlandi?'color:#22c55e;border-color:#22c55e;font-weight:600;':''}" onclick="toggleTamamlandi(${r.id})">${r.tamamlandi?'✓ Tamamlandı':'○ Tamamlandı'}</button>
           <button class="icon-btn" onclick="closeCalDetail();openModal(records.find(x=>x.id===${r.id}))">Düzenle</button>
           <button class="icon-btn del" onclick="deleteRecord(${r.id})">Sil</button>
         </div>
-      </div>`;
-    }
-    return `<div style="border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:6px;${tStyle}">
-      <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;background:var(--surface);" onclick="toggleCalItem(${r.id})">
-        <div style="width:10px;height:10px;border-radius:50%;background:${dot};flex-shrink:0;"></div>
-        <div style="flex:1;min-width:0;">
-          <div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${r.tamamlandi?'✓ ':''}${getBaslik(r)}</div>
-          ${r.muvekkil||r.saat?`<div style="font-size:11px;color:var(--text2);margin-top:1px;">${r.muvekkil||''}${r.saat?' · ⏰'+r.saat:''}</div>`:''}
-        </div>
-        <div style="font-size:11px;color:var(--text3);flex-shrink:0;">${isExp?'▲':'▼'}</div>
       </div>
-      ${expHTML}
     </div>`;
   }).join('');
-  html+=`<div style="padding-top:4px;"><button class="cal-add-btn" onclick="closeCalDetail();openModal(null,'${dateStr}')">+ Bu Tarihe Kayıt Ekle</button></div>`;
+  html+=`<button class="cal-add-btn" onclick="closeCalDetail();openModal(null,'${dateStr}')">+ Bu Tarihe Kayıt Ekle</button>`;
   container.innerHTML=html;
 }
 
