@@ -1000,11 +1000,12 @@ function renderDashboard(){
   const ms=new Date(today.getFullYear(),today.getMonth(),1);
   const me=new Date(today.getFullYear(),today.getMonth()+1,0);me.setHours(23,59,59);
 
-  // İstatistikler
-  document.getElementById('stat-total').textContent=records.filter(r=>{const d=new Date(r.date+'T12:00:00');return d>=ms&&d<=me;}).length;
-  document.getElementById('stat-genel').textContent=records.filter(r=>r.type==='genel'&&!r.tekrarAnaId).length;
-  document.getElementById('stat-sure').textContent=records.filter(r=>r.type==='sure').length;
-  document.getElementById('stat-tekrar').textContent=records.filter(r=>r.tekrarTipi&&!r.tekrarAnaId).length;
+  // İstatistikler - sadece bu ay
+  const buAy=r=>{const d=new Date(r.date+'T12:00:00');return d>=ms&&d<=me;};
+  document.getElementById('stat-total').textContent=records.filter(buAy).length;
+  document.getElementById('stat-genel').textContent=records.filter(r=>r.type==='genel'&&!r.tekrarAnaId&&buAy(r)).length;
+  document.getElementById('stat-sure').textContent=records.filter(r=>r.type==='sure'&&buAy(r)).length;
+  document.getElementById('stat-tekrar').textContent=records.filter(r=>r.tekrarTipi&&!r.tekrarAnaId&&buAy(r)).length;
   const urgents=records.filter(r=>{const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);return r.type==='sure'&&d>=today&&d<=in7&&!r.tekrarAnaId;}).sort((a,b)=>new Date(a.date)-new Date(b.date));
   // acil kart kaldırıldı
 
@@ -1047,15 +1048,15 @@ function renderDashboard(){
 
   // Yaklaşan kayıtlar - filtre
   let upcoming=[];
+  const buAyFilter=r=>{const d=new Date(r.date+'T12:00:00');return d>=ms&&d<=me;};
   if(_dashFilter==='hepsi'){
-    // Bu aydaki tüm işler
-    upcoming=records.filter(r=>{const d=new Date(r.date+'T12:00:00');return d>=ms&&d<=me&&!r.tamamlandi&&!r.tekrarAnaId;}).sort((a,b)=>new Date(a.date)-new Date(b.date));
+    upcoming=records.filter(r=>buAyFilter(r)&&!r.tamamlandi&&!r.tekrarAnaId).sort((a,b)=>new Date(a.date)-new Date(b.date));
   } else if(_dashFilter==='genel'){
-    upcoming=records.filter(r=>{const d=new Date(r.date+'T12:00:00');return r.type==='genel'&&d>=ms&&d<=me&&!r.tamamlandi&&!r.tekrarAnaId;}).sort((a,b)=>new Date(a.date)-new Date(b.date));
+    upcoming=records.filter(r=>r.type==='genel'&&buAyFilter(r)&&!r.tamamlandi&&!r.tekrarAnaId).sort((a,b)=>new Date(a.date)-new Date(b.date));
   } else if(_dashFilter==='sure'){
-    upcoming=records.filter(r=>{const d=new Date(r.date+'T12:00:00');return r.type==='sure'&&d>=ms&&d<=me&&!r.tamamlandi;}).sort((a,b)=>new Date(a.date)-new Date(b.date));
+    upcoming=records.filter(r=>r.type==='sure'&&buAyFilter(r)&&!r.tamamlandi).sort((a,b)=>new Date(a.date)-new Date(b.date));
   } else if(_dashFilter==='tekrar'){
-    upcoming=records.filter(r=>{const d=new Date(r.date+'T12:00:00');return (r.tekrarTipi||r.tekrarAnaId)&&d>=ms&&d<=me&&!r.tamamlandi;}).sort((a,b)=>new Date(a.date)-new Date(b.date));
+    upcoming=records.filter(r=>(r.tekrarTipi||r.tekrarAnaId)&&buAyFilter(r)&&!r.tamamlandi).sort((a,b)=>new Date(a.date)-new Date(b.date));
   } else if(_dashFilter==='acil'){
     upcoming=urgents;
   }
