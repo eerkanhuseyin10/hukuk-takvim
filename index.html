@@ -497,13 +497,14 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
       <!-- DURUŞMA -->
       <div id="form-durusma" style="display:none;">
-        <div class="fg"><label>Mahkeme Adı</label><input type="text" id="f-durusma-mahkeme-adi" placeholder="Mahkeme adını girin"></div>
+        <div class="fg" id="durusma-mahkeme-box"><label id="durusma-baslik-label">Mahkeme Adı</label><input type="text" id="f-durusma-mahkeme-adi" placeholder="Mahkeme adını girin"></div>
+        <div class="fg"><label>Müvekkil</label><input type="text" id="f-durusma-muvekkil" placeholder="Müvekkil adı"></div>
         <div class="frow">
           <div class="fg"><label>Tarih</label><input type="date" id="f-durusma-tarih"></div>
           <div class="fg"><label>Saat</label><input type="time" id="f-durusma-saat"></div>
         </div>
         <div class="fg">
-          <label>Hukuk Dalı</label>
+          <label>Tür</label>
           <div class="chip-group" id="dal-chips-d">
             <button class="chip" onclick="setChip('dal2','hukuk',this)">Hukuk</button>
             <button class="chip" onclick="setChip('dal2','ceza',this)">Ceza</button>
@@ -514,34 +515,18 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
             <button class="chip" onclick="setChip('dal2','randevu',this)">Randevu</button>
           </div>
         </div>
-        <div class="dosya-box">
+        <div class="dosya-box" id="durusma-dosya-box">
           <div class="dosya-box-title">Dosya Bilgileri</div>
           <div class="fg">
             <label>Esas No</label>
             <div style="display:flex;gap:6px;align-items:center;">
-      <div style="display:flex;gap:8px;align-items:center;">
-              <select id="f-durusma-yil" style="padding:9px 10px;font-size:14px;border:1px solid var(--border2);border-radius:10px;background:var(--surface);color:var(--text);font-family:inherit;width:90px;"><option value="2020">2020</option><option value="2021">2021</option><option value="2022">2022</option><option value="2023">2023</option><option value="2024">2024</option><option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option></select>
+              <select id="f-durusma-yil" style="padding:9px 10px;font-size:14px;border:1px solid var(--border2);border-radius:10px;background:var(--surface);color:var(--text);font-family:inherit;width:92px;"><option value="2020">2020</option><option value="2021">2021</option><option value="2022">2022</option><option value="2023">2023</option><option value="2024">2024</option><option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option></select>
               <span style="color:var(--text3);font-size:16px;">/</span>
               <input type="text" id="f-durusma-no" style="flex:1;" placeholder="Esas No">
             </div>
-            </div>
           </div>
-          <div class="fg" style="margin-bottom:0;"><input type="text" id="f-durusma-muvekkil" placeholder="Müvekkil"></div>
         </div>
         <div class="fg" style="margin-bottom:0;"><label>Açıklama (opsiyonel)</label><textarea id="f-durusma-not" placeholder="Notlar..."></textarea></div>
-        <div class="fg">
-          <label>Tekrarlayan İş</label>
-          <div class="chip-group" id="tekrar-chips-d">
-            <button class="chip sel" onclick="setTekrarD('',this)">Tekrar yok</button>
-            <button class="chip" onclick="setTekrarD('haftalik',this)">Haftalık</button>
-            <button class="chip" onclick="setTekrarD('aylik',this)">Aylık</button>
-            <button class="chip" onclick="setTekrarD('yillik',this)">Yıllık</button>
-          </div>
-        </div>
-        <div id="tekrar-bitis-box-d" style="display:none;" class="fg">
-          <label>Tekrar Bitiş Tarihi (opsiyonel)</label>
-          <input type="date" id="f-tekrar-bitis-d">
-        </div>
       </div>
 
       <!-- GENEL İŞ -->
@@ -787,6 +772,14 @@ function setChip(g,val,el){
   el.classList.add('sel');ST[g]=val;
   if(g==='teblig'){document.getElementById('eteb-uyari').style.display=val==='etebligat'?'block':'none';hesapla();}
   if(g==='dal')hesapla();
+  if(g==='dal2'){
+    const dosyaBox=document.getElementById('durusma-dosya-box');
+    const mahkemeBox=document.getElementById('durusma-mahkeme-box');
+    const baslikLabel=document.getElementById('durusma-baslik-label');
+    if(dosyaBox) dosyaBox.style.display=val==='randevu'?'none':'block';
+    if(mahkemeBox) mahkemeBox.style.display=val==='randevu'?'none':'block';
+    if(baslikLabel) baslikLabel.textContent=val==='randevu'?'Randevu Konusu':'Mahkeme Adı';
+  }
 }
 function setBirim(b,el){document.querySelectorAll('.sure-birim-btn').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');ST.birim=b;hesapla();}
 let ST_TEKRAR_SIKLIK = '';
@@ -850,6 +843,9 @@ function openModal(editRecord,prefillDate){
   document.getElementById('form-sure').style.display='block';
   document.getElementById('form-durusma').style.display='none';
   document.getElementById('form-genel').style.display='none';
+  const ddb=document.getElementById('durusma-dosya-box');if(ddb)ddb.style.display='block';
+  const dmb=document.getElementById('durusma-mahkeme-box');if(dmb)dmb.style.display='block';
+  const dbl=document.getElementById('durusma-baslik-label');if(dbl)dbl.textContent='Mahkeme Adı';
   document.getElementById('form-tekrar').style.display='none';
   document.querySelectorAll('#tekrar-siklik-chips .chip').forEach(x=>x.classList.remove('sel'));
   ['f-tekrar-baslik','f-tekrar-saat','f-tekrar-bitis2','f-tekrar-mahkeme','f-tekrar-no','f-tekrar-muvekkil','f-tekrar-aciklama'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
