@@ -182,7 +182,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .muvekkil-is-item:hover{background:var(--surface2);}
 .muvekkil-is-item:last-child{border-bottom:none;}
 .mv-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.mv-link{color:var(--navy);font-weight:500;text-decoration:underline;cursor:pointer;}
+.mv-link{color:var(--navy);font-weight:500;text-decoration:underline;cursor:pointer;display:inline-block;padding:2px 4px;margin:-2px -4px;}
 .mv-link:hover{color:var(--navy-dark);}
 .kayit-modal{background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-width:580px;max-height:90vh;overflow-y:auto;overflow-x:hidden;margin:0 auto;}
 @media(min-width:640px){.durusma-sonuc-overlay{position:fixed;inset:0;background:rgba(15,22,40,0.5);display:flex;align-items:flex-end;justify-content:center;z-index:270;padding:0;}
@@ -1296,7 +1296,7 @@ function renderDashboard(){
   let weekly=_dashFilter==='hepsi'?[
     ...records.filter(r=>{
       const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);
-      return d>=today&&d<=in7&&!r.tamamlandi&&!r.tekrarAnaId&&(r.type==='sure'||r.type==='durusma'||r.type==='tekrar');
+      return d>=today&&d<=in7&&!r.tamamlandi&&!r.tekrarAnaId&&(r.type==='sure'||r.type==='durusma'||r.type==='tekrar'||r.type==='genel');
     }),
     ...records.filter(r=>{
       const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);
@@ -1323,7 +1323,7 @@ function renderDashboard(){
     return dateHeader+`<tr onclick="openKayitModal(${r.id})" style="cursor:pointer;${r.tamamlandi?'opacity:0.5;':''}">
       <td>${r.saat?'<span style="font-weight:600;color:var(--navy);">⏰ '+r.saat+'</span><br>':''}<span style="font-size:11px;">${lbl}</span></td>
       <td style="${r.tamamlandi?'text-decoration:line-through;color:var(--text3);':''}">${r.tamamlandi?'✓ ':''}${getBaslik(r)}</td>
-      <td>${r.muvekkil?`<span class='mv-link' onclick='event.stopPropagation();openMuvekkilModal("${r.muvekkil}")'>${r.muvekkil}</span>`:'—'}</td>
+      <td onclick="event.stopPropagation();if('${r.muvekkil}')openMuvekkilModal('${r.muvekkil}')" style="cursor:pointer;">${r.muvekkil?`<span class='mv-link'>${r.muvekkil}</span>`:'—'}</td>
       <td><span class="badge badge-${r.type==='tekrar'?'tekrar-type':r.type}">${typeLabel(r.type,r.dal)}</span></td>
       <td>${dalLabel(r.dal)}</td>
       <td><div class="action-btns">
