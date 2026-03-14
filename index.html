@@ -1128,16 +1128,11 @@ async function toggleTamamlandi(id){
     if(error){alert('Hata: '+error.message);return;}
     await loadRecords();return;
   }
-  // Tamamlandı yaparken açıklama zorunlu
-  if(!rec.not){
-    const not_metni=prompt('⚠️ Açıklama zorunludur.\n\nBu iş hakkında kısa bir not girin:');
-    if(not_metni===null) return; // iptal
-    if(!not_metni.trim()){alert('Açıklama girilmeden tamamlandı işaretlenemez.');return;}
-    const{error}=await sb.from('kayitlar').update({tamamlandi:true,not_alani:sentenceCase(not_metni.trim())}).eq('id',id);
-    if(error){alert('Hata: '+error.message);return;}
-    await loadRecords();return;
-  }
-  const{error}=await sb.from('kayitlar').update({tamamlandi:true}).eq('id',id);
+  // Tamamlandı yaparken açıklama her zaman zorunlu
+  const not_metni=prompt('⚠️ Açıklama zorunludur.\n\nBu iş hakkında kısa bir not girin:');
+  if(not_metni===null) return;
+  if(!not_metni.trim()){alert('Açıklama girilmeden tamamlandı işaretlenemez.');return;}
+  const{error}=await sb.from('kayitlar').update({tamamlandi:true,not_alani:sentenceCase(not_metni.trim())}).eq('id',id);
   if(error){alert('Hata: '+error.message);return;}
   await loadRecords();
   if(document.getElementById('cal-detail-panel').classList.contains('open')){
