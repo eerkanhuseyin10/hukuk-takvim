@@ -82,6 +82,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .list-table tr:last-child td{border-bottom:none;}
 .list-table tbody tr:hover td{background:var(--surface2);}
 .list-table tbody tr{cursor:pointer;}
+.mahkeme-wrap{position:relative;}
+.mahkeme-dropdown{position:absolute;top:100%;left:0;right:0;background:var(--surface);border:1px solid var(--border2);border-top:none;border-radius:0 0 var(--radius) var(--radius);z-index:50;max-height:180px;overflow-y:auto;display:none;box-shadow:0 4px 12px rgba(0,0,0,0.1);}
+.mahkeme-dropdown-item{padding:9px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--border);}
+.mahkeme-dropdown-item:last-child{border-bottom:none;}
+.mahkeme-dropdown-item:hover{background:var(--navy-light);}
 .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;}
 .badge-durusma{background:var(--blue-light);color:var(--blue-dark);}
 .badge-sure{background:#fecaca;color:#991b1b;}
@@ -477,7 +482,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
         <div class="sure-hesap" id="sure-hesap-box"></div>
         <div class="dosya-box">
           <div class="dosya-box-title">Dosya Bilgileri</div>
-          <div class="fg"><input type="text" id="f-mahkeme" placeholder="Mahkeme (opsiyonel)"></div>
+          <div class="fg"><div class="mahkeme-wrap"><input type="text" id="f-mahkeme" placeholder="Gönderen (opsiyonel)" autocomplete="off" oninput="showMahkemeDropdown('f-mahkeme','dd-mahkeme')" onfocus="showMahkemeDropdown('f-mahkeme','dd-mahkeme')" onblur="setTimeout(()=>{const d=document.getElementById('dd-mahkeme');if(d)d.style.display='none';},200)"><div class="mahkeme-dropdown" id="dd-mahkeme"></div></div></div>
           <div class="fg">
             <label>Esas No</label>
             <div style="display:flex;gap:6px;align-items:center;">
@@ -498,7 +503,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
       <!-- DURUŞMA -->
       <div id="form-durusma" style="display:none;">
-        <div class="fg" id="durusma-mahkeme-box"><label id="durusma-baslik-label">Mahkeme Adı</label><input type="text" id="f-durusma-mahkeme-adi" placeholder="Mahkeme adını girin"></div>
+        <div class="fg" id="durusma-mahkeme-box"><label id="durusma-baslik-label">Mahkeme Adı</label><div class="mahkeme-wrap"><input type="text" id="f-durusma-mahkeme-adi" placeholder="Mahkeme adını girin" autocomplete="off" oninput="showMahkemeDropdown('f-durusma-mahkeme-adi','dd-durusma-mahkeme')" onfocus="showMahkemeDropdown('f-durusma-mahkeme-adi','dd-durusma-mahkeme')" onblur="setTimeout(()=>{const d=document.getElementById('dd-durusma-mahkeme');if(d)d.style.display='none';},200)"><div class="mahkeme-dropdown" id="dd-durusma-mahkeme"></div></div></div>
         <div class="fg"><label>Müvekkil</label><input type="text" id="f-durusma-muvekkil" placeholder="Müvekkil adı"></div>
         <div class="frow">
           <div class="fg"><label>Tarih</label><input type="date" id="f-durusma-tarih"></div>
@@ -557,7 +562,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
           <span class="collapsible-arrow">▶</span>
         </div>
         <div class="collapsible-body">
-          <div class="fg"><label>Mahkeme</label><input type="text" id="f-genel-mahkeme" placeholder="Mahkeme"></div>
+          <div class="fg"><label>Mahkeme</label><div class="mahkeme-wrap"><input type="text" id="f-genel-mahkeme" placeholder="Mahkeme" autocomplete="off" oninput="showMahkemeDropdown('f-genel-mahkeme','dd-genel-mahkeme')" onfocus="showMahkemeDropdown('f-genel-mahkeme','dd-genel-mahkeme')" onblur="setTimeout(()=>{const d=document.getElementById('dd-genel-mahkeme');if(d)d.style.display='none';},200)"><div class="mahkeme-dropdown" id="dd-genel-mahkeme"></div></div></div>
           <div class="fg">
             <label>Esas No</label>
             <div style="display:flex;gap:6px;align-items:center;">
@@ -605,10 +610,33 @@ const SUPABASE_URL='https://uocdxifomlrbzorizrud.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvY2R4aWZvbWxyYnpvcml6cnVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzI1MTEsImV4cCI6MjA4OTAwODUxMX0.Vf0hXl-s96DEvGDF3gHNgGyd8EQvvuF8p-XzWmJcv9M';
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
+const MAHKEMELER = [
+  "Balıkesir 1. Asliye Hukuk Mahkemesi","Balıkesir 2. Asliye Hukuk Mahkemesi","Balıkesir 3. Asliye Hukuk Mahkemesi",
+  "Balıkesir 1. Asliye Ticaret Mahkemesi","Balıkesir 1. Sulh Hukuk Mahkemesi","Balıkesir 2. Sulh Hukuk Mahkemesi",
+  "Balıkesir 1. Sulh Ceza Hâkimliği","Balıkesir 2. Sulh Ceza Hâkimliği",
+  "Balıkesir 1. Ağır Ceza Mahkemesi","Balıkesir 2. Ağır Ceza Mahkemesi","Balıkesir 3. Ağır Ceza Mahkemesi",
+  "Balıkesir 1. Asliye Ceza Mahkemesi","Balıkesir 2. Asliye Ceza Mahkemesi","Balıkesir 3. Asliye Ceza Mahkemesi","Balıkesir 4. Asliye Ceza Mahkemesi",
+  "Balıkesir 1. İcra Hukuk Mahkemesi","Balıkesir 2. İcra Hukuk Mahkemesi",
+  "Balıkesir İş Mahkemesi","Balıkesir 1. Aile Mahkemesi","Balıkesir 2. Aile Mahkemesi",
+  "Balıkesir İdare Mahkemesi","Balıkesir Vergi Mahkemesi","Balıkesir Kadastro Mahkemesi",
+  "Balıkesir Tüketici Mahkemesi","Balıkesir Çocuk Mahkemesi","Balıkesir Çocuk Ağır Ceza Mahkemesi",
+  "Bandırma Asliye Hukuk Mahkemesi","Bandırma Ağır Ceza Mahkemesi","Bandırma Asliye Ceza Mahkemesi",
+  "Bandırma Aile Mahkemesi","Bandırma İş Mahkemesi",
+  "Edremit Asliye Hukuk Mahkemesi","Edremit Asliye Ceza Mahkemesi","Edremit Ağır Ceza Mahkemesi",
+  "Burhaniye Asliye Hukuk Mahkemesi","Burhaniye Asliye Ceza Mahkemesi",
+  "Erdek Asliye Hukuk Mahkemesi","Gönen Asliye Hukuk Mahkemesi","Gönen Asliye Ceza Mahkemesi",
+  "Manyas Asliye Hukuk Mahkemesi","Sındırgı Asliye Hukuk Mahkemesi",
+  "Susurluk Asliye Hukuk Mahkemesi","Susurluk Asliye Ceza Mahkemesi",
+  "Balıkesir Bölge Adliye Mahkemesi","İzmir Bölge Adliye Mahkemesi","Bursa Bölge İdare Mahkemesi",
+  "Yargıtay","Danıştay","Anayasa Mahkemesi",
+  "Balıkesir Cumhuriyet Başsavcılığı","Bandırma Cumhuriyet Başsavcılığı",
+  "Balıkesir İcra Müdürlüğü","Balıkesir Arabuluculuk Merkezi",
+];
+
 const IS_TIPLERI=['89/1 İtirazı','Adli Kontrol Kararına İtiraz','Adres Bildirme Dilekçesi','AİHM Bakanlık Görüşüne İtiraz','AİHM Başvurusu','Ara Karara İtiraz','Ara Kararın Yerine Getirilmesi','Arabuluculuk Başvurusu','Arabuluculuk Tutanağının Sunulması','AYM Bakanlık Görüşüne İtiraz','AYM Bireysel Başvuru','Basit Yargılama Usulüne İtiraz','Beyan Dilekçesi','Bilirkişi Raporuna İtiraz','Bilirkişi Raporuna Karşı Beyan','Cevap Dilekçesi','Cevaba Cevap Dilekçesi','Dahili Dava Dilekçesi','Değişik İş Kararına İtiraz','Delil Listesi Sunumu','Delil Sunumu','Dosyanın Kesinleşmesi','Dosyanın Yenilenmesi İşlemi','Ek Karar Talebi (Hükmün Tamamlanması)','Esas Hakkında Beyan','Hukuk Dava Açılış','İcra Dosyası Ödeme','İcra İşlemini Şikayet','İdari Dava Açılış','İdari Para Cezasına İtiraz','İhtarnameye Cevap','İhtiyati Hacze İtiraz','İhtiyati Tedbire İtiraz Dilekçesi','İkinci Cevap Dilekçesi','İlamsız İcraya İtiraz','İstinaf Başvuru Dilekçesi','İstinaf Başvurusuna Cevap','İşe İade Başvurusuna Cevap','İtirazın İptali Davası Açılışı','İtirazın Kaldırılması Davası Açılışı','Islah Dilekçesi','Islaha Karşı Beyan Dilekçesi','Kambiyo Takibine İtiraz','Kanun Yararına Bozma Başvurusu','Maaş Haczi İtirazı','Mütalaaya İtiraz','Nihai Karara İtiraz Dilekçesi','Ön Ödemenin Yatırılması','Savunma Dilekçesi','Savunmaya Cevap Dilekçesi','Takipsizlik (KYOK) Kararına İtiraz','Talebin Açıklanması','Tanık Beyanlarına Karşı Beyan','Tanık Bildirimi','Tehiri İcra Kararı Sunumu','Temyiz Başvuru Dilekçesi','Temyiz Başvurusuna Cevap','Tensip Kaynaklı İşlemler','Tutukluluğa İtiraz','Yemin İtirazı','Yemin Teklifi','Şikayet Dilekçesi','Diğer'].sort((a,b)=>a.localeCompare(b,'tr'));
 
 let selectedIstipi='';
-let records=[],ST={type:'sure',teblig:'',dal:'',dal2:'',birim:'',hesaplananTarih:null,hesapDetay:null,editId:null};
+let records=[],ST={type:'sure',teblig:'',dal:'',dal2:'',birim:'',hesaplananTarih:null,hesapDetay:null,editId:null,prefillDate:''};
 let currentMonth=new Date().getMonth(),currentYear=new Date().getFullYear(),openDetailId=null;
 
 // ── İŞ TİPİ ──────────────────────────────────────────────────────
@@ -795,6 +823,7 @@ function setType(t,el){
   document.getElementById('form-durusma').style.display=t==='durusma'?'block':'none';
   document.getElementById('form-genel').style.display=t==='genel'?'block':'none';
   const ft=document.getElementById('form-tekrar');if(ft)ft.style.display=t==='tekrar'?'block':'none';
+  if(t==='tekrar'&&ST.prefillDate){const ftd=document.getElementById('f-tekrar-tarih');if(ftd&&!ftd.value)ftd.value=ST.prefillDate;}
   const titles={sure:'Süreli İş',durusma:'Duruşma / Randevu',genel:'Genel İş',tekrar:'Tekrarlayan İş'};
   document.getElementById('modal-title').textContent=titles[t]+(ST.editId?' — Düzenle':' Ekle');
 }
@@ -815,22 +844,23 @@ function hesapla(){
 
 // ── MODAL ─────────────────────────────────────────────────────────
 function openModal(editRecord,prefillDate){
-  ST={type:'sure',teblig:'',dal:'',dal2:'',birim:'',hesaplananTarih:null,hesapDetay:null,editId:null};
+  ST={type:'sure',teblig:'',dal:'',dal2:'',birim:'',hesaplananTarih:null,hesapDetay:null,editId:null,prefillDate:prefillDate||''};
   selectedIstipi='';
   document.querySelectorAll('.chip,.type-tab,.sure-birim-btn').forEach(c=>c.classList.remove('sel'));
   document.querySelector('.type-tab').classList.add('sel');
   const cy=new Date().getFullYear();
   ['f-teblig-tarihi','f-mahkeme','f-dava-no','f-muvekkil','f-not-sure','f-sure-miktar','f-durusma-mahkeme-adi','f-durusma-no','f-durusma-muvekkil','f-durusma-not','f-durusma-saat','f-genel-baslik','f-genel-mahkeme','f-genel-no','f-genel-muvekkil','f-genel-aciklama','f-genel-saat','istipi-search','f-istipi-val','f-istipi-text'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   setYil('f-dava-yil',cy);setYil('f-durusma-yil',cy);setYil('f-genel-yil',cy);
-  const today=prefillDate||new Date().toISOString().split('T')[0];
-  document.getElementById('f-durusma-tarih').value='';
-  document.getElementById('f-genel-tarih').value='';
+  const today=prefillDate||'';
+  document.getElementById('f-durusma-tarih').value=today;
+  document.getElementById('f-genel-tarih').value=today;
+  const ftd=document.getElementById('f-tekrar-tarih');if(ftd)ftd.value=prefillDate||'';
   document.getElementById('sure-hesap-box').classList.remove('show');
   ST_TEKRAR_SIKLIK='';
   const ft=document.getElementById('form-tekrar');if(ft)ft.style.display='none';
   document.querySelectorAll('#tekrar-siklik-chips .chip').forEach(x=>x.classList.remove('sel'));
   ['f-tekrar-baslik','f-tekrar-bitis2','f-tekrar-aciklama'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  const ftt=document.getElementById('f-tekrar-tarih');if(ftt)ftt.value=new Date().toISOString().split('T')[0];
+  const ftt=document.getElementById('f-tekrar-tarih');if(ftt)ftt.value='';
   ST_TEKRAR=''; ST_TEKRAR_D=''; ST_TEKRAR_SIKLIK='';
   document.querySelectorAll('#tekrar-chips .chip, #tekrar-chips-d .chip').forEach(x=>x.classList.remove('sel'));
   const tc0=document.querySelector('#tekrar-chips .chip');if(tc0)tc0.classList.add('sel');
@@ -850,7 +880,7 @@ function openModal(editRecord,prefillDate){
   document.getElementById('form-tekrar').style.display='none';
   document.querySelectorAll('#tekrar-siklik-chips .chip').forEach(x=>x.classList.remove('sel'));
   ['f-tekrar-baslik','f-tekrar-saat','f-tekrar-bitis2','f-tekrar-mahkeme','f-tekrar-no','f-tekrar-muvekkil','f-tekrar-aciklama'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('f-tekrar-tarih').value=new Date().toISOString().split('T')[0];
+  document.getElementById('f-tekrar-tarih').value='';
   document.getElementById('modal-title').textContent='Süreli İş Ekle';
 
   if(editRecord){
@@ -1312,6 +1342,26 @@ function openKayitModal(id){
 }
 function closeKayitModal(){
   document.getElementById('kayit-modal').style.display='none';
+}
+function showMahkemeDropdown(inputId, ddId){
+  const input=document.getElementById(inputId);
+  const dd=document.getElementById(ddId);
+  if(!input||!dd) return;
+  const val=input.value.toLocaleLowerCase('tr-TR');
+  const matches=MAHKEMELER.filter(m=>m.toLocaleLowerCase('tr-TR').includes(val)).slice(0,8);
+  if(!matches.length){dd.style.display='none';return;}
+  dd.innerHTML=matches.map(m=>{
+    const safe=m.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+    return '<div class="mahkeme-dropdown-item" data-inputid="'+inputId+'" data-ddid="'+ddId+'" data-val="'+safe+'">'+m+'</div>';
+  }).join('');
+  dd.querySelectorAll('.mahkeme-dropdown-item').forEach(el=>{
+    el.addEventListener('mousedown',function(e){
+      e.preventDefault();
+      document.getElementById(el.dataset.inputid).value=el.dataset.val;
+      document.getElementById(el.dataset.ddid).style.display='none';
+    });
+  });
+  dd.style.display='block';
 }
 function closeCalDetail(){
   document.getElementById('cal-detail-panel').classList.remove('open');
