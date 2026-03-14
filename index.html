@@ -571,6 +571,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
             <button class="chip" onclick="setChip('dal2','arabuluculuk',this)">Arabuluculuk</button>
             <button class="chip" onclick="setChip('dal2','randevu',this)">Randevu</button>
             <button class="chip" onclick="setChip('dal2','kesif',this)">Keşif</button>
+            <button class="chip" onclick="setChip('dal2','tevkil',this)">Tevkil</button>
           </div>
         </div>
         <div class="dosya-box" id="durusma-dosya-box">
@@ -1091,7 +1092,7 @@ async function saveRecord(){
     rec={type:'durusma',date,baslik:(()=>{
       const mAdi=titleCase(document.getElementById('f-durusma-mahkeme-adi').value.trim());
       if(mAdi) return mAdi;
-      const ozel={tahkim:'Tahkim',arabuluculuk:'Arabuluculuk',randevu:'Randevu',kesif:'Keşif'};
+      const ozel={tahkim:'Tahkim',arabuluculuk:'Arabuluculuk',randevu:'Randevu',kesif:'Keşif',tevkil:'Tevkil'};
       return ozel[ST.dal2]||'Duruşma';
     })(),saat:document.getElementById('f-durusma-saat').value,dal:ST.dal2,mahkeme:titleCase(document.getElementById('f-durusma-mahkeme-adi').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-durusma-muvekkil').value.trim()),not:sentenceCase(document.getElementById('f-durusma-not').value.trim()),tekrarTipi:ST_TEKRAR_D||null,tekrarBitis:ST_TEKRAR_D&&document.getElementById('f-tekrar-bitis-d').value?document.getElementById('f-tekrar-bitis-d').value:null};
   }else if(ST.type==='tekrar'){
@@ -1172,7 +1173,7 @@ function formatDate(s){if(!s)return'—';const d=new Date(s+'T12:00:00');return 
 function formatDateLong(s){if(!s)return'—';const d=new Date(s+'T12:00:00');return d.toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}
 function typeLabel(t,dal){
   if(t==='durusma'){
-    const ozel={tahkim:'Tahkim',arabuluculuk:'Arabuluculuk',randevu:'Randevu',kesif:'Keşif'};
+    const ozel={tahkim:'Tahkim',arabuluculuk:'Arabuluculuk',randevu:'Randevu',kesif:'Keşif',tevkil:'Tevkil'};
     return ozel[dal]||'Duruşma';
   }
   return{sure:'Süreli İş',genel:'Genel İş',tekrar:'Tekrarlayan'}[t]||t;
