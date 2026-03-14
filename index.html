@@ -83,6 +83,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .badge-durusma{background:var(--blue-light);color:var(--blue-dark);}
 .badge-sure{background:var(--amber);color:var(--amber-dark);}
 .badge-genel{background:var(--green-light);color:var(--green-dark);}
+.badge-tekrar{background:#e0e7ff;color:#3730a3;font-size:10px;padding:1px 6px;}
 .action-btns{display:flex;gap:5px;white-space:nowrap;}
 .icon-btn{padding:4px 9px;font-size:12px;border:1px solid var(--border);border-radius:7px;cursor:pointer;background:transparent;color:var(--text2);font-family:inherit;transition:all .15s;}
 .icon-btn:hover{background:var(--surface2);}
@@ -462,6 +463,19 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
           <div class="fg" style="margin-bottom:0;"><input type="text" id="f-durusma-muvekkil" placeholder="Müvekkil"></div>
         </div>
         <div class="fg" style="margin-bottom:0;"><label>Açıklama (opsiyonel)</label><textarea id="f-durusma-not" placeholder="Notlar..."></textarea></div>
+        <div class="fg">
+          <label>Tekrarlayan İş</label>
+          <div class="chip-group" id="tekrar-chips-d">
+            <button class="chip sel" onclick="setTekrarD('',this)">Tekrar yok</button>
+            <button class="chip" onclick="setTekrarD('haftalik',this)">Haftalık</button>
+            <button class="chip" onclick="setTekrarD('aylik',this)">Aylık</button>
+            <button class="chip" onclick="setTekrarD('yillik',this)">Yıllık</button>
+          </div>
+        </div>
+        <div id="tekrar-bitis-box-d" style="display:none;" class="fg">
+          <label>Tekrar Bitiş Tarihi (opsiyonel)</label>
+          <input type="date" id="f-tekrar-bitis-d">
+        </div>
       </div>
 
       <!-- GENEL İŞ -->
@@ -472,6 +486,20 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
           <div class="fg"><label>Saat (opsiyonel)</label><input type="time" id="f-genel-saat"></div>
         </div>
         <div class="fg"><label>Açıklama (opsiyonel)</label><textarea id="f-genel-aciklama" placeholder="Açıklama..."></textarea></div>
+        <!-- TEKRAR -->
+        <div class="fg">
+          <label>Tekrarlayan İş</label>
+          <div class="chip-group" id="tekrar-chips">
+            <button class="chip" onclick="setTekrar('',this)">Tekrar yok</button>
+            <button class="chip" onclick="setTekrar('haftalik',this)">Haftalık</button>
+            <button class="chip" onclick="setTekrar('aylik',this)">Aylık</button>
+            <button class="chip" onclick="setTekrar('yillik',this)">Yıllık</button>
+          </div>
+        </div>
+        <div id="tekrar-bitis-box" style="display:none;" class="fg">
+          <label>Tekrar Bitiş Tarihi (opsiyonel)</label>
+          <input type="date" id="f-tekrar-bitis" placeholder="Boş bırakırsan 2 yıl devam eder">
+        </div>
         <div class="collapsible-header" onclick="toggleCollapsible(this)">
           <span>Dosya Bilgileri (opsiyonel)</span>
           <span class="collapsible-arrow">▶</span>
@@ -565,11 +593,63 @@ function drumWheel(e,id){
 }
 
 // ── VERİ ──────────────────────────────────────────────────────────
+// ── TEKRAR MOTORU ────────────────────────────────────────────────
+function tekrarTipiLabel(t){return{haftalik:'Haftalık',aylik:'Aylık',yillik:'Yıllık'}[t]||'';}
+
+function nextTekrarDate(dateStr, tipi){
+  const d = new Date(dateStr+'T12:00:00');
+  if(tipi==='haftalik') d.setDate(d.getDate()+7);
+  else if(tipi==='aylik') d.setMonth(d.getMonth()+1);
+  else if(tipi==='yillik') d.setFullYear(d.getFullYear()+1);
+  return d.toISOString().split('T')[0];
+}
+
+async function olusturTekrarKayitlari(anaRec){
+  if(!anaRec.tekrarTipi) return;
+  const today = new Date().toISOString().split('T')[0];
+  // Bitiş tarihi: belirtilmemişse 2 yıl sonra
+  const bitis = anaRec.tekrarBitis || new Date(new Date().setFullYear(new Date().getFullYear()+2)).toISOString().split('T')[0];
+  // Mevcut tekrar kayıtlarını bul
+  const mevcutlar = records.filter(r => r.tekrarAnaId === anaRec.id).map(r => r.date);
+  let sonTarih = mevcutlar.length > 0 ? mevcutlar.sort().pop() : anaRec.date;
+  const yeniKayitlar = [];
+  let next = nextTekrarDate(sonTarih, anaRec.tekrarTipi);
+  while(next <= bitis && yeniKayitlar.length < 24){
+    if(!mevcutlar.includes(next)){
+      yeniKayitlar.push({...localToDB({...anaRec, date:next, id:undefined, tekrarAnaId:anaRec.id, tekrarTipi:null, tekrarBitis:null}), tekrar_ana_id:anaRec.id});
+    }
+    next = nextTekrarDate(next, anaRec.tekrarTipi);
+  }
+  if(yeniKayitlar.length>0){
+    await sb.from('kayitlar').insert(yeniKayitlar);
+  }
+}
+
+let ST_TEKRAR = '';
+let ST_TEKRAR_D = '';
+function setTekrar(val,el){
+  document.querySelectorAll('#tekrar-chips .chip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel'); ST_TEKRAR=val;
+  document.getElementById('tekrar-bitis-box').style.display=val?'block':'none';
+}
+function setTekrarD(val,el){
+  document.querySelectorAll('#tekrar-chips-d .chip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel'); ST_TEKRAR_D=val;
+  document.getElementById('tekrar-bitis-box-d').style.display=val?'block':'none';
+}
+
 async function loadRecords(){
   setSyncStatus('loading','Yükleniyor...');
   const{data,error}=await sb.from('kayitlar').select('*').order('date',{ascending:true});
   if(error){setSyncStatus('error','Bağlantı hatası');return;}
   records=(data||[]).map(dbToLocal);
+  // Tekrar kayıtlarını otomatik oluştur
+  const anaKayitlar = records.filter(r=>r.tekrarTipi && !r.tekrarAnaId);
+  for(const r of anaKayitlar){ await olusturTekrarKayitlari(r); }
+  if(anaKayitlar.length>0){
+    const{data:data2}=await sb.from('kayitlar').select('*').order('date',{ascending:true});
+    records=(data2||[]).map(dbToLocal);
+  }
   setSyncStatus('ok','Bağlı');
   renderAll();
 }
@@ -577,8 +657,8 @@ function setSyncStatus(s,t){
   document.getElementById('sync-dot').className='sync-dot'+(s==='error'?' error':s==='loading'?' loading':'');
   document.getElementById('sync-text').textContent=t;
 }
-function dbToLocal(r){return{id:r.id,type:r.type,date:r.date,baslik:r.baslik||'',muvekkil:r.muvekkil||'',mahkeme:r.mahkeme||'',dava:r.dava||'',dal:r.dal||'',istipi:r.istipi||'',istipiVal:r.istipi_val||'',tebligTarihi:r.teblig_tarihi||'',tebligSekli:r.teblig_sekli||'',sureMiktar:r.sure_miktar,sureBirim:r.sure_birim||'',hesapDetay:r.hesap_detay||null,not:r.not_alani||'',saat:r.saat||''};}
-function localToDB(r){return{type:r.type,date:r.date,baslik:r.baslik||null,muvekkil:r.muvekkil||null,mahkeme:r.mahkeme||null,dava:r.dava||null,dal:r.dal||null,istipi:r.istipi||null,istipi_val:r.istipiVal||null,teblig_tarihi:r.tebligTarihi||null,teblig_sekli:r.tebligSekli||null,sure_miktar:r.sureMiktar||null,sure_birim:r.sureBirim||null,hesap_detay:r.hesapDetay||null,not_alani:r.not||null,saat:r.saat||null};}
+function dbToLocal(r){return{id:r.id,type:r.type,date:r.date,baslik:r.baslik||'',muvekkil:r.muvekkil||'',mahkeme:r.mahkeme||'',dava:r.dava||'',dal:r.dal||'',istipi:r.istipi||'',istipiVal:r.istipi_val||'',tebligTarihi:r.teblig_tarihi||'',tebligSekli:r.teblig_sekli||'',sureMiktar:r.sure_miktar,sureBirim:r.sure_birim||'',hesapDetay:r.hesap_detay||null,not:r.not_alani||'',saat:r.saat||'',tekrarTipi:r.tekrar_tipi||null,tekrarBitis:r.tekrar_bitis||null,tekrarAnaId:r.tekrar_ana_id||null};}
+function localToDB(r){return{type:r.type,date:r.date,baslik:r.baslik||null,muvekkil:r.muvekkil||null,mahkeme:r.mahkeme||null,dava:r.dava||null,dal:r.dal||null,istipi:r.istipi||null,istipi_val:r.istipiVal||null,teblig_tarihi:r.tebligTarihi||null,teblig_sekli:r.tebligSekli||null,sure_miktar:r.sureMiktar||null,sure_birim:r.sureBirim||null,hesap_detay:r.hesapDetay||null,not_alani:r.not||null,saat:r.saat||null,tekrar_tipi:r.tekrarTipi||null,tekrar_bitis:r.tekrarBitis||null,tekrar_ana_id:r.tekrarAnaId||null};}
 
 // ── SÜRE MOTORU ───────────────────────────────────────────────────
 function isAdliTatil(d){const m=d.getMonth(),g=d.getDate();return(m===6&&g>=20)||m===7;}
@@ -651,6 +731,14 @@ function openModal(editRecord,prefillDate){
   document.getElementById('f-durusma-tarih').value=today;
   document.getElementById('f-genel-tarih').value=today;
   document.getElementById('sure-hesap-box').classList.remove('show');
+  ST_TEKRAR=''; ST_TEKRAR_D='';
+  document.querySelectorAll('#tekrar-chips .chip, #tekrar-chips-d .chip').forEach(x=>x.classList.remove('sel'));
+  const tc0=document.querySelector('#tekrar-chips .chip');if(tc0)tc0.classList.add('sel');
+  const td0=document.querySelector('#tekrar-chips-d .chip');if(td0)td0.classList.add('sel');
+  const tbb=document.getElementById('tekrar-bitis-box');if(tbb)tbb.style.display='none';
+  const tbbd=document.getElementById('tekrar-bitis-box-d');if(tbbd)tbbd.style.display='none';
+  const ftb=document.getElementById('f-tekrar-bitis');if(ftb)ftb.value='';
+  const ftbd=document.getElementById('f-tekrar-bitis-d');if(ftbd)ftbd.value='';
   document.getElementById('eteb-uyari').style.display='none';
   document.getElementById('istipi-list').style.display='none';
   document.getElementById('form-sure').style.display='block';
@@ -710,11 +798,11 @@ async function saveRecord(){
   }else if(ST.type==='durusma'){
     const date=document.getElementById('f-durusma-tarih').value;if(!date){alert('Tarih zorunludur.');return;}
     const yil=document.getElementById('f-durusma-yil').value,no=document.getElementById('f-durusma-no').value.trim();
-    rec={type:'durusma',date,baslik:document.getElementById('f-durusma-mahkeme-adi').value.trim()||'Duruşma',saat:document.getElementById('f-durusma-saat').value,dal:ST.dal2,mahkeme:document.getElementById('f-durusma-mahkeme-adi').value.trim(),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:document.getElementById('f-durusma-muvekkil').value.trim(),not:document.getElementById('f-durusma-not').value.trim()};
+    rec={type:'durusma',date,baslik:document.getElementById('f-durusma-mahkeme-adi').value.trim()||'Duruşma',saat:document.getElementById('f-durusma-saat').value,dal:ST.dal2,mahkeme:document.getElementById('f-durusma-mahkeme-adi').value.trim(),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:document.getElementById('f-durusma-muvekkil').value.trim(),not:document.getElementById('f-durusma-not').value.trim(),tekrarTipi:ST_TEKRAR_D||null,tekrarBitis:ST_TEKRAR_D&&document.getElementById('f-tekrar-bitis-d').value?document.getElementById('f-tekrar-bitis-d').value:null};
   }else{
     const date=document.getElementById('f-genel-tarih').value;if(!date){alert('Tarih zorunludur.');return;}
     const yil=document.getElementById('f-genel-yil').value,no=document.getElementById('f-genel-no').value.trim();
-    rec={type:'genel',date,baslik:document.getElementById('f-genel-baslik').value.trim()||'Genel İş',saat:document.getElementById('f-genel-saat').value,mahkeme:document.getElementById('f-genel-mahkeme').value.trim(),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:document.getElementById('f-genel-muvekkil').value.trim(),not:document.getElementById('f-genel-aciklama').value.trim()};
+    rec={type:'genel',date,baslik:document.getElementById('f-genel-baslik').value.trim()||'Genel İş',saat:document.getElementById('f-genel-saat').value,mahkeme:document.getElementById('f-genel-mahkeme').value.trim(),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:document.getElementById('f-genel-muvekkil').value.trim(),not:document.getElementById('f-genel-aciklama').value.trim(),tekrarTipi:ST_TEKRAR||null,tekrarBitis:ST_TEKRAR&&document.getElementById('f-tekrar-bitis').value?document.getElementById('f-tekrar-bitis').value:null};
   }
   const btn=document.getElementById('save-btn');btn.textContent='Kaydediliyor...';btn.disabled=true;
   if(ST.editId){const{error}=await sb.from('kayitlar').update(localToDB(rec)).eq('id',ST.editId);if(error){alert('Güncelleme hatası: '+error.message);}}
@@ -724,9 +812,22 @@ async function saveRecord(){
 
 }
 async function deleteRecord(id){
-  if(!confirm('Bu kaydı silmek istediğinizden emin misiniz?'))return;
+  const rec = records.find(r=>r.id===id);
+  let msg = 'Bu kaydı silmek istediğinizden emin misiniz?';
+  if(rec&&rec.tekrarTipi){
+    const choice = confirm('Bu tekrarlayan bir iştir.\n\nTamam: Sadece bu kaydı sil\nİptal: Vazgeç');
+    if(!choice) return;
+  } else {
+    if(!confirm(msg)) return;
+  }
   const{error}=await sb.from('kayitlar').delete().eq('id',id);
   if(error){alert('Silme hatası: '+error.message);return;}
+  openDetailId=null;closeCalDetail();await loadRecords();
+}
+async function deleteTekrarHepsi(anaId){
+  if(!confirm('Bu tekrarlayan işin TÜM kayıtları silinecek. Emin misiniz?'))return;
+  await sb.from('kayitlar').delete().eq('tekrar_ana_id',anaId);
+  await sb.from('kayitlar').delete().eq('id',anaId);
   openDetailId=null;closeCalDetail();await loadRecords();
 }
 
@@ -793,7 +894,7 @@ function renderCal(){
   while(cells.length%7!==0)cells.push({day:0,other:true,date:null});
   document.getElementById('cal-grid').innerHTML=cells.map(c=>{
     const evs=c.date?records.filter(r=>r.date===c.date):[];
-    const eh=evs.slice(0,3).map(r=>`<span class="cal-event ev-${r.type}">${r.muvekkil||getBaslik(r)}</span>`).join('')+(evs.length>3?`<span style="font-size:9px;color:var(--text3);display:block;">+${evs.length-3}</span>`:'');
+    const eh=evs.slice(0,3).map(r=>`<span class="cal-event ev-${r.type}">${r.tekrarAnaId?'↻ ':r.tekrarTipi?'↻ ':''}${r.muvekkil||getBaslik(r)}</span>`).join('')+(evs.length>3?`<span style="font-size:9px;color:var(--text3);display:block;">+${evs.length-3}</span>`:'');
     const ca=c.date?`onclick="showCalDetail('${c.date}')"`:'' ;
     return`<div class="cal-cell${c.other?' other-month':''}${c.isToday?' today':''}" ${ca}><div class="cal-day">${c.other&&!c.day?'':c.day}</div>${eh}</div>`;
   }).join('');
@@ -823,6 +924,8 @@ function showCalDetail(dateStr){
         ${r.dava?`<div class="cal-detail-item-row"><strong>Dava No:</strong> ${r.dava}</div>`:''}
         ${r.not?`<div class="cal-detail-item-row"><strong>Not:</strong> ${r.not}</div>`:''}
         ${detailHTML}
+        ${r.tekrarTipi?`<div style="margin-top:8px;padding:6px 10px;background:#e0e7ff;border-radius:8px;font-size:12px;color:#3730a3;display:flex;align-items:center;justify-content:space-between;"><span>↻ ${tekrarTipiLabel(r.tekrarTipi)} tekrarlayan iş${r.tekrarBitis?' · Bitiş: '+formatDate(r.tekrarBitis):''}</span><button style="background:none;border:none;cursor:pointer;color:#dc2626;font-size:11px;font-family:inherit;" onclick="deleteTekrarHepsi(${r.id})">Tümünü sil</button></div>`:''}
+        ${r.tekrarAnaId?`<div style="margin-top:8px;padding:6px 10px;background:#e0e7ff;border-radius:8px;font-size:12px;color:#3730a3;">↻ Tekrarlayan iş (otomatik oluşturuldu)</div>`:''}
         <div class="cal-detail-item-actions">
           <button class="icon-btn" onclick="closeCalDetail();openModal(records.find(x=>x.id===${r.id}))">Düzenle</button>
           <button class="icon-btn del" onclick="deleteRecord(${r.id})">Sil</button>
@@ -853,7 +956,7 @@ function renderListe(){
   f.forEach(r=>{
     html+=`<tr onclick="toggleDetail(${r.id})">
       <td>${formatDate(r.date)}${r.saat?'<br><small style="color:var(--text2)">'+r.saat+'</small>':''}</td>
-      <td>${getBaslik(r)}</td><td>${r.muvekkil||'—'}</td>
+      <td>${getBaslik(r)}${r.tekrarTipi?'<br><span class="badge badge-tekrar">↻ '+tekrarTipiLabel(r.tekrarTipi)+'</span>':r.tekrarAnaId?'<br><span class="badge badge-tekrar">↻ Tekrar</span>':''}</td><td>${r.muvekkil||'—'}</td>
       <td><span class="badge badge-${r.type}">${typeLabel(r.type)}</span></td>
       <td>${dalLabel(r.dal)}</td><td>${r.dava||'—'}</td>
       <td><div class="action-btns">
