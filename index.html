@@ -91,12 +91,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .badge-durusma{background:var(--blue-light);color:var(--blue-dark);}
 .badge-sure{background:#fecaca;color:#991b1b;}
 .badge-tekrar-type{background:#fef3c7;color:#92400e;}
-.av-huseyin{border-left:4px solid #6366f1!important;}
-.av-necati{border-left:4px solid #ec4899!important;}
-.av-huseyin .av-tag{background:#6366f1;color:#fff;font-size:9px;padding:1px 5px;border-radius:3px;font-weight:600;}
-.av-necati .av-tag{background:#ec4899;color:#fff;font-size:9px;padding:1px 5px;border-radius:3px;font-weight:600;}
-.cal-event.av-h{border-left:3px solid #6366f1;}
-.cal-event.av-n{border-left:3px solid #ec4899;}
 .badge-genel{background:var(--green-light);color:var(--green-dark);}
 .badge-tekrar{background:#e0e7ff;color:#3730a3;font-size:10px;padding:1px 6px;}
 .ev-tekrar{background:#fbbf24;color:#78350f;}
@@ -481,13 +475,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
       <!-- SÜRE -->
       <div id="form-sure">
         <div class="fg">
-          <label>Avukat</label>
-          <div class="chip-group" id="avukat-chips-sure">
-            <button class="chip" onclick="setAvukat('sure','huseyin',this)" style="border-color:#6366f1;">Hüseyin</button>
-            <button class="chip" onclick="setAvukat('sure','necati',this)" style="border-color:#ec4899;">Necati</button>
-          </div>
-        </div>
-        <div class="fg">
           <label>Tebliğ Tarihi</label>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
             <input type="date" id="f-teblig-tarihi" style="flex:1;min-width:140px;" oninput="hesapla()">
@@ -549,13 +536,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
       <!-- DURUŞMA -->
       <div id="form-durusma" style="display:none;">
-        <div class="fg">
-          <label>Avukat</label>
-          <div class="chip-group" id="avukat-chips-durusma">
-            <button class="chip" onclick="setAvukat('durusma','huseyin',this)" style="border-color:#6366f1;">Hüseyin</button>
-            <button class="chip" onclick="setAvukat('durusma','necati',this)" style="border-color:#ec4899;">Necati</button>
-          </div>
-        </div>
         <div class="fg" id="durusma-mahkeme-box"><label id="durusma-baslik-label">Mahkeme Adı</label><div class="mahkeme-wrap"><input type="text" id="f-durusma-mahkeme-adi" placeholder="Mahkeme adını girin" autocomplete="off" oninput="showMahkemeDropdown('f-durusma-mahkeme-adi','dd-durusma-mahkeme')" onfocus="showMahkemeDropdown('f-durusma-mahkeme-adi','dd-durusma-mahkeme')" onblur="setTimeout(()=>{const d=document.getElementById('dd-durusma-mahkeme');if(d)d.style.display='none';},200)"><div class="mahkeme-dropdown" id="dd-durusma-mahkeme"></div></div></div>
         <div class="fg"><label>Müvekkil</label><input type="text" id="f-durusma-muvekkil" placeholder="Müvekkil adı"></div>
         <div class="frow">
@@ -591,13 +571,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
       <!-- GENEL İŞ -->
       <div id="form-genel" style="display:none;">
-        <div class="fg">
-          <label>Avukat</label>
-          <div class="chip-group" id="avukat-chips-genel">
-            <button class="chip" onclick="setAvukat('genel','huseyin',this)" style="border-color:#6366f1;">Hüseyin</button>
-            <button class="chip" onclick="setAvukat('genel','necati',this)" style="border-color:#ec4899;">Necati</button>
-          </div>
-        </div>
         <div class="fg"><label>İş Başlığı</label><input type="text" id="f-genel-baslik" placeholder="İş başlığı girin"></div>
         <div class="frow">
           <div class="fg"><label>Tarih</label><input type="date" id="f-genel-tarih"></div>
@@ -640,13 +613,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
       <!-- TEKRARLAYAN İŞ -->
       <div id="form-tekrar" style="display:none;">
-        <div class="fg">
-          <label>Avukat</label>
-          <div class="chip-group" id="avukat-chips-tekrar">
-            <button class="chip" onclick="setAvukat('tekrar','huseyin',this)" style="border-color:#6366f1;">Hüseyin</button>
-            <button class="chip" onclick="setAvukat('tekrar','necati',this)" style="border-color:#ec4899;">Necati</button>
-          </div>
-        </div>
         <div class="fg" style="width:100%;"><label>İş Başlığı</label><input type="text" id="f-tekrar-baslik" placeholder="Örn: Kira, Muhasebe, KDV, 4B Prim Borcu..."></div>
         <div class="fg"><label>Başlangıç Tarihi</label><input type="date" id="f-tekrar-tarih"></div>
         <div class="fg">
@@ -933,8 +899,8 @@ function setSyncStatus(s,t){
   document.getElementById('sync-dot').className='sync-dot'+(s==='error'?' error':s==='loading'?' loading':'');
   document.getElementById('sync-text').textContent=t;
 }
-function dbToLocal(r){return{id:r.id,type:r.type,date:r.date,baslik:r.baslik||'',muvekkil:r.muvekkil||'',mahkeme:r.mahkeme||'',dava:r.dava||'',dal:r.dal||'',istipi:r.istipi||'',istipiVal:r.istipi_val||'',tebligTarihi:r.teblig_tarihi||'',tebligSekli:r.teblig_sekli||'',sureMiktar:r.sure_miktar,sureBirim:r.sure_birim||'',hesapDetay:r.hesap_detay||null,not:r.not_alani||'',saat:r.saat||'',tekrarTipi:r.tekrar_tipi||null,tekrarBitis:r.tekrar_bitis||null,tekrarAnaId:r.tekrar_ana_id||null,tamamlandi:r.tamamlandi===true,avukat:r.avukat||null,tekrarTipi:r.tekrar_tipi||null,tekrarBitis:r.tekrar_bitis||null,tekrarAnaId:r.tekrar_ana_id||null};}
-function localToDB(r){return{type:r.type,date:r.date,baslik:r.baslik||null,muvekkil:r.muvekkil||null,mahkeme:r.mahkeme||null,dava:r.dava||null,dal:r.dal||null,istipi:r.istipi||null,istipi_val:r.istipiVal||null,teblig_tarihi:r.tebligTarihi||null,teblig_sekli:r.tebligSekli||null,sure_miktar:r.sureMiktar||null,sure_birim:r.sureBirim||null,hesap_detay:r.hesapDetay||null,not_alani:r.not||null,saat:r.saat||null,tekrar_tipi:r.tekrarTipi||null,tekrar_bitis:r.tekrarBitis||null,tekrar_ana_id:r.tekrarAnaId||null,tamamlandi:r.tamamlandi||false,avukat:r.avukat||null,tekrar_tipi:r.tekrarTipi||null,tekrar_bitis:r.tekrarBitis||null,tekrar_ana_id:r.tekrarAnaId||null};}
+function dbToLocal(r){return{id:r.id,type:r.type,date:r.date,baslik:r.baslik||'',muvekkil:r.muvekkil||'',mahkeme:r.mahkeme||'',dava:r.dava||'',dal:r.dal||'',istipi:r.istipi||'',istipiVal:r.istipi_val||'',tebligTarihi:r.teblig_tarihi||'',tebligSekli:r.teblig_sekli||'',sureMiktar:r.sure_miktar,sureBirim:r.sure_birim||'',hesapDetay:r.hesap_detay||null,not:r.not_alani||'',saat:r.saat||'',tekrarTipi:r.tekrar_tipi||null,tekrarBitis:r.tekrar_bitis||null,tekrarAnaId:r.tekrar_ana_id||null,tamamlandi:r.tamamlandi===true,tekrarTipi:r.tekrar_tipi||null,tekrarBitis:r.tekrar_bitis||null,tekrarAnaId:r.tekrar_ana_id||null};}
+function localToDB(r){return{type:r.type,date:r.date,baslik:r.baslik||null,muvekkil:r.muvekkil||null,mahkeme:r.mahkeme||null,dava:r.dava||null,dal:r.dal||null,istipi:r.istipi||null,istipi_val:r.istipiVal||null,teblig_tarihi:r.tebligTarihi||null,teblig_sekli:r.tebligSekli||null,sure_miktar:r.sureMiktar||null,sure_birim:r.sureBirim||null,hesap_detay:r.hesapDetay||null,not_alani:r.not||null,saat:r.saat||null,tekrar_tipi:r.tekrarTipi||null,tekrar_bitis:r.tekrarBitis||null,tekrar_ana_id:r.tekrarAnaId||null,tamamlandi:r.tamamlandi||false,tekrar_tipi:r.tekrarTipi||null,tekrar_bitis:r.tekrarBitis||null,tekrar_ana_id:r.tekrarAnaId||null};}
 
 // ── SÜRE MOTORU ───────────────────────────────────────────────────
 function isAdliTatil(d){const m=d.getMonth(),g=d.getDate();return(m===6&&g>=20)||m===7;}
@@ -1043,10 +1009,6 @@ function openModal(editRecord,prefillDate){
   document.getElementById('form-sure').style.display='block';
   document.getElementById('form-durusma').style.display='none';
   document.getElementById('form-genel').style.display='none';
-  ST_AVUKAT={sure:'',durusma:'',genel:'',tekrar:''};
-  ['sure','durusma','genel','tekrar'].forEach(f=>{
-    document.querySelectorAll('#avukat-chips-'+f+' .chip').forEach(x=>x.classList.remove('sel'));
-  });
   const ddb=document.getElementById('durusma-dosya-box');if(ddb)ddb.style.display='block';
   const dmb=document.getElementById('durusma-mahkeme-box');if(dmb)dmb.style.display='block';
   const dbl=document.getElementById('durusma-baslik-label');if(dbl)dbl.textContent='Mahkeme Adı';
@@ -1104,7 +1066,7 @@ async function saveRecord(){
   if(ST.type==='sure'){
     if(!ST.hesaplananTarih){alert('Lütfen tebliğ tarihi, hukuk dalı, süre birimi ve miktarı girin.');return;}
     const yil=document.getElementById('f-dava-yil').value,no=document.getElementById('f-dava-no').value.trim();
-    rec={type:'sure',date:ST.hesaplananTarih,baslik:titleCase(selectedIstipi)||'Süreli İş',tebligTarihi:document.getElementById('f-teblig-tarihi').value,tebligSekli:ST.teblig,dal:ST.dal,sureMiktar:parseInt(document.getElementById('f-sure-miktar').value),sureBirim:ST.birim,istipi:selectedIstipi,istipiVal:selectedIstipi,mahkeme:titleCase(document.getElementById('f-mahkeme').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-muvekkil').value.trim()),not:sentenceCase(document.getElementById('f-not-sure').value.trim()),hesapDetay:ST.hesapDetay,avukat:ST_AVUKAT.sure||null};
+    rec={type:'sure',date:ST.hesaplananTarih,baslik:titleCase(selectedIstipi)||'Süreli İş',tebligTarihi:document.getElementById('f-teblig-tarihi').value,tebligSekli:ST.teblig,dal:ST.dal,sureMiktar:parseInt(document.getElementById('f-sure-miktar').value),sureBirim:ST.birim,istipi:selectedIstipi,istipiVal:selectedIstipi,mahkeme:titleCase(document.getElementById('f-mahkeme').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-muvekkil').value.trim()),not:sentenceCase(document.getElementById('f-not-sure').value.trim()),hesapDetay:ST.hesapDetay};
   }else if(ST.type==='durusma'){
     const date=document.getElementById('f-durusma-tarih').value;if(!date){alert('Tarih zorunludur.');return;}
     const yil=document.getElementById('f-durusma-yil').value,no=document.getElementById('f-durusma-no').value.trim();
@@ -1118,12 +1080,12 @@ async function saveRecord(){
     const date=document.getElementById('f-tekrar-tarih').value;
     if(!date){alert('Başlangıç tarihi zorunludur.');return;}
     if(!ST_TEKRAR_SIKLIK){alert('Tekrar sıklığı seçiniz.');return;}
-    rec={type:'tekrar',date,baslik:titleCase(document.getElementById('f-tekrar-baslik').value.trim())||'Tekrarlayan İş',not:sentenceCase(document.getElementById('f-tekrar-aciklama').value.trim()),tekrarTipi:ST_TEKRAR_SIKLIK,tekrarBitis:document.getElementById('f-tekrar-bitis2').value||null,avukat:ST_AVUKAT.tekrar||null};
+    rec={type:'tekrar',date,baslik:titleCase(document.getElementById('f-tekrar-baslik').value.trim())||'Tekrarlayan İş',not:sentenceCase(document.getElementById('f-tekrar-aciklama').value.trim()),tekrarTipi:ST_TEKRAR_SIKLIK,tekrarBitis:document.getElementById('f-tekrar-bitis2').value||null};
   }else if(ST.type==='tekrar'){
     const date=document.getElementById('f-tekrar-tarih').value;
     if(!date){alert('Başlangıç tarihi zorunludur.');return;}
     if(!ST_TEKRAR_SIKLIK){alert('Tekrar sıklığı seçiniz.');return;}
-    rec={type:'tekrar',date,baslik:titleCase(document.getElementById('f-tekrar-baslik').value.trim())||'Tekrarlayan İş',not:sentenceCase(document.getElementById('f-tekrar-aciklama').value.trim()),tekrarTipi:ST_TEKRAR_SIKLIK,tekrarBitis:document.getElementById('f-tekrar-bitis2').value||null,avukat:ST_AVUKAT.tekrar||null};
+    rec={type:'tekrar',date,baslik:titleCase(document.getElementById('f-tekrar-baslik').value.trim())||'Tekrarlayan İş',not:sentenceCase(document.getElementById('f-tekrar-aciklama').value.trim()),tekrarTipi:ST_TEKRAR_SIKLIK,tekrarBitis:document.getElementById('f-tekrar-bitis2').value||null};
   }else{
     const date=document.getElementById('f-genel-tarih').value;if(!date){alert('Tarih zorunludur.');return;}
     const yil=document.getElementById('f-genel-yil').value,no=document.getElementById('f-genel-no').value.trim();
@@ -1466,7 +1428,6 @@ function renderCalDetail(){
         <span class="badge badge-${r.type==='tekrar'?'tekrar-type':r.type}" style="font-size:11px;">${typeLabel(r.type,r.dal)}</span>
         ${r.dal?`<span style="font-size:11px;color:var(--text2);">${dalLabel(r.dal)}</span>`:''}
         ${r.saat?`<span style="font-size:12px;font-weight:600;color:var(--navy);">⏰ ${r.saat}</span>`:''}
-        ${r.avukat?`<span style="font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;background:${r.avukat==='huseyin'?'#6366f1':'#ec4899'};color:#fff;">${r.avukat==='huseyin'?'Hüseyin':'Necati'}</span>`:''}
       </div>
       <div style="padding:12px 14px;">
         <div style="font-size:15px;font-weight:600;margin-bottom:8px;">${r.tamamlandi?'✓ ':''}${getBaslik(r)}</div>
@@ -1595,12 +1556,6 @@ function showMahkemeDropdown(inputId, ddId){
     });
   });
   dd.style.display='block';
-}
-let ST_AVUKAT = {sure:'', durusma:'', genel:'', tekrar:''};
-function setAvukat(form, val, el){
-  document.querySelectorAll('#avukat-chips-'+form+' .chip').forEach(x=>x.classList.remove('sel'));
-  el.classList.add('sel');
-  ST_AVUKAT[form] = val;
 }
 function closeCalDetail(){
   document.getElementById('cal-detail-panel').classList.remove('open');
