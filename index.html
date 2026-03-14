@@ -1134,6 +1134,8 @@ function renderCal(){
 }
 
 // ── TAKVİM DETAY PANELİ ───────────────────────────────────────────
+let _calDetailDate=null,_calDetailExpanded=null;
+
 function showCalDetail(dateStr, expandId){
   _calDetailDate=dateStr;
   _calDetailExpanded=expandId||null;
@@ -1142,8 +1144,6 @@ function showCalDetail(dateStr, expandId){
   document.getElementById('cal-detail-overlay').classList.add('open');
   setTimeout(()=>document.getElementById('cal-detail-panel').classList.add('open'),10);
 }
-
-let _calDetailDate=null,_calDetailExpanded=null;
 
 function renderCalDetail(){
   const dateStr=_calDetailDate;
