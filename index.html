@@ -120,6 +120,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .cal-legend{display:flex;gap:14px;margin-top:10px;flex-wrap:wrap;flex-shrink:0;}
 .cal-legend span{font-size:11px;color:var(--text2);display:flex;align-items:center;gap:4px;}
 .cal-legend-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0;}
+.cal-event[draggable]{cursor:grab;}
+.cal-event[draggable]:active{cursor:grabbing;opacity:0.6;}
+.cal-cell.drag-over{background:var(--navy-light)!important;outline:2px dashed var(--navy);}
 
 /* TAKVİM DETAY PANEL - mobilde drawer gibi açılır */
 .cal-detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:120;display:none;}
@@ -912,10 +915,11 @@ function renderCal(){
     const eh=evs.slice(0,3).map(r=>{
     let cls=r.tamamlandi?'ev-tamamlandi':(r.tekrarTipi||r.tekrarAnaId)?'ev-tekrar':('ev-'+r.type);
     let prefix=r.tamamlandi?'✓ ':(r.tekrarTipi||r.tekrarAnaId)?'↻ ':'';
-    return`<span class="cal-event ${cls}">${prefix}${r.muvekkil||getBaslik(r)}</span>`;
+    return`<span class="cal-event ${cls}" draggable="true" ondragstart="calDragStart(event,${r.id})" onclick="event.stopPropagation()">${prefix}${r.muvekkil||getBaslik(r)}</span>`;
   }).join('')+(evs.length>3?`<span style="font-size:9px;color:var(--text3);display:block;">+${evs.length-3}</span>`:'');
     const ca=c.date?`onclick="showCalDetail('${c.date}')"`:'' ;
-    return`<div class="cal-cell${c.other?' other-month':''}${c.isToday?' today':''}" ${ca}><div class="cal-day">${c.other&&!c.day?'':c.day}</div>${eh}</div>`;
+    const dropAttr=c.date?`ondragover="calDragOver(event)" ondrop="calDrop(event,'${c.date}')" ondragenter="calDragEnter(this)" ondragleave="calDragLeave(this)"`:'';
+    return`<div class="cal-cell${c.other?' other-month':''}${c.isToday?' today':''}" ${ca} ${dropAttr}><div class="cal-day">${c.other&&!c.day?'':c.day}</div>${eh}</div>`;
   }).join('');
 }
 
@@ -955,6 +959,38 @@ function showCalDetail(dateStr){
   }
   document.getElementById('cal-detail-overlay').classList.add('open');
   setTimeout(()=>document.getElementById('cal-detail-panel').classList.add('open'),10);
+}
+// ── SÜRÜKLEME ─────────────────────────────────────────────────────
+let _dragRecId = null;
+function calDragStart(e, id){
+  _dragRecId = id;
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', id);
+  e.target.style.opacity = '0.5';
+  setTimeout(()=>{ if(e.target) e.target.style.opacity=''; }, 0);
+}
+function calDragOver(e){
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+}
+function calDragEnter(cell){
+  cell.classList.add('drag-over');
+}
+function calDragLeave(cell){
+  cell.classList.remove('drag-over');
+}
+async function calDrop(e, dateStr){
+  e.preventDefault();
+  const cell = e.currentTarget;
+  cell.classList.remove('drag-over');
+  if(!_dragRecId) return;
+  const rec = records.find(r=>r.id===_dragRecId);
+  if(!rec || rec.date===dateStr) return;
+  if(rec.tekrarAnaId){ alert('Otomatik tekrar kayıtları taşınamaz.'); return; }
+  const{error} = await sb.from('kayitlar').update({date:dateStr}).eq('id',_dragRecId);
+  if(error){ alert('Taşıma hatası: '+error.message); return; }
+  _dragRecId = null;
+  await loadRecords();
 }
 function closeCalDetail(){
   document.getElementById('cal-detail-panel').classList.remove('open');
