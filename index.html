@@ -163,6 +163,18 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 /* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(15,22,40,0.5);display:flex;align-items:flex-end;justify-content:center;z-index:200;padding:0;}
 .kayit-modal-overlay{position:fixed;inset:0;background:rgba(15,22,40,0.5);display:flex;align-items:flex-end;justify-content:center;z-index:250;padding:0;}
+.muvekkil-modal-overlay{position:fixed;inset:0;background:rgba(15,22,40,0.5);display:flex;align-items:flex-end;justify-content:center;z-index:260;padding:0;}
+.muvekkil-modal{background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-width:640px;max-height:90vh;overflow-y:auto;overflow-x:hidden;margin:0 auto;}
+@media(min-width:640px){.muvekkil-modal-overlay{align-items:center;padding:16px;}.muvekkil-modal{border-radius:var(--radius-lg);}}
+.muvekkil-modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 13px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:1;}
+.muvekkil-isler-group{margin-bottom:16px;}
+.muvekkil-isler-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;padding:0 20px;margin-bottom:8px;}
+.muvekkil-is-item{display:flex;align-items:center;gap:10px;padding:10px 20px;border-bottom:1px solid var(--border);cursor:pointer;}
+.muvekkil-is-item:hover{background:var(--surface2);}
+.muvekkil-is-item:last-child{border-bottom:none;}
+.mv-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.mv-link{color:var(--navy);font-weight:500;text-decoration:underline;cursor:pointer;}
+.mv-link:hover{color:var(--navy-dark);}
 .kayit-modal{background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-width:580px;max-height:90vh;overflow-y:auto;overflow-x:hidden;margin:0 auto;}
 @media(min-width:640px){.kayit-modal-overlay{align-items:center;padding:16px;}.kayit-modal{border-radius:var(--radius-lg);}}
 .kayit-modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 13px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:1;}
@@ -1278,7 +1290,7 @@ function renderDashboard(){
     return dateHeader+`<tr onclick="openKayitModal(${r.id})" style="cursor:pointer;">
       <td>${r.saat?'<span style="font-weight:600;color:var(--navy);">⏰ '+r.saat+'</span><br>':''}<span style="font-size:11px;">${lbl}</span></td>
       <td>${getBaslik(r)}</td>
-      <td>${r.muvekkil||'—'}</td>
+      <td>${r.muvekkil?`<span class='mv-link' onclick='event.stopPropagation();openMuvekkilModal("${r.muvekkil}")'>${r.muvekkil}</span>`:'—'}</td>
       <td><span class="badge badge-${r.type==='tekrar'?'tekrar-type':r.type}">${typeLabel(r.type,r.dal)}</span></td>
       <td>${dalLabel(r.dal)}</td>
       <td><div class="action-btns">
@@ -1446,6 +1458,52 @@ function toggleCalItem(id){
   renderCalDetail();
 }
 
+function openMuvekkilModal(isim){
+  if(!isim||isim==='—') return;
+  const tumIsler = records.filter(r=>r.muvekkil===isim);
+  const aktif = tumIsler.filter(r=>!r.tamamlandi).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const tamamlanan = tumIsler.filter(r=>r.tamamlandi).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const typeDot={sure:'#ef4444',durusma:'#3b82f6',genel:'#22c55e',tekrar:'#f59e0b'};
+
+  document.getElementById('mv-isim').textContent=isim;
+  document.getElementById('mv-ozet').textContent=tumIsler.length+' iş · '+aktif.length+' aktif · '+tamamlanan.length+' tamamlanan';
+
+  let html='';
+  if(aktif.length){
+    html+='<div class="muvekkil-isler-group"><div class="muvekkil-isler-title">Aktif İşler ('+aktif.length+')</div>';
+    html+=aktif.map(r=>`
+      <div class="muvekkil-is-item" onclick="closeMuvekkilModal();openKayitModal(${r.id})">
+        <div class="mv-dot" style="background:${typeDot[r.type]||'#9aa0ac'};"></div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${getBaslik(r)}</div>
+          <div style="font-size:11px;color:var(--text2);">${formatDate(r.date)}${r.saat?' · ⏰'+r.saat:''} · ${typeLabel(r.type,r.dal)}</div>
+        </div>
+        <div style="font-size:11px;color:var(--text3);">›</div>
+      </div>`).join('');
+    html+='</div>';
+  }
+  if(tamamlanan.length){
+    html+='<div class="muvekkil-isler-group"><div class="muvekkil-isler-title" style="margin-top:8px;">Tamamlanan İşler ('+tamamlanan.length+')</div>';
+    html+=tamamlanan.map(r=>`
+      <div class="muvekkil-is-item" style="opacity:0.6;" onclick="closeMuvekkilModal();openKayitModal(${r.id})">
+        <div class="mv-dot" style="background:#d1d5db;"></div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;text-decoration:line-through;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">✓ ${getBaslik(r)}</div>
+          <div style="font-size:11px;color:var(--text2);">${formatDate(r.date)} · ${typeLabel(r.type,r.dal)}</div>
+        </div>
+      </div>`).join('');
+    html+='</div>';
+  }
+  if(!tumIsler.length){
+    html='<div style="text-align:center;color:var(--text3);padding:30px;">Kayıt bulunamadı</div>';
+  }
+
+  document.getElementById('mv-body').innerHTML=html;
+  document.getElementById('muvekkil-modal').style.display='flex';
+}
+function closeMuvekkilModal(){
+  document.getElementById('muvekkil-modal').style.display='none';
+}
 function openKayitModal(id){
   const r=records.find(x=>x.id===id);
   if(!r)return;
@@ -1572,6 +1630,19 @@ function showView(v,el){
 
 loadRecords();
 </script>
+<div class="muvekkil-modal-overlay" id="muvekkil-modal" style="display:none;" onclick="closeMuvekkilModal()">
+  <div class="muvekkil-modal" onclick="event.stopPropagation()">
+    <div style="width:40px;height:4px;background:var(--border2);border-radius:2px;margin:10px auto 0;"></div>
+    <div class="muvekkil-modal-header">
+      <div>
+        <h2 id="mv-isim" style="font-size:16px;font-weight:700;"></h2>
+        <div id="mv-ozet" style="font-size:12px;color:var(--text2);margin-top:2px;"></div>
+      </div>
+      <button class="btn" onclick="closeMuvekkilModal()">✕</button>
+    </div>
+    <div id="mv-body" style="padding-bottom:20px;"></div>
+  </div>
+</div>
 <div class="kayit-modal-overlay" id="kayit-modal" style="display:none;" onclick="closeKayitModal()">
   <div class="kayit-modal" onclick="event.stopPropagation()">
     <div class="modal-handle" style="width:40px;height:4px;background:var(--border2);border-radius:2px;margin:10px auto 0;"></div>
