@@ -1128,7 +1128,7 @@ function renderCal(){
     let prefix=r.tamamlandi?'✓ ':(r.tekrarTipi||r.tekrarAnaId)?'↻ ':'';
     return`<span class="cal-event ${cls}" onmousedown="calDragStart(event,${r.id})" onclick="event.stopPropagation()" style="cursor:grab;">${prefix}${r.muvekkil||getBaslik(r)}</span>`;
   }).join('')+(evs.length>3?`<span style="font-size:9px;color:var(--text3);display:block;">+${evs.length-3}</span>`:'');
-    const clickAttr=c.date?`onclick="if(!_drag.active)showCalDetail('${c.date}')" data-date="${c.date}"`:'' ;
+    const clickAttr=c.date?`onclick="showCalDetail('${c.date}')" data-date="${c.date}"`:'' ;
     return`<div class="cal-cell${c.other?' other-month':''}${c.isToday?' today':''}" ${clickAttr}><div class="cal-day">${c.other&&!c.day?'':c.day}</div>${eh}</div>`;
   }).join('');
 }
