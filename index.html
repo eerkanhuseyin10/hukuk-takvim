@@ -1451,9 +1451,19 @@ function renderCal(){
   const dim=new Date(currentYear,currentMonth+1,0).getDate(),dip=new Date(currentYear,currentMonth,0).getDate();
   const today=new Date();today.setHours(0,0,0,0);
   let cells=[];
-  for(let i=sdow-1;i>0;i--)cells.push({day:dip-i+1,other:true,date:null});
+  for(let i=sdow-1;i>0;i--){
+    const prevDate=new Date(currentYear,currentMonth,1-i);
+    const ds=`${prevDate.getFullYear()}-${String(prevDate.getMonth()+1).padStart(2,'0')}-${String(prevDate.getDate()).padStart(2,'0')}`;
+    cells.push({day:dip-i+1,other:true,date:ds});
+  }
   for(let d=1;d<=dim;d++){const ds=`${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const dt=new Date(currentYear,currentMonth,d);dt.setHours(0,0,0,0);cells.push({day:d,other:false,date:ds,isToday:dt.getTime()===today.getTime()});}
-  while(cells.length%7!==0)cells.push({day:0,other:true,date:null});
+  let nextDay=1;
+  while(cells.length%7!==0){
+    const nextDate=new Date(currentYear,currentMonth+1,nextDay);
+    const ds=`${nextDate.getFullYear()}-${String(nextDate.getMonth()+1).padStart(2,'0')}-${String(nextDate.getDate()).padStart(2,'0')}`;
+    cells.push({day:nextDay,other:true,date:ds});
+    nextDay++;
+  }
   document.getElementById('cal-grid').innerHTML=cells.map(c=>{
     const evs=c.date?records.filter(r=>r.date===c.date).sort((a,b)=>{
     const order={sure:0,durusma:1,tekrar:2,genel:3};
