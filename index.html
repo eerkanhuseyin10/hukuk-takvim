@@ -1284,10 +1284,16 @@ function renderDashboard(){
   if(yt) yt.innerHTML=(_dashFilter==='hepsi'||_dashFilter===undefined?'Yaklaşan Kayıtlar <span style="font-weight:400;text-transform:none;letter-spacing:0;">(Önümüzdeki 7 Günün İşleri)</span>':titles[_dashFilter]);
 
   // Yaklaşan 7 gün - filtre seçili değilse önümüzdeki 7 gün sure/durusma/tekrar
-  let weekly=_dashFilter==='hepsi'?records.filter(r=>{
-    const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);
-    return d>=today&&d<=in7&&!r.tamamlandi&&!r.tekrarAnaId&&(r.type==='sure'||r.type==='durusma'||r.type==='tekrar');
-  }).sort((a,b)=>new Date(a.date)-new Date(b.date)):upcoming;
+  let weekly=_dashFilter==='hepsi'?[
+    ...records.filter(r=>{
+      const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);
+      return d>=today&&d<=in7&&!r.tamamlandi&&!r.tekrarAnaId&&(r.type==='sure'||r.type==='durusma'||r.type==='tekrar');
+    }),
+    ...records.filter(r=>{
+      const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);
+      return d>=today&&d<=in7&&r.tamamlandi&&!r.tekrarAnaId&&(r.type==='sure'||r.type==='durusma'||r.type==='tekrar');
+    })
+  ].sort((a,b)=>new Date(a.date)-new Date(b.date)):upcoming;
 
   const displayList=_dashFilter==='hepsi'?weekly:upcoming;
 
@@ -1305,9 +1311,9 @@ function renderDashboard(){
       const dayLabel=diff===0?'Bugün':diff===1?'Yarın':diff===-1?'Dün':formatDate(r.date);
       dateHeader=`<tr><td colspan="6" style="padding:10px 13px 5px;background:var(--surface2);border-bottom:2px solid var(--border);border-top:1px solid var(--border);"><span style="font-size:12px;font-weight:700;color:var(--navy);">${dayLabel}</span><span style="font-size:11px;color:var(--text3);margin-left:6px;">${diff===0||diff===1||diff===-1?formatDate(r.date):''}</span></td></tr>`;
     }
-    return dateHeader+`<tr onclick="openKayitModal(${r.id})" style="cursor:pointer;">
+    return dateHeader+`<tr onclick="openKayitModal(${r.id})" style="cursor:pointer;${r.tamamlandi?'opacity:0.5;':''}">
       <td>${r.saat?'<span style="font-weight:600;color:var(--navy);">⏰ '+r.saat+'</span><br>':''}<span style="font-size:11px;">${lbl}</span></td>
-      <td>${getBaslik(r)}</td>
+      <td style="${r.tamamlandi?'text-decoration:line-through;color:var(--text3);':''}">${r.tamamlandi?'✓ ':''}${getBaslik(r)}</td>
       <td>${r.muvekkil?`<span class='mv-link' onclick='event.stopPropagation();openMuvekkilModal("${r.muvekkil}")'>${r.muvekkil}</span>`:'—'}</td>
       <td><span class="badge badge-${r.type==='tekrar'?'tekrar-type':r.type}">${typeLabel(r.type,r.dal)}</span></td>
       <td>${dalLabel(r.dal)}</td>
@@ -1457,7 +1463,7 @@ function renderCal(){
     let cls=r.tamamlandi?'ev-tamamlandi':(r.type==='tekrar'||r.tekrarAnaId)?'ev-tekrar':('ev-'+r.type);
     let prefix=r.tamamlandi?'✓ ':(r.tekrarTipi||r.tekrarAnaId)?'↻ ':'';
     return`<span class="cal-event ${cls}" onmousedown="calDragStart(event,${r.id})" onclick="event.stopPropagation()" style="cursor:grab;">${prefix}${r.muvekkil||getBaslik(r)}</span>`;
-  }).join('')+(evs.length>3?`<span style="font-size:9px;color:var(--text3);display:block;">+${evs.length-3}</span>`:'');
+  }).join('')+(evs.length>3?`<span style="font-size:11px;color:var(--navy);font-weight:700;display:block;cursor:pointer;padding:1px 3px;border-radius:3px;background:var(--navy-light);" onclick="event.stopPropagation();showCalDetail('${c.date}')">+${evs.length-3} daha</span>`:'');
     const tatil=c.date?getTatil(c.date):null;
     const clickAttr=c.date?`onclick="showCalDetail('${c.date}')" data-date="${c.date}"`:'' ;
     const tatilHTML=tatil?`<div style="font-size:8px;color:#dc2626;font-weight:600;line-height:1.2;margin-bottom:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${tatil}</div>`:'';
