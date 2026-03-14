@@ -539,11 +539,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
       <!-- TEKRARLAYAN İŞ -->
       <div id="form-tekrar" style="display:none;">
-        <div class="fg"><label>İş Başlığı</label><input type="text" id="f-tekrar-baslik" placeholder="Örn: Kira, Muhasebe, KDV, 4B Prim Borcu..."></div>
+        <div class="fg" style="width:100%;"><label>İş Başlığı</label><input type="text" id="f-tekrar-baslik" placeholder="Örn: Kira, Muhasebe, KDV, 4B Prim Borcu..."></div>
         <div class="fg"><label>Başlangıç Tarihi</label><input type="date" id="f-tekrar-tarih"></div>
         <div class="fg">
           <label>Tekrar Sıklığı</label>
-          <div class="chip-group" id="tekrar-siklik-chips">
+          <div class="chip-group" id="tekrar-siklik-chips" style="flex-wrap:wrap;width:100%;">
             <button class="chip" onclick="setTekrarSiklik('haftalik',this)">Haftalık</button>
             <button class="chip" onclick="setTekrarSiklik('aylik',this)">Aylık</button>
             <button class="chip" onclick="setTekrarSiklik('yillik',this)">Yıllık</button>
@@ -849,18 +849,15 @@ async function saveRecord(){
     const date=document.getElementById('f-durusma-tarih').value;if(!date){alert('Tarih zorunludur.');return;}
     const yil=document.getElementById('f-durusma-yil').value,no=document.getElementById('f-durusma-no').value.trim();
     rec={type:'durusma',date,baslik:document.getElementById('f-durusma-mahkeme-adi').value.trim()||'Duruşma',saat:document.getElementById('f-durusma-saat').value,dal:ST.dal2,mahkeme:document.getElementById('f-durusma-mahkeme-adi').value.trim(),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:document.getElementById('f-durusma-muvekkil').value.trim(),not:document.getElementById('f-durusma-not').value.trim(),tekrarTipi:ST_TEKRAR_D||null,tekrarBitis:ST_TEKRAR_D&&document.getElementById('f-tekrar-bitis-d').value?document.getElementById('f-tekrar-bitis-d').value:null};
+  }else if(ST.type==='tekrar'){
+    const date=document.getElementById('f-tekrar-tarih').value;
+    if(!date){alert('Başlangıç tarihi zorunludur.');return;}
+    if(!ST_TEKRAR_SIKLIK){alert('Tekrar sıklığı seçiniz.');return;}
+    rec={type:'genel',date,baslik:document.getElementById('f-tekrar-baslik').value.trim()||'Tekrarlayan İş',not:document.getElementById('f-tekrar-aciklama').value.trim(),tekrarTipi:ST_TEKRAR_SIKLIK,tekrarBitis:document.getElementById('f-tekrar-bitis2').value||null};
   }else{
     const date=document.getElementById('f-genel-tarih').value;if(!date){alert('Tarih zorunludur.');return;}
     const yil=document.getElementById('f-genel-yil').value,no=document.getElementById('f-genel-no').value.trim();
     rec={type:'genel',date,baslik:document.getElementById('f-genel-baslik').value.trim()||'Genel İş',saat:document.getElementById('f-genel-saat').value,mahkeme:document.getElementById('f-genel-mahkeme').value.trim(),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:document.getElementById('f-genel-muvekkil').value.trim(),not:document.getElementById('f-genel-aciklama').value.trim(),tekrarTipi:ST_TEKRAR||null,tekrarBitis:ST_TEKRAR&&document.getElementById('f-tekrar-bitis').value?document.getElementById('f-tekrar-bitis').value:null};
-  }
-  if(ST.type==='tekrar'){
-    const date=document.getElementById('f-tekrar-tarih').value;
-    if(!date){alert('Başlangıç tarihi zorunludur.');return;}
-    if(!ST_TEKRAR_SIKLIK){alert('Tekrar sıklığı seçiniz.');return;}
-    const yil=document.getElementById('f-tekrar-yil').value;
-    const no=document.getElementById('f-tekrar-no').value.trim();
-    rec={type:'genel',date,baslik:document.getElementById('f-tekrar-baslik').value.trim()||'Tekrarlayan İş',saat:document.getElementById('f-tekrar-saat').value,mahkeme:document.getElementById('f-tekrar-mahkeme').value.trim(),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:document.getElementById('f-tekrar-muvekkil').value.trim(),not:document.getElementById('f-tekrar-aciklama').value.trim(),tekrarTipi:ST_TEKRAR_SIKLIK,tekrarBitis:document.getElementById('f-tekrar-bitis2').value||null};
   }
   const btn=document.getElementById('save-btn');btn.textContent='Kaydediliyor...';btn.disabled=true;
   if(ST.editId){const{error}=await sb.from('kayitlar').update(localToDB(rec)).eq('id',ST.editId);if(error){alert('Güncelleme hatası: '+error.message);}}
