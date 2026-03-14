@@ -81,7 +81,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .list-table tbody tr{cursor:pointer;}
 .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;}
 .badge-durusma{background:var(--blue-light);color:var(--blue-dark);}
-.badge-sure{background:var(--amber);color:var(--amber-dark);}
+.badge-sure{background:#fecaca;color:#991b1b;}
 .badge-genel{background:var(--green-light);color:var(--green-dark);}
 .badge-tekrar{background:#e0e7ff;color:#3730a3;font-size:10px;padding:1px 6px;}
 .ev-tekrar{background:#fbbf24;color:#78350f;}
@@ -115,7 +115,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .cal-day{font-size:12px;font-weight:500;margin-bottom:2px;}
 .cal-event{font-size:10px;padding:2px 4px;border-radius:3px;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;line-height:1.3;}
 .ev-durusma{background:var(--blue-light);color:var(--blue-dark);}
-.ev-sure{background:var(--amber);color:var(--amber-dark);}
+.ev-sure{background:#fecaca;color:#991b1b;}
 .ev-genel{background:var(--green-light);color:var(--green-dark);}
 .cal-legend{display:flex;gap:14px;margin-top:10px;flex-wrap:wrap;flex-shrink:0;}
 .cal-legend span{font-size:11px;color:var(--text2);display:flex;align-items:center;gap:4px;}
@@ -268,7 +268,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <div class="view active" id="view-dashboard">
       <div class="stats-row">
         <div class="stat-card"><div class="stat-label">Bu Ay</div><div class="stat-val" id="stat-total">—</div></div>
-        <div class="stat-card"><div class="stat-label">Süre</div><div class="stat-val" id="stat-sure">—</div></div>
+        <div class="stat-card"><div class="stat-label">Süreli İş</div><div class="stat-val" id="stat-sure">—</div></div>
         <div class="stat-card"><div class="stat-label">Acil</div><div class="stat-val danger" id="stat-urgent">—</div></div>
       </div>
       <div class="section-title">Acil Süreler</div>
@@ -296,7 +296,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
         <div class="cal-grid" id="cal-grid"></div>
         <div class="cal-legend">
           <span><div class="cal-legend-dot" style="background:var(--blue-light)"></div>Duruşma</span>
-          <span><div class="cal-legend-dot" style="background:var(--amber)"></div>Süre</span>
+          <span><div class="cal-legend-dot" style="background:#ef4444"></div>Süreli İş</span>
           <span><div class="cal-legend-dot" style="background:var(--green-light)"></div>Genel İş</span>
         </div>
       </div>
@@ -309,7 +309,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
         <select id="filter-type" onchange="renderListe()">
           <option value="">Tüm Türler</option>
           <option value="durusma">Duruşma</option>
-          <option value="sure">Süre</option>
+          <option value="sure">Süreli İş</option>
           <option value="genel">Genel İş</option>
         </select>
       </div>
@@ -367,7 +367,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     </div>
     <div class="modal-body">
       <div class="type-tabs">
-        <button class="type-tab sel" onclick="setType('sure',this)">Süre</button>
+        <button class="type-tab sel" onclick="setType('sure',this)">Süreli İş</button>
         <button class="type-tab" onclick="setType('durusma',this)">Duruşma</button>
         <button class="type-tab" onclick="setType('genel',this)">Genel İş</button>
       </div>
@@ -704,7 +704,7 @@ function setType(t,el){
   document.getElementById('form-sure').style.display=t==='sure'?'block':'none';
   document.getElementById('form-durusma').style.display=t==='durusma'?'block':'none';
   document.getElementById('form-genel').style.display=t==='genel'?'block':'none';
-  document.getElementById('modal-title').textContent={sure:'Süre',durusma:'Duruşma',genel:'Genel İş'}[t]+(ST.editId?' — Düzenle':' Ekle');
+  document.getElementById('modal-title').textContent={sure:'Süreli İş',durusma:'Duruşma',genel:'Genel İş'}[t]+(ST.editId?' — Düzenle':' Ekle');
 }
 function toggleCollapsible(h){h.querySelector('.collapsible-arrow').classList.toggle('open');h.nextElementSibling.classList.toggle('open');}
 function hesapla(){
@@ -747,13 +747,13 @@ function openModal(editRecord,prefillDate){
   document.getElementById('form-sure').style.display='block';
   document.getElementById('form-durusma').style.display='none';
   document.getElementById('form-genel').style.display='none';
-  document.getElementById('modal-title').textContent='Süre Ekle';
+  document.getElementById('modal-title').textContent='Süreli İş Ekle';
 
   if(editRecord){
     ST.editId=editRecord.id;ST.type=editRecord.type;
     document.querySelectorAll('.type-tab').forEach(x=>x.classList.remove('sel'));
     document.querySelectorAll('.type-tab')[{sure:0,durusma:1,genel:2}[editRecord.type]||0].classList.add('sel');
-    document.getElementById('modal-title').textContent={sure:'Süre',durusma:'Duruşma',genel:'Genel İş'}[editRecord.type]+' — Düzenle';
+    document.getElementById('modal-title').textContent={sure:'Süreli İş',durusma:'Duruşma',genel:'Genel İş'}[editRecord.type]+' — Düzenle';
     document.getElementById('form-sure').style.display=editRecord.type==='sure'?'block':'none';
     document.getElementById('form-durusma').style.display=editRecord.type==='durusma'?'block':'none';
     document.getElementById('form-genel').style.display=editRecord.type==='genel'?'block':'none';
@@ -850,7 +850,7 @@ async function deleteTekrarHepsi(anaId){
 // ── YARDIMCILAR ───────────────────────────────────────────────────
 function formatDate(s){if(!s)return'—';const d=new Date(s+'T12:00:00');return d.toLocaleDateString('tr-TR',{day:'2-digit',month:'short',year:'numeric'});}
 function formatDateLong(s){if(!s)return'—';const d=new Date(s+'T12:00:00');return d.toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}
-function typeLabel(t){return{durusma:'Duruşma',sure:'Süre',genel:'Genel İş'}[t]||t;}
+function typeLabel(t){return{durusma:'Duruşma',sure:'Süreli İş',genel:'Genel İş'}[t]||t;}
 function dalLabel(d){return{ceza:'Ceza',hukuk:'Hukuk',idare:'İdare',icra:'İcra',tahkim:'Tahkim'}[d]||'—';}
 function tebligLabel(t){return{etebligat:'E-Tebligat',tefhim:'Tefhim',fiziki:'Fiziki tebligat'}[t]||t||'—';}
 function getBaslik(r){return r.baslik||r.istipi||r.not||'—';}
