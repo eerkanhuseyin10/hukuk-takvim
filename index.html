@@ -300,6 +300,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
       <div class="sync-dot" id="sync-dot"></div>
       <span id="sync-text">Bağlı</span>
     </div>
+    <button id="bildirim-btn" onclick="bildirimToggle()" style="margin-top:10px;background:none;border:none;cursor:pointer;font-size:11px;color:rgba(255,255,255,0.6);font-family:inherit;padding:0;text-align:left;">🔔 Bildirimleri Aç</button>
 
 
   </div>
@@ -716,6 +717,105 @@ function drumWheel(e,id){
 }
 
 // ── VERİ ──────────────────────────────────────────────────────────
+
+// ── BİLDİRİMLER ──────────────────────────────────────────────────
+async function bildirimIzniAl(){
+  if(!('Notification' in window)) return;
+  if(Notification.permission === 'default'){
+    await Notification.requestPermission();
+  }
+}
+
+function bildirimGonder(baslik, mesaj, icon){
+  if(Notification.permission !== 'granted') return;
+  const n = new Notification(baslik, {
+    body: mesaj,
+    icon: icon || 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCI+PHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByeD0iMTAiIGZpbGw9IiMwZjI0NDciLz48dGV4dCB4PSIyNCIgeT0iMzMiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IiNGQUM3NzUiPkU8L3RleHQ+PC9zdmc+',
+    badge: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCI+PHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiByeD0iMTAiIGZpbGw9IiMwZjI0NDciLz48L3N2Zz4=',
+    tag: baslik,
+    renotify: false,
+  });
+  n.onclick = () => { window.focus(); n.close(); };
+}
+
+function hatirlaticiKontrol(){
+  if(Notification.permission !== 'granted') return;
+  const bugun = new Date(); bugun.setHours(0,0,0,0);
+  const yarin = new Date(bugun); yarin.setDate(bugun.getDate()+1);
+  const uc_gun = new Date(bugun); uc_gun.setDate(bugun.getDate()+3);
+
+  // Bugün ve yarın duruşma/süre olanlar
+  const kritik = records.filter(r => {
+    const d = new Date(r.date+'T12:00:00'); d.setHours(0,0,0,0);
+    return (r.type==='sure'||r.type==='durusma') && !r.tamamlandi &&
+           (d.getTime()===bugun.getTime() || d.getTime()===yarin.getTime());
+  });
+
+  // 3 gün içinde süre bitenler
+  const yaklasan = records.filter(r => {
+    const d = new Date(r.date+'T12:00:00'); d.setHours(0,0,0,0);
+    return r.type==='sure' && !r.tamamlandi && d>bugun && d<=uc_gun;
+  });
+
+  if(kritik.length > 0){
+    const bugunVar = kritik.filter(r=>{
+      const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);
+      return d.getTime()===bugun.getTime();
+    });
+    const yarinVar = kritik.filter(r=>{
+      const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);
+      return d.getTime()===yarin.getTime();
+    });
+    if(bugunVar.length>0){
+      bildirimGonder(
+        '⚠️ Bugün '+bugunVar.length+' kritik iş var!',
+        bugunVar.map(r=>getBaslik(r)+(r.saat?' - '+r.saat:'')).join('\n'),
+      );
+    }
+    if(yarinVar.length>0){
+      bildirimGonder(
+        '📅 Yarın '+yarinVar.length+' iş var',
+        yarinVar.map(r=>getBaslik(r)+(r.saat?' - '+r.saat:'')).join('\n'),
+      );
+    }
+  }
+
+  if(yaklasan.length>0){
+    bildirimGonder(
+      '⏰ '+yaklasan.length+' süre yaklaşıyor',
+      yaklasan.map(r=>{
+        const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);
+        const diff=Math.round((d-bugun)/86400000);
+        return getBaslik(r)+' - '+diff+' gün kaldı';
+      }).join('\n'),
+    );
+  }
+}
+
+// Bildirim izni butonu - sidebar footer'a eklenir
+function bildirimDurumGuncelle(){
+  const btn = document.getElementById('bildirim-btn');
+  if(!btn) return;
+  if(!('Notification' in window)){
+    btn.style.display='none'; return;
+  }
+  if(Notification.permission==='granted'){
+    btn.textContent='🔔 Bildirimler Açık';
+    btn.style.color='#4ade80';
+  } else if(Notification.permission==='denied'){
+    btn.textContent='🔕 Bildirim Engellendi';
+    btn.style.color='#f87171';
+  } else {
+    btn.textContent='🔔 Bildirimleri Aç';
+    btn.style.color='rgba(255,255,255,0.6)';
+  }
+}
+
+async function bildirimToggle(){
+  await bildirimIzniAl();
+  bildirimDurumGuncelle();
+  if(Notification.permission==='granted') hatirlaticiKontrol();
+}
 // ── TEKRAR MOTORU ────────────────────────────────────────────────
 function tekrarTipiLabel(t){return{haftalik:'Haftalık',aylik:'Aylık',yillik:'Yıllık'}[t]||'';}
 
@@ -780,6 +880,8 @@ async function loadRecords(){
   }
   setSyncStatus('ok','Bağlı');
   renderAll();
+  bildirimDurumGuncelle();
+  hatirlaticiKontrol();
 }
 function setSyncStatus(s,t){
   document.getElementById('sync-dot').className='sync-dot'+(s==='error'?' error':s==='loading'?' loading':'');
@@ -983,6 +1085,7 @@ async function saveRecord(){
   btn.textContent='Kaydet';btn.disabled=false;
   closeModal();await loadRecords();
 tatilleriYukle();
+bildirimIzniAl().then(bildirimDurumGuncelle);
 showView('takvim',document.querySelector('.nav-item.active'));
 
 }
