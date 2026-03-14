@@ -1076,10 +1076,20 @@ function renderDashboard(){
 
   const tb=document.getElementById('upcoming-tbody');
   if(!displayList.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:18px;">Kayıt yok</td></tr>';return;}
+  let lastDate='';
   tb.innerHTML=displayList.map(r=>{
     const lbl=gunKaldiLabel(r.date,r.type);
-    return `<tr onclick="openKayitModal(${r.id})">
-      <td>${formatDate(r.date)}${r.saat?'<br><small style="color:var(--text2)">'+r.saat+'</small>':''}<br>${lbl}</td>
+    let dateHeader='';
+    if(r.date!==lastDate){
+      lastDate=r.date;
+      const today=new Date();today.setHours(0,0,0,0);
+      const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);
+      const diff=Math.round((d-today)/86400000);
+      const dayLabel=diff===0?'Bugün':diff===1?'Yarın':diff===-1?'Dün':formatDate(r.date);
+      dateHeader=`<tr><td colspan="6" style="padding:10px 13px 5px;background:var(--surface2);border-bottom:2px solid var(--border);border-top:1px solid var(--border);"><span style="font-size:12px;font-weight:700;color:var(--navy);">${dayLabel}</span><span style="font-size:11px;color:var(--text3);margin-left:6px;">${diff===0||diff===1||diff===-1?formatDate(r.date):''}</span></td></tr>`;
+    }
+    return dateHeader+`<tr onclick="openKayitModal(${r.id})" style="cursor:pointer;">
+      <td>${r.saat?'<span style="font-weight:600;color:var(--navy);">⏰ '+r.saat+'</span><br>':''}<span style="font-size:11px;">${lbl}</span></td>
       <td>${getBaslik(r)}</td>
       <td>${r.muvekkil||'—'}</td>
       <td><span class="badge badge-${r.type==='tekrar'?'tekrar-type':r.type}">${typeLabel(r.type)}</span></td>
