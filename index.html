@@ -873,11 +873,11 @@ function renderDashboard(){
   const ms=new Date(today.getFullYear(),today.getMonth(),1),me=new Date(today.getFullYear(),today.getMonth()+1,0);
   document.getElementById('stat-total').textContent=records.filter(r=>{const d=new Date(r.date+'T12:00:00');return d>=ms&&d<=me;}).length;
   document.getElementById('stat-sure').textContent=records.filter(r=>r.type==='sure').length;
-  const urgents=records.filter(r=>{const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);return r.type==='sure'&&d>=today&&d<=in7;}).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const urgents=records.filter(r=>{const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);return r.type==='sure'&&d>=today&&d<=in7&&!r.tekrarAnaId;}).sort((a,b)=>new Date(a.date)-new Date(b.date));
   document.getElementById('stat-urgent').textContent=urgents.length;
   const ul=document.getElementById('urgents-list');
   ul.innerHTML=!urgents.length?'<div style="font-size:13px;color:var(--text3);padding:8px 0;">Acil süre yok.</div>':urgents.map(r=>{const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);const diff=Math.round((d-today)/86400000);return`<div class="urgent-item" onclick="showCalDetail('${r.date}')"><div><div class="u-title">${r.muvekkil||'Müvekkil belirtilmedi'} — ${getBaslik(r)}</div><div class="u-sub">${r.dava||''} ${r.dal?'· '+dalLabel(r.dal):''}</div></div><div class="urgent-days">${diff===0?'Bugün':diff+' gün'}</div></div>`;}).join('');
-  const upcoming=records.filter(r=>{const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);return d>=today&&!r.tamamlandi;}).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,10);
+  const upcoming=records.filter(r=>{const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);return d>=today&&!r.tamamlandi&&!r.tekrarAnaId;}).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,10);
   const tb=document.getElementById('upcoming-tbody');
   if(!upcoming.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:18px;">Kayıt yok</td></tr>';return;}
   tb.innerHTML=upcoming.map(r=>{
@@ -966,7 +966,7 @@ function toggleDetail(id){openDetailId=openDetailId===id?null:id;renderListe();}
 function renderListe(){
   const ft=document.getElementById('filter-type').value;
   const fs=(document.getElementById('filter-search').value||'').toLowerCase();
-  let f=[...records];
+  let f=records.filter(r=>!r.tekrarAnaId);
   if(ft)f=f.filter(r=>r.type===ft);
   if(fs)f=f.filter(r=>(getBaslik(r)+r.muvekkil+r.dava+r.mahkeme).toLowerCase().includes(fs));
   f.sort((a,b)=>new Date(a.date)-new Date(b.date));
