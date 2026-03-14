@@ -1406,7 +1406,7 @@ function toggleDetail(id){openDetailId=openDetailId===id?null:id;renderListe();}
 function renderListe(){
   const ft=document.getElementById('filter-type').value;
   const fs=(document.getElementById('filter-search').value||'').toLowerCase();
-  let f=records.filter(r=>!r.tekrarAnaId);
+  let f=records.filter(r=>!r.tekrarAnaId&&!r.tamamlandi);
   if(ft)f=f.filter(r=>r.type===ft);
   if(fs)f=f.filter(r=>(getBaslik(r)+r.muvekkil+r.dava+r.mahkeme).toLowerCase().includes(fs));
   f.sort((a,b)=>new Date(a.date)-new Date(b.date));
