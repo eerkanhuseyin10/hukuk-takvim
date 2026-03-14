@@ -1707,23 +1707,21 @@ async function durusmayiErtelendi(){
   const yeniTarih = document.getElementById('ertelendi-tarih').value;
   const yeniSaat = document.getElementById('ertelendi-saat').value;
   if(!yeniTarih){ alert('Yeni tarih seçiniz.'); return; }
-  // Yeni kayıt ekle - aynı bilgilerle yeni tarihte
-  const yeniRec = {...localToDB(r), date:yeniTarih, saat:yeniSaat||r.saat||null, id:undefined};
+  const yeniRec = {...localToDB(r), date:yeniTarih, saat:yeniSaat||r.saat||null};
   delete yeniRec.id;
   const {error} = await sb.from('kayitlar').insert(yeniRec);
   if(error){ alert('Hata: '+error.message); return; }
-  // Eski kaydı tamamlandı yap
-  await sb.from('kayitlar').update({tamamlandi:true}).eq('id',r.id);
+  // Eski kaydı tamamlandı yap, açıklama ekle
+  await sb.from('kayitlar').update({tamamlandi:true, not_alani:'Ertelendi → '+formatDate(yeniTarih)}).eq('id',r.id);
   closeDurusmaSonuc();
   await loadRecords();
-  alert('✓ Duruşma '+formatDate(yeniTarih)+' tarihine eklendi.');
+  alert('✓ Duruşma '+formatDate(yeniTarih)+' tarihine ertelendi.');
 }
 async function durusmaSonucKarar(){
   if(!_durusmaSonucId) return;
   const not_metni = document.getElementById('karar-not').value.trim();
-  const updateData = {tamamlandi:true};
-  if(not_metni) updateData.not_alani = not_metni;
-  await sb.from('kayitlar').update(updateData).eq('id',_durusmaSonucId);
+  if(!not_metni){ alert('Karar notu zorunludur.'); return; }
+  await sb.from('kayitlar').update({tamamlandi:true, not_alani:'Karar verildi: '+sentenceCase(not_metni)}).eq('id',_durusmaSonucId);
   closeDurusmaSonuc();
   await loadRecords();
 }
@@ -1743,6 +1741,8 @@ async function durusmaSonucMazeret(){
   };
   const {error} = await sb.from('kayitlar').insert(yeniRec);
   if(error){ alert('Hata: '+error.message); return; }
+  // Orijinal duruşmayı tamamlandı yap
+  await sb.from('kayitlar').update({tamamlandi:true, not_alani:'Mazeret gönderildi → '+formatDate(tarihStr)+' tarihinde takip edilecek'}).eq('id',_durusmaSonucId);
   closeDurusmaSonuc();
   await loadRecords();
   alert('✓ Mazeret kaydedildi. '+formatDate(tarihStr)+' tarihine hatırlatıcı eklendi.');
@@ -1857,7 +1857,7 @@ loadRecords();
         <span>✅</span><span>Karar Verildi</span>
       </button>
       <div class="ertelendi-form" id="karar-form" style="display:none;">
-        <label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Karar Notu (opsiyonel)</label>
+        <label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Karar Notu <span style="color:#dc2626;">*zorunlu</span></label>
         <textarea id="karar-not" placeholder="Örn: Beraat, mahkumiyet, tazminat kararı..." style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;height:80px;resize:vertical;"></textarea>
         <button onclick="durusmaSonucKarar()" style="width:100%;margin-top:10px;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Kaydet ve Tamamlandı İşaretle</button>
       </div>
