@@ -1267,13 +1267,13 @@ function renderDashboard(){
   if(_dashFilter==='hepsi'){
     upcoming=records.filter(r=>buAyFilter(r)&&!r.tamamlandi&&!r.tekrarAnaId).sort((a,b)=>new Date(a.date)-new Date(b.date));
   } else if(_dashFilter==='genel'){
-    upcoming=records.filter(r=>r.type==='genel'&&buAyFilter(r)&&!r.tamamlandi&&!r.tekrarAnaId).sort((a,b)=>new Date(a.date)-new Date(b.date));
+    upcoming=records.filter(r=>r.type==='genel'&&buAyFilter(r)&&!r.tekrarAnaId).sort((a,b)=>new Date(a.date)-new Date(b.date));
   } else if(_dashFilter==='sure'){
-    upcoming=records.filter(r=>r.type==='sure'&&buAyFilter(r)&&!r.tamamlandi).sort((a,b)=>new Date(a.date)-new Date(b.date));
+    upcoming=records.filter(r=>r.type==='sure'&&buAyFilter(r)).sort((a,b)=>new Date(a.date)-new Date(b.date));
   } else if(_dashFilter==='durusma'){
-    upcoming=records.filter(r=>r.type==='durusma'&&buAyFilter(r)&&!r.tamamlandi).sort((a,b)=>new Date(a.date)-new Date(b.date));
+    upcoming=records.filter(r=>r.type==='durusma'&&buAyFilter(r)).sort((a,b)=>new Date(a.date)-new Date(b.date));
   } else if(_dashFilter==='tekrar'){
-    upcoming=records.filter(r=>(r.tekrarTipi||r.tekrarAnaId)&&buAyFilter(r)&&!r.tamamlandi).sort((a,b)=>new Date(a.date)-new Date(b.date));
+    upcoming=records.filter(r=>(r.tekrarTipi||r.tekrarAnaId)&&buAyFilter(r)).sort((a,b)=>new Date(a.date)-new Date(b.date));
   } else if(_dashFilter==='acil'){
     upcoming=urgents;
   }
