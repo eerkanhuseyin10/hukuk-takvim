@@ -154,6 +154,15 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
 /* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(15,22,40,0.5);display:flex;align-items:flex-end;justify-content:center;z-index:200;padding:0;}
+.kayit-modal-overlay{position:fixed;inset:0;background:rgba(15,22,40,0.5);display:flex;align-items:flex-end;justify-content:center;z-index:250;padding:0;}
+.kayit-modal{background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-width:580px;max-height:90vh;overflow-y:auto;overflow-x:hidden;margin:0 auto;}
+@media(min-width:640px){.kayit-modal-overlay{align-items:center;padding:16px;}.kayit-modal{border-radius:var(--radius-lg);}}
+.kayit-modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 13px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:1;}
+.kayit-modal-body{padding:16px 20px 24px;}
+.kayit-row{display:flex;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.kayit-row:last-child{border-bottom:none;}
+.kayit-row-label{width:100px;flex-shrink:0;color:var(--text3);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;padding-top:1px;}
+.kayit-row-val{flex:1;color:var(--text);font-weight:500;}
 .modal{background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-width:580px;box-shadow:0 -10px 40px rgba(0,0,0,0.15);max-height:95vh;overflow-y:auto;overflow-x:hidden;margin:0 auto;}
 @media(min-width:640px){
   .modal-overlay{align-items:flex-start;padding:16px;}
@@ -1012,7 +1021,7 @@ function renderDashboard(){
     gecenEl.innerHTML=gecenList.map(r=>{
       const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);
       const diff=Math.abs(Math.round((d-today)/86400000));
-      return`<div class="urgent-item" style="border-left-color:#f59e0b;" onclick="showCalDetail('${r.date}',${r.id})">
+      return`<div class="urgent-item" style="border-left-color:#f59e0b;" onclick="openKayitModal(${r.id})">
         <div>
           <div class="u-title">${r.muvekkil||'Müvekkil belirtilmedi'} — ${getBaslik(r)}</div>
           <div class="u-sub">${r.dava||''} ${r.dal?'· '+dalLabel(r.dal):''}</div>
@@ -1068,7 +1077,7 @@ function renderDashboard(){
   if(!displayList.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:18px;">Kayıt yok</td></tr>';return;}
   tb.innerHTML=displayList.map(r=>{
     const lbl=gunKaldiLabel(r.date,r.type);
-    return `<tr onclick="showCalDetail('${r.date}',${r.id})">
+    return `<tr onclick="openKayitModal(${r.id})">
       <td>${formatDate(r.date)}${r.saat?'<br><small style="color:var(--text2)">'+r.saat+'</small>':''}<br>${lbl}</td>
       <td>${getBaslik(r)}</td>
       <td>${r.muvekkil||'—'}</td>
@@ -1182,6 +1191,39 @@ function toggleCalItem(id){
   renderCalDetail();
 }
 
+function openKayitModal(id){
+  const r=records.find(x=>x.id===id);
+  if(!r)return;
+  const typeDot={sure:'#ef4444',durusma:'#3b82f6',genel:'#22c55e',tekrar:'#f59e0b'};
+  document.getElementById('km-type-dot').style.background=typeDot[r.type]||'#9aa0ac';
+  document.getElementById('km-title').textContent=getBaslik(r);
+  const d=r.hesapDetay;
+  let body='';
+  if(r.type==='sure'&&d){
+    body+=`<div style="border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:14px;">${buildHesapHTML(d)}</div>`;
+  }
+  const rows=[
+    r.muvekkil?{l:'Müvekkil',v:r.muvekkil}:null,
+    r.mahkeme?{l:'Mahkeme',v:r.mahkeme}:null,
+    r.dava?{l:'Dava No',v:r.dava}:null,
+    r.dal?{l:'Dal',v:dalLabel(r.dal)}:null,
+    r.saat?{l:'Saat',v:'⏰ '+r.saat}:null,
+    {l:'Tarih',v:formatDate(r.date)},
+    r.not?{l:'Not',v:r.not}:null,
+    r.tekrarTipi?{l:'Tekrar',v:'↻ '+tekrarTipiLabel(r.tekrarTipi)+(r.tekrarBitis?' · Bitiş: '+formatDate(r.tekrarBitis):'')}:null,
+  ].filter(Boolean);
+  body+=rows.map(row=>`<div class="kayit-row"><div class="kayit-row-label">${row.l}</div><div class="kayit-row-val">${row.v}</div></div>`).join('');
+  body+=`<div style="display:flex;gap:8px;margin-top:16px;padding-top:4px;">
+    <button class="icon-btn" style="flex:1;padding:10px;${r.tamamlandi?'color:#22c55e;border-color:#22c55e;font-weight:600;':''}" onclick="toggleTamamlandi(${r.id});closeKayitModal();">${r.tamamlandi?'✓ Tamamlandı':'○ Tamamlandı İşaretle'}</button>
+    <button class="icon-btn" style="flex:1;padding:10px;" onclick="closeKayitModal();openModal(records.find(x=>x.id===${r.id}))">✎ Düzenle</button>
+    <button class="icon-btn del" style="padding:10px 14px;" onclick="closeKayitModal();deleteRecord(${r.id})">Sil</button>
+  </div>`;
+  document.getElementById('km-body').innerHTML=body;
+  document.getElementById('kayit-modal').style.display='flex';
+}
+function closeKayitModal(){
+  document.getElementById('kayit-modal').style.display='none';
+}
 function closeCalDetail(){
   document.getElementById('cal-detail-panel').classList.remove('open');
   document.getElementById('cal-detail-overlay').classList.remove('open');
@@ -1235,5 +1277,18 @@ function showView(v,el){
 
 loadRecords();
 </script>
+<div class="kayit-modal-overlay" id="kayit-modal" style="display:none;" onclick="closeKayitModal()">
+  <div class="kayit-modal" onclick="event.stopPropagation()">
+    <div class="modal-handle" style="width:40px;height:4px;background:var(--border2);border-radius:2px;margin:10px auto 0;"></div>
+    <div class="kayit-modal-header">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div id="km-type-dot" style="width:12px;height:12px;border-radius:50%;flex-shrink:0;"></div>
+        <h2 id="km-title" style="font-size:15px;font-weight:600;"></h2>
+      </div>
+      <button class="btn" onclick="closeKayitModal()">✕</button>
+    </div>
+    <div class="kayit-modal-body" id="km-body"></div>
+  </div>
+</div>
 </body>
 </html>
