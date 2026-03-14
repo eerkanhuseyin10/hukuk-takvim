@@ -1594,11 +1594,22 @@ function openDurusmaSonuc(id){
 }
 function closeDurusmaSonuc(){
   document.getElementById('durusma-sonuc-overlay').style.display = 'none';
+  document.getElementById('karar-form').style.display = 'none';
+  document.getElementById('ertelendi-form').style.display = 'none';
+  const kn = document.getElementById('karar-not'); if(kn) kn.value='';
   _durusmaSonucId = null;
 }
+function toggleKararForm(){
+  const f=document.getElementById('karar-form');
+  f.style.display=f.style.display==='none'?'block':'none';
+  // Ertelendi formu kapat
+  document.getElementById('ertelendi-form').style.display='none';
+}
 function toggleErtelendiForm(){
-  const f = document.getElementById('ertelendi-form');
-  f.style.display = f.style.display==='none' ? 'block' : 'none';
+  const f=document.getElementById('ertelendi-form');
+  f.style.display=f.style.display==='none'?'block':'none';
+  // Karar formu kapat
+  document.getElementById('karar-form').style.display='none';
 }
 async function durusmayiErtelendi(){
   const r = records.find(x=>x.id===_durusmaSonucId);
@@ -1619,8 +1630,10 @@ async function durusmayiErtelendi(){
 }
 async function durusmaSonucKarar(){
   if(!_durusmaSonucId) return;
-  if(!confirm('Karar verildi olarak işaretlensin mi?')) return;
-  await sb.from('kayitlar').update({tamamlandi:true}).eq('id',_durusmaSonucId);
+  const not_metni = document.getElementById('karar-not').value.trim();
+  const updateData = {tamamlandi:true};
+  if(not_metni) updateData.not_alani = not_metni;
+  await sb.from('kayitlar').update(updateData).eq('id',_durusmaSonucId);
   closeDurusmaSonuc();
   await loadRecords();
 }
@@ -1750,9 +1763,14 @@ loadRecords();
         <button onclick="durusmayiErtelendi()" style="width:100%;margin-top:10px;padding:12px;background:var(--navy);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Yeni Tarihe Ekle</button>
       </div>
 
-      <button class="sonuc-btn karar" onclick="durusmaSonucKarar()">
+      <button class="sonuc-btn karar" onclick="toggleKararForm()">
         <span>✅</span><span>Karar Verildi</span>
       </button>
+      <div class="ertelendi-form" id="karar-form" style="display:none;">
+        <label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Karar Notu (opsiyonel)</label>
+        <textarea id="karar-not" placeholder="Örn: Beraat, mahkumiyet, tazminat kararı..." style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;height:80px;resize:vertical;"></textarea>
+        <button onclick="durusmaSonucKarar()" style="width:100%;margin-top:10px;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Kaydet ve Tamamlandı İşaretle</button>
+      </div>
 
       <button class="sonuc-btn mazeret" onclick="durusmaSonucMazeret()">
         <span>📋</span><span>Mazeret Gönderildi</span>
