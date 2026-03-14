@@ -1122,8 +1122,22 @@ showView('takvim',document.querySelector('.nav-item.active'));
 async function toggleTamamlandi(id){
   const rec=records.find(r=>r.id===id);
   if(!rec)return;
-  const yeni=rec.tamamlandi===true?false:true;
-  const{error}=await sb.from('kayitlar').update({tamamlandi:yeni}).eq('id',id);
+  // Geri al - direkt
+  if(rec.tamamlandi===true){
+    const{error}=await sb.from('kayitlar').update({tamamlandi:false}).eq('id',id);
+    if(error){alert('Hata: '+error.message);return;}
+    await loadRecords();return;
+  }
+  // Tamamlandı yaparken açıklama zorunlu
+  if(!rec.not){
+    const not_metni=prompt('⚠️ Açıklama zorunludur.\n\nBu iş hakkında kısa bir not girin:');
+    if(not_metni===null) return; // iptal
+    if(!not_metni.trim()){alert('Açıklama girilmeden tamamlandı işaretlenemez.');return;}
+    const{error}=await sb.from('kayitlar').update({tamamlandi:true,not_alani:sentenceCase(not_metni.trim())}).eq('id',id);
+    if(error){alert('Hata: '+error.message);return;}
+    await loadRecords();return;
+  }
+  const{error}=await sb.from('kayitlar').update({tamamlandi:true}).eq('id',id);
   if(error){alert('Hata: '+error.message);return;}
   await loadRecords();
   if(document.getElementById('cal-detail-panel').classList.contains('open')){
