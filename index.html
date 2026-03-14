@@ -1080,6 +1080,19 @@ function openModal(editRecord,prefillDate){
 }
 function closeModal(){document.getElementById('modal').style.display='none';}
 
+// Enter tuşu ile kaydet
+document.addEventListener('keydown', function(e){
+  if(e.key==='Enter' && document.getElementById('modal').style.display==='flex'){
+    // Textarea veya dropdown içindeyse kaydetme
+    const tag = document.activeElement.tagName.toLowerCase();
+    if(tag==='textarea') return;
+    if(document.activeElement.closest('.istipi-list')) return;
+    if(document.activeElement.closest('.mahkeme-dropdown')) return;
+    e.preventDefault();
+    saveRecord();
+  }
+});
+
 // ── KAYDET ────────────────────────────────────────────────────────
 async function saveRecord(){
   let rec={};
