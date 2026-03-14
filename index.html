@@ -304,18 +304,21 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   <div class="content">
     <!-- ÖZET -->
     <div class="view active" id="view-dashboard">
-      <div class="stats-row" style="grid-template-columns:repeat(4,1fr);">
+      <div class="stats-row" style="grid-template-columns:repeat(5,1fr);">
         <div class="stat-card" onclick="filterDashboard('hepsi')" style="border-top:3px solid var(--navy);">
           <div class="stat-label">Bu Ay</div><div class="stat-val" id="stat-total">—</div>
         </div>
         <div class="stat-card" onclick="filterDashboard('genel')" style="border-top:3px solid #22c55e;">
           <div class="stat-label" style="color:#166534;">Genel İş</div><div class="stat-val" style="color:#166534;" id="stat-genel">—</div>
         </div>
+        <div class="stat-card" onclick="filterDashboard('durusma')" style="border-top:3px solid #3b82f6;">
+          <div class="stat-label" style="color:#1e40af;">Duruşma</div><div class="stat-val" style="color:#1e40af;" id="stat-durusma">—</div>
+        </div>
         <div class="stat-card" onclick="filterDashboard('sure')" style="border-top:3px solid #ef4444;">
           <div class="stat-label" style="color:#991b1b;">Süreli İş</div><div class="stat-val" style="color:#991b1b;" id="stat-sure">—</div>
         </div>
         <div class="stat-card" onclick="filterDashboard('tekrar')" style="border-top:3px solid #f59e0b;">
-          <div class="stat-label" style="color:#92400e;">Tekrarlayan İş</div><div class="stat-val" style="color:#92400e;" id="stat-tekrar">—</div>
+          <div class="stat-label" style="color:#92400e;">Tekrarlayan</div><div class="stat-val" style="color:#92400e;" id="stat-tekrar">—</div>
         </div>
       </div>
 
@@ -1004,6 +1007,7 @@ function renderDashboard(){
   const buAy=r=>{const d=new Date(r.date+'T12:00:00');return d>=ms&&d<=me;};
   document.getElementById('stat-total').textContent=records.filter(buAy).length;
   document.getElementById('stat-genel').textContent=records.filter(r=>r.type==='genel'&&!r.tekrarAnaId&&buAy(r)).length;
+  document.getElementById('stat-durusma').textContent=records.filter(r=>r.type==='durusma'&&buAy(r)).length;
   document.getElementById('stat-sure').textContent=records.filter(r=>r.type==='sure'&&buAy(r)).length;
   document.getElementById('stat-tekrar').textContent=records.filter(r=>r.tekrarTipi&&!r.tekrarAnaId&&buAy(r)).length;
   const urgents=records.filter(r=>{const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);return r.type==='sure'&&d>=today&&d<=in7&&!r.tekrarAnaId;}).sort((a,b)=>new Date(a.date)-new Date(b.date));
@@ -1039,7 +1043,7 @@ function renderDashboard(){
 
   // Kart vurgusu
   document.querySelectorAll('.stat-card').forEach(x=>x.style.cssText='');
-  const cardIdx={hepsi:0,genel:1,sure:2,tekrar:3};
+  const cardIdx={hepsi:0,genel:1,durusma:2,sure:3,tekrar:4};
   const cards=document.querySelectorAll('.stat-card');
   if(cardIdx[_dashFilter]!==undefined&&cards[cardIdx[_dashFilter]]){
     cards[cardIdx[_dashFilter]].style.borderColor='var(--navy)';
@@ -1055,6 +1059,8 @@ function renderDashboard(){
     upcoming=records.filter(r=>r.type==='genel'&&buAyFilter(r)&&!r.tamamlandi&&!r.tekrarAnaId).sort((a,b)=>new Date(a.date)-new Date(b.date));
   } else if(_dashFilter==='sure'){
     upcoming=records.filter(r=>r.type==='sure'&&buAyFilter(r)&&!r.tamamlandi).sort((a,b)=>new Date(a.date)-new Date(b.date));
+  } else if(_dashFilter==='durusma'){
+    upcoming=records.filter(r=>r.type==='durusma'&&buAyFilter(r)&&!r.tamamlandi).sort((a,b)=>new Date(a.date)-new Date(b.date));
   } else if(_dashFilter==='tekrar'){
     upcoming=records.filter(r=>(r.tekrarTipi||r.tekrarAnaId)&&buAyFilter(r)&&!r.tamamlandi).sort((a,b)=>new Date(a.date)-new Date(b.date));
   } else if(_dashFilter==='acil'){
@@ -1062,7 +1068,7 @@ function renderDashboard(){
   }
 
   // Başlık güncelle
-  const titles={hepsi:'Bu Aydaki Tüm İşler',genel:'Bu Aydaki Genel İşler',sure:'Bu Aydaki Süreli İşler',tekrar:'Bu Aydaki Tekrarlayan İşler',acil:'Acil Süreler (7 Gün)'};
+  const titles={hepsi:'Bu Aydaki Tüm İşler',genel:'Bu Aydaki Genel İşler',durusma:'Bu Aydaki Duruşmalar',sure:'Bu Aydaki Süreli İşler',tekrar:'Bu Aydaki Tekrarlayan İşler',acil:'Acil Süreler (7 Gün)'};
   const yt=document.getElementById('yaklasan-title');
   if(yt) yt.innerHTML=(_dashFilter==='hepsi'||_dashFilter===undefined?'Yaklaşan Kayıtlar <span style="font-weight:400;text-transform:none;letter-spacing:0;">(Önümüzdeki 7 Günün İşleri)</span>':titles[_dashFilter]);
 
@@ -1122,7 +1128,10 @@ function renderCal(){
   for(let d=1;d<=dim;d++){const ds=`${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const dt=new Date(currentYear,currentMonth,d);dt.setHours(0,0,0,0);cells.push({day:d,other:false,date:ds,isToday:dt.getTime()===today.getTime()});}
   while(cells.length%7!==0)cells.push({day:0,other:true,date:null});
   document.getElementById('cal-grid').innerHTML=cells.map(c=>{
-    const evs=c.date?records.filter(r=>r.date===c.date):[];
+    const evs=c.date?records.filter(r=>r.date===c.date).sort((a,b)=>{
+    const order={sure:0,durusma:1,tekrar:2,genel:3};
+    return (order[a.type]??9)-(order[b.type]??9);
+  }):[];
     const eh=evs.slice(0,3).map(r=>{
     let cls=r.tamamlandi?'ev-tamamlandi':(r.type==='tekrar'||r.tekrarAnaId)?'ev-tekrar':('ev-'+r.type);
     let prefix=r.tamamlandi?'✓ ':(r.tekrarTipi||r.tekrarAnaId)?'↻ ':'';
