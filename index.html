@@ -82,6 +82,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;}
 .badge-durusma{background:var(--blue-light);color:var(--blue-dark);}
 .badge-sure{background:#fecaca;color:#991b1b;}
+.badge-tekrar-type{background:#fef3c7;color:#92400e;}
 .badge-genel{background:var(--green-light);color:var(--green-dark);}
 .badge-tekrar{background:#e0e7ff;color:#3730a3;font-size:10px;padding:1px 6px;}
 .ev-tekrar{background:#fbbf24;color:#78350f;}
@@ -309,6 +310,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
           <span><div class="cal-legend-dot" style="background:var(--blue-light)"></div>Duruşma</span>
           <span><div class="cal-legend-dot" style="background:#ef4444"></div>Süreli İş</span>
           <span><div class="cal-legend-dot" style="background:var(--green-light)"></div>Genel İş</span>
+          <span><div class="cal-legend-dot" style="background:#fbbf24"></div>Tekrarlayan</span>
         </div>
       </div>
     </div>
@@ -322,6 +324,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
           <option value="durusma">Duruşma</option>
           <option value="sure">Süreli İş</option>
           <option value="genel">Genel İş</option>
+          <option value="tekrar">Tekrarlayan</option>
         </select>
       </div>
       <div class="table-wrap">
@@ -654,7 +657,7 @@ async function olusturTekrarKayitlari(anaRec){
   let next = nextTekrarDate(sonTarih, anaRec.tekrarTipi);
   while(next <= bitis && yeniKayitlar.length < 24){
     if(!mevcutlar.includes(next)){
-      yeniKayitlar.push({...localToDB({...anaRec, date:next, id:undefined, tekrarAnaId:anaRec.id, tekrarTipi:null, tekrarBitis:null}), tekrar_ana_id:anaRec.id});
+      yeniKayitlar.push({...localToDB({...anaRec, date:next, id:undefined, tekrarAnaId:anaRec.id, tekrarTipi:null, tekrarBitis:null, type:'tekrar'}), tekrar_ana_id:anaRec.id});
     }
     next = nextTekrarDate(next, anaRec.tekrarTipi);
   }
@@ -682,7 +685,7 @@ async function loadRecords(){
   if(error){setSyncStatus('error','Bağlantı hatası');return;}
   records=(data||[]).map(dbToLocal);
   // Tekrar kayıtlarını otomatik oluştur
-  const anaKayitlar = records.filter(r=>r.tekrarTipi && !r.tekrarAnaId);
+  const anaKayitlar = records.filter(r=>r.tekrarTipi && !r.tekrarAnaId && r.type==='tekrar');
   for(const r of anaKayitlar){ await olusturTekrarKayitlari(r); }
   if(anaKayitlar.length>0){
     const{data:data2}=await sb.from('kayitlar').select('*').order('date',{ascending:true});
@@ -853,7 +856,7 @@ async function saveRecord(){
     const date=document.getElementById('f-tekrar-tarih').value;
     if(!date){alert('Başlangıç tarihi zorunludur.');return;}
     if(!ST_TEKRAR_SIKLIK){alert('Tekrar sıklığı seçiniz.');return;}
-    rec={type:'genel',date,baslik:document.getElementById('f-tekrar-baslik').value.trim()||'Tekrarlayan İş',not:document.getElementById('f-tekrar-aciklama').value.trim(),tekrarTipi:ST_TEKRAR_SIKLIK,tekrarBitis:document.getElementById('f-tekrar-bitis2').value||null};
+    rec={type:'tekrar',date,baslik:document.getElementById('f-tekrar-baslik').value.trim()||'Tekrarlayan İş',not:document.getElementById('f-tekrar-aciklama').value.trim(),tekrarTipi:ST_TEKRAR_SIKLIK,tekrarBitis:document.getElementById('f-tekrar-bitis2').value||null};
   }else{
     const date=document.getElementById('f-genel-tarih').value;if(!date){alert('Tarih zorunludur.');return;}
     const yil=document.getElementById('f-genel-yil').value,no=document.getElementById('f-genel-no').value.trim();
@@ -938,7 +941,7 @@ function renderDashboard(){
     return `<tr onclick="showCalDetail('${r.date}')">
     <td>${formatDate(r.date)}${r.saat?'<br><small style="color:var(--text2)">'+r.saat+'</small>':''}<br>${lbl}</td>
     <td>${getBaslik(r)}</td><td>${r.muvekkil||'—'}</td>
-    <td><span class="badge badge-${r.type}">${typeLabel(r.type)}</span></td>
+    <td><span class="badge badge-${r.type==="tekrar"?"tekrar-type":r.type}">${typeLabel(r.type)}</span></td>
     <td>${dalLabel(r.dal)}</td>
     <td><div class="action-btns">
       <button class="icon-btn" onclick="event.stopPropagation();openModal(records.find(x=>x.id===${r.id}))">Düzenle</button>
@@ -962,7 +965,7 @@ function renderCal(){
   document.getElementById('cal-grid').innerHTML=cells.map(c=>{
     const evs=c.date?records.filter(r=>r.date===c.date):[];
     const eh=evs.slice(0,3).map(r=>{
-    let cls=r.tamamlandi?'ev-tamamlandi':(r.tekrarTipi||r.tekrarAnaId)?'ev-tekrar':('ev-'+r.type);
+    let cls=r.tamamlandi?'ev-tamamlandi':(r.type==='tekrar'||r.tekrarAnaId)?'ev-tekrar':('ev-'+r.type);
     let prefix=r.tamamlandi?'✓ ':(r.tekrarTipi||r.tekrarAnaId)?'↻ ':'';
     return`<span class="cal-event ${cls}" onmousedown="calDragStart(event,${r.id})" onclick="event.stopPropagation()" style="cursor:grab;">${prefix}${r.muvekkil||getBaslik(r)}</span>`;
   }).join('')+(evs.length>3?`<span style="font-size:9px;color:var(--text3);display:block;">+${evs.length-3}</span>`:'');
@@ -985,7 +988,7 @@ function showCalDetail(dateStr){
       if(r.type==='sure'&&d){detailHTML=`<div class="cal-detail-hesap">${buildHesapHTML(d)}</div>`;}
       return`<div class="cal-detail-item">
         <div class="cal-detail-item-type">
-          <span class="badge badge-${r.type}">${typeLabel(r.type)}</span>
+          <span class="badge badge-${r.type==="tekrar"?"tekrar-type":r.type}">${typeLabel(r.type)}</span>
           ${r.dal?'<span style="font-size:11px;color:var(--text2);">'+dalLabel(r.dal)+'</span>':''}
           ${r.saat?'<span style="font-size:12px;font-weight:600;color:var(--navy);">⏰ '+r.saat+'</span>':''}
         </div>
@@ -1095,7 +1098,7 @@ function renderListe(){
     html+=`<tr onclick="toggleDetail(${r.id})" style="${rowStyle}">
       <td>${formatDate(r.date)}${r.saat?'<br><small style="color:var(--text2)">'+r.saat+'</small>':''}</td>
       <td>${getBaslik(r)}${r.tekrarTipi?'<br><span class="badge badge-tekrar">↻ '+tekrarTipiLabel(r.tekrarTipi)+'</span>':r.tekrarAnaId?'<br><span class="badge badge-tekrar">↻ Tekrar</span>':''}</td><td>${r.muvekkil||'—'}</td>
-      <td><span class="badge badge-${r.type}">${typeLabel(r.type)}</span></td>
+      <td><span class="badge badge-${r.type==="tekrar"?"tekrar-type":r.type}">${typeLabel(r.type)}</span></td>
       <td>${dalLabel(r.dal)}</td><td>${r.dava||'—'}</td>
       <td><div class="action-btns">
         <button class="icon-btn" style="${r.tamamlandi?'color:#22c55e;border-color:#22c55e;':''}" onclick="event.stopPropagation();toggleTamamlandi(${r.id})" title="${r.tamamlandi?'Tamamlandı - geri al':'Tamamlandı işaretle'}">${r.tamamlandi?'✓':'○'}</button>
