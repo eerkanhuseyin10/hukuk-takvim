@@ -406,7 +406,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <!-- LİSTE -->
     <div class="view" id="view-liste">
       <div class="filter-bar">
-        <input type="text" id="filter-search" placeholder="🔍 Arama..." oninput="renderListe()">
+        <input type="text" id="filter-search" placeholder="🔍 Arama..." oninput="renderListe()" autocomplete="new-password">
         <select id="filter-type" onchange="renderListe()">
           <option value="">Tüm Türler</option>
           <option value="durusma">Duruşma / Randevu</option>
@@ -425,7 +425,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <!-- TAMAMLANAN İŞLER -->
     <div class="view" id="view-tamamlanan">
       <div class="filter-bar">
-        <input type="text" id="filter-tamamlanan" placeholder="🔍 Arama..." oninput="renderTamamlanan()">
+        <input type="text" id="filter-tamamlanan" placeholder="🔍 Arama..." oninput="renderTamamlanan()" autocomplete="new-password">
       </div>
       <div class="table-wrap">
         <table class="list-table">
@@ -533,18 +533,18 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
         <div class="sure-hesap" id="sure-hesap-box"></div>
         <div class="dosya-box">
           <div class="dosya-box-title">Dosya Bilgileri</div>
-          <div class="fg"><div class="mahkeme-wrap"><input type="text" id="f-mahkeme" placeholder="Gönderen (opsiyonel)" autocomplete="off" oninput="showMahkemeDropdown('f-mahkeme','dd-mahkeme')" onfocus="showMahkemeDropdown('f-mahkeme','dd-mahkeme')" onblur="setTimeout(()=>{const d=document.getElementById('dd-mahkeme');if(d)d.style.display='none';},200)"><div class="mahkeme-dropdown" id="dd-mahkeme"></div></div></div>
+          <div class="fg"><div class="mahkeme-wrap"><input type="text" id="f-mahkeme" placeholder="Gönderen (opsiyonel)" autocomplete="new-password" oninput="showMahkemeDropdown('f-mahkeme','dd-mahkeme')" onfocus="showMahkemeDropdown('f-mahkeme','dd-mahkeme')" onblur="setTimeout(()=>{const d=document.getElementById('dd-mahkeme');if(d)d.style.display='none';},200)"><div class="mahkeme-dropdown" id="dd-mahkeme"></div></div></div>
           <div class="fg">
             <label>Esas No</label>
             <div style="display:flex;gap:6px;align-items:center;">
       <div style="display:flex;gap:8px;align-items:center;">
               <select id="f-dava-yil" style="padding:9px 10px;font-size:14px;border:1px solid var(--border2);border-radius:10px;background:var(--surface);color:var(--text);font-family:inherit;width:90px;"><option value="2020">2020</option><option value="2021">2021</option><option value="2022">2022</option><option value="2023">2023</option><option value="2024">2024</option><option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option></select>
               <span style="color:var(--text3);font-size:16px;">/</span>
-              <input type="text" id="f-dava-no" style="flex:1;" placeholder="Esas No">
+              <input type="text" id="f-dava-no" style="flex:1;" placeholder="Esas No" autocomplete="new-password">
             </div>
             </div>
           </div>
-          <div class="fg" style="margin-bottom:0;"><input type="text" id="f-muvekkil" placeholder="Müvekkil"></div>
+          <div class="fg" style="margin-bottom:0;"><input type="text" id="f-muvekkil" placeholder="Müvekkil" autocomplete="new-password"></div>
         </div>
         <div class="fg" style="margin-bottom:0;">
           <label>Açıklama (opsiyonel)</label>
@@ -554,8 +554,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
       <!-- DURUŞMA -->
       <div id="form-durusma" style="display:none;">
-        <div class="fg" id="durusma-mahkeme-box"><label id="durusma-baslik-label">Mahkeme Adı</label><div class="mahkeme-wrap"><input type="text" id="f-durusma-mahkeme-adi" placeholder="Mahkeme adını girin" autocomplete="off" oninput="showMahkemeDropdown('f-durusma-mahkeme-adi','dd-durusma-mahkeme')" onfocus="showMahkemeDropdown('f-durusma-mahkeme-adi','dd-durusma-mahkeme')" onblur="setTimeout(()=>{const d=document.getElementById('dd-durusma-mahkeme');if(d)d.style.display='none';},200)"><div class="mahkeme-dropdown" id="dd-durusma-mahkeme"></div></div></div>
-        <div class="fg"><label>Müvekkil</label><input type="text" id="f-durusma-muvekkil" placeholder="Müvekkil adı"></div>
+        <div class="fg" id="durusma-mahkeme-box"><label id="durusma-baslik-label">Mahkeme Adı</label><div class="mahkeme-wrap"><input type="text" id="f-durusma-mahkeme-adi" placeholder="Mahkeme adını girin" autocomplete="new-password" oninput="showMahkemeDropdown('f-durusma-mahkeme-adi','dd-durusma-mahkeme')" onfocus="showMahkemeDropdown('f-durusma-mahkeme-adi','dd-durusma-mahkeme')" onblur="setTimeout(()=>{const d=document.getElementById('dd-durusma-mahkeme');if(d)d.style.display='none';},200)"><div class="mahkeme-dropdown" id="dd-durusma-mahkeme"></div></div></div>
+        <div class="fg"><label>Müvekkil</label><input type="text" id="f-durusma-muvekkil" placeholder="Müvekkil adı" autocomplete="new-password"></div>
         <div class="frow">
           <div class="fg"><label>Tarih</label><input type="date" id="f-durusma-tarih"></div>
           <div class="fg"><label>Saat</label><input type="time" id="f-durusma-saat"></div>
@@ -582,7 +582,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
             <div style="display:flex;gap:6px;align-items:center;">
               <select id="f-durusma-yil" style="padding:9px 10px;font-size:14px;border:1px solid var(--border2);border-radius:10px;background:var(--surface);color:var(--text);font-family:inherit;width:92px;"><option value="2020">2020</option><option value="2021">2021</option><option value="2022">2022</option><option value="2023">2023</option><option value="2024">2024</option><option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option></select>
               <span style="color:var(--text3);font-size:16px;">/</span>
-              <input type="text" id="f-durusma-no" style="flex:1;" placeholder="Esas No">
+              <input type="text" id="f-durusma-no" style="flex:1;" placeholder="Esas No" autocomplete="new-password">
             </div>
           </div>
         </div>
@@ -591,7 +591,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
       <!-- GENEL İŞ -->
       <div id="form-genel" style="display:none;">
-        <div class="fg"><label>İş Başlığı</label><input type="text" id="f-genel-baslik" placeholder="İş başlığı girin"></div>
+        <div class="fg"><label>İş Başlığı</label><input type="text" id="f-genel-baslik" placeholder="İş başlığı girin" autocomplete="new-password"></div>
         <div class="frow">
           <div class="fg"><label>Tarih</label><input type="date" id="f-genel-tarih"></div>
           <div class="fg"><label>Saat (opsiyonel)</label><input type="time" id="f-genel-saat"></div>
@@ -616,24 +616,24 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
           <span class="collapsible-arrow">▶</span>
         </div>
         <div class="collapsible-body">
-          <div class="fg"><label>Mahkeme</label><div class="mahkeme-wrap"><input type="text" id="f-genel-mahkeme" placeholder="Mahkeme" autocomplete="off" oninput="showMahkemeDropdown('f-genel-mahkeme','dd-genel-mahkeme')" onfocus="showMahkemeDropdown('f-genel-mahkeme','dd-genel-mahkeme')" onblur="setTimeout(()=>{const d=document.getElementById('dd-genel-mahkeme');if(d)d.style.display='none';},200)"><div class="mahkeme-dropdown" id="dd-genel-mahkeme"></div></div></div>
+          <div class="fg"><label>Mahkeme</label><div class="mahkeme-wrap"><input type="text" id="f-genel-mahkeme" placeholder="Mahkeme" autocomplete="new-password" oninput="showMahkemeDropdown('f-genel-mahkeme','dd-genel-mahkeme')" onfocus="showMahkemeDropdown('f-genel-mahkeme','dd-genel-mahkeme')" onblur="setTimeout(()=>{const d=document.getElementById('dd-genel-mahkeme');if(d)d.style.display='none';},200)"><div class="mahkeme-dropdown" id="dd-genel-mahkeme"></div></div></div>
           <div class="fg">
             <label>Esas No</label>
             <div style="display:flex;gap:6px;align-items:center;">
       <div style="display:flex;gap:8px;align-items:center;">
               <select id="f-genel-yil" style="padding:9px 10px;font-size:14px;border:1px solid var(--border2);border-radius:10px;background:var(--surface);color:var(--text);font-family:inherit;width:90px;"><option value="2020">2020</option><option value="2021">2021</option><option value="2022">2022</option><option value="2023">2023</option><option value="2024">2024</option><option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option></select>
               <span style="color:var(--text3);font-size:16px;">/</span>
-              <input type="text" id="f-genel-no" style="flex:1;" placeholder="Esas No">
+              <input type="text" id="f-genel-no" style="flex:1;" placeholder="Esas No" autocomplete="new-password">
             </div>
             </div>
           </div>
-          <div class="fg" style="margin-bottom:0;"><input type="text" id="f-genel-muvekkil" placeholder="Müvekkil"></div>
+          <div class="fg" style="margin-bottom:0;"><input type="text" id="f-genel-muvekkil" placeholder="Müvekkil" autocomplete="new-password"></div>
         </div>
       </div>
 
       <!-- TEKRARLAYAN İŞ -->
       <div id="form-tekrar" style="display:none;">
-        <div class="fg" style="width:100%;"><label>İş Başlığı</label><input type="text" id="f-tekrar-baslik" placeholder="Örn: Kira, Muhasebe, KDV, 4B Prim Borcu..."></div>
+        <div class="fg" style="width:100%;"><label>İş Başlığı</label><input type="text" id="f-tekrar-baslik" placeholder="Örn: Kira, Muhasebe, KDV, 4B Prim Borcu..." autocomplete="new-password"></div>
         <div class="fg"><label>Başlangıç Tarihi</label><input type="date" id="f-tekrar-tarih"></div>
         <div class="fg">
           <label>Tekrar Sıklığı</label>
