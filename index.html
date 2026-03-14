@@ -118,24 +118,23 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .cal-legend-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0;}
 
 /* TAKVİM DETAY PANEL - mobilde drawer gibi açılır */
-.cal-detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:120;display:none;align-items:flex-end;justify-content:center;}
-.cal-detail-overlay.open{display:flex;}
-.cal-detail-panel{position:relative;background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-width:900px;max-height:75vh;overflow-y:auto;transform:translateY(100%);transition:transform .3s ease;}
+.cal-detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:120;display:none;}
+.cal-detail-overlay.open{display:block;}
+.cal-detail-panel{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-radius:20px 20px 0 0;z-index:130;max-height:80vh;overflow-y:auto;transform:translateY(100%);transition:transform .3s ease;}
 .cal-detail-panel.open{transform:translateY(0);}
 .cal-detail-handle{width:40px;height:4px;background:var(--border2);border-radius:2px;margin:12px auto 0;}
-.cal-detail-header{padding:14px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surface);z-index:1;}
-.cal-detail-date{font-size:15px;font-weight:700;color:var(--navy);}
+.cal-detail-header{padding:16px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.cal-detail-date{font-size:16px;font-weight:700;color:var(--navy);}
 .cal-detail-close{background:none;border:none;cursor:pointer;font-size:20px;color:var(--text3);padding:0 4px;}
-.cal-detail-items{padding:12px 18px 20px;display:flex;flex-wrap:wrap;gap:12px;}
-.cal-detail-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:13px 14px;flex:1 1 280px;min-width:240px;max-width:100%;display:flex;flex-direction:column;}
-.cal-detail-item-type{display:flex;align-items:center;gap:7px;margin-bottom:7px;flex-wrap:wrap;}
-.cal-detail-item-title{font-size:14px;font-weight:600;margin-bottom:6px;}
-.cal-detail-item-row{font-size:12px;color:var(--text2);margin-bottom:3px;display:flex;gap:5px;}
+.cal-detail-items{padding:12px 18px 24px;}
+.cal-detail-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:10px;}
+.cal-detail-item-type{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.cal-detail-item-title{font-size:15px;font-weight:600;margin-bottom:6px;}
+.cal-detail-item-row{font-size:13px;color:var(--text2);margin-bottom:4px;display:flex;gap:6px;}
 .cal-detail-item-row strong{color:var(--text);font-weight:500;}
-.cal-detail-item-actions{display:flex;gap:7px;margin-top:auto;padding-top:10px;border-top:1px solid var(--border);}
-.cal-detail-hesap{margin-top:8px;border-radius:8px;overflow:hidden;border:1px solid var(--border);}
-.cal-detail-empty{text-align:center;color:var(--text3);font-size:14px;padding:30px 0;width:100%;}
-.cal-add-btn{background:var(--navy);color:#fff;font-size:13px;font-weight:600;border:none;border-radius:var(--radius);cursor:pointer;font-family:inherit;padding:10px 16px;white-space:nowrap;}
+.cal-detail-item-actions{display:flex;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);}
+.cal-detail-empty{text-align:center;color:var(--text3);font-size:14px;padding:30px 0;}
+.cal-add-btn{width:100%;padding:13px;background:var(--navy);color:#fff;font-size:14px;font-weight:600;border:none;border-radius:var(--radius);cursor:pointer;font-family:inherit;margin-top:4px;}
 
 /* LİSTE FİLTRE */
 .filter-bar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;flex-shrink:0;}
@@ -277,7 +276,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
       <div class="section-title">Yaklaşan Kayıtlar</div>
       <div class="table-wrap">
         <table class="list-table">
-          <thead><tr><th>Tarih / Son Gün</th><th>Başlık</th><th>Müvekkil</th><th>Tür</th><th>Dal</th><th></th></tr></thead>
+          <thead><tr><th>Tarih</th><th>Başlık</th><th>Müvekkil</th><th>Tür</th><th>Dal</th><th></th></tr></thead>
           <tbody id="upcoming-tbody"></tbody>
         </table>
       </div>
@@ -316,7 +315,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
       </div>
       <div class="table-wrap">
         <table class="list-table">
-          <thead><tr><th>Tarih / Son Gün</th><th>Başlık</th><th>Müvekkil</th><th>Tür</th><th>Dal</th><th>Dava No</th><th></th></tr></thead>
+          <thead><tr><th>Tarih</th><th>Başlık</th><th>Müvekkil</th><th>Tür</th><th>Dal</th><th>Dava No</th><th></th></tr></thead>
           <tbody id="liste-tbody"></tbody>
         </table>
       </div>
@@ -782,22 +781,17 @@ function renderDashboard(){
   const ul=document.getElementById('urgents-list');
   ul.innerHTML=!urgents.length?'<div style="font-size:13px;color:var(--text3);padding:8px 0;">Acil süre yok.</div>':urgents.map(r=>{const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);const diff=Math.round((d-today)/86400000);return`<div class="urgent-item" onclick="showCalDetail('${r.date}')"><div><div class="u-title">${r.muvekkil||'Müvekkil belirtilmedi'} — ${getBaslik(r)}</div><div class="u-sub">${r.dava||''} ${r.dal?'· '+dalLabel(r.dal):''}</div></div><div class="urgent-days">${diff===0?'Bugün':diff+' gün'}</div></div>`;}).join('');
   const upcoming=records.filter(r=>{const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);return d>=today;}).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,10);
-  const todayMs=new Date().setHours(0,0,0,0);
   const tb=document.getElementById('upcoming-tbody');
-  if(!upcoming.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:18px;">Kayıt yok</td></tr>';return;}
-  tb.innerHTML=upcoming.map(r=>{
-    const diff=Math.round((new Date(r.date+'T12:00:00')-todayMs)/86400000);
-    const diffLabel=diff===0?'<span style="color:#dc2626;font-weight:600;font-size:11px;">Bugün</span>':diff===1?'<span style="color:#ea580c;font-size:11px;">Yarın</span>':'<span style="color:var(--text3);font-size:11px;">'+diff+' gün kaldı</span>';
-    return '<tr onclick="showCalDetail(\''+r.date+'\')">'
-      +'<td>'+formatDate(r.date)+(r.saat?'<br><small style="color:var(--text2)">'+r.saat+'</small>':'')+'<br>'+diffLabel+'</td>'
-      +'<td>'+getBaslik(r)+'</td><td>'+(r.muvekkil||'—')+'</td>'
-      +'<td><span class="badge badge-'+r.type+'">'+typeLabel(r.type)+'</span></td>'
-      +'<td>'+dalLabel(r.dal)+'</td>'
-      +'<td><div class="action-btns">'
-      +'<button class="icon-btn" onclick="event.stopPropagation();openModal(records.find(x=>x.id==='+r.id+'))">Düzenle</button>'
-      +'<button class="icon-btn del" onclick="event.stopPropagation();deleteRecord('+r.id+')">Sil</button>'
-      +'</div></td></tr>';
-  }).join('');
+  tb.innerHTML=!upcoming.length?'<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:18px;">Kayıt yok</td></tr>':upcoming.map(r=>`<tr onclick="showCalDetail('${r.date}')">
+    <td>${formatDate(r.date)}${r.saat?'<br><small style="color:var(--text2)">'+r.saat+'</small>':''}</td>
+    <td>${getBaslik(r)}</td><td>${r.muvekkil||'—'}</td>
+    <td><span class="badge badge-${r.type}">${typeLabel(r.type)}</span></td>
+    <td>${dalLabel(r.dal)}</td>
+    <td><div class="action-btns">
+      <button class="icon-btn" onclick="event.stopPropagation();openModal(records.find(x=>x.id===${r.id}))">Düzenle</button>
+      <button class="icon-btn del" onclick="event.stopPropagation();deleteRecord(${r.id})">Sil</button>
+    </div></td>
+  </tr>`).join('');
 }
 
 // ── TAKVİM ────────────────────────────────────────────────────────
@@ -831,7 +825,7 @@ function showCalDetail(dateStr){
     container.innerHTML=evs.map(r=>{
       const d=r.hesapDetay;
       let detailHTML='';
-      if(r.type==='sure'&&d){detailHTML=`<div class="cal-detail-hesap">${buildHesapHTML(d)}</div>`;}
+      if(r.type==='sure'&&d){detailHTML=`<div style="margin-top:10px;padding:10px;background:var(--surface);border-radius:8px;border:1px solid var(--border);">${buildHesapHTML(d)}</div>`;}
       return`<div class="cal-detail-item">
         <div class="cal-detail-item-type">
           <span class="badge badge-${r.type}">${typeLabel(r.type)}</span>
@@ -849,7 +843,7 @@ function showCalDetail(dateStr){
           <button class="icon-btn del" onclick="deleteRecord(${r.id})">Sil</button>
         </div>
       </div>`;
-    }).join('')+`<div style="width:100%;padding-top:4px;"><button class="cal-add-btn" onclick="closeCalDetail();openModal(null,'${dateStr}')">+ Bu Tarihe Kayıt Ekle</button></div>`;
+    }).join('')+`<button class="cal-add-btn" onclick="closeCalDetail();openModal(null,'${dateStr}')">+ Bu Tarihe Kayıt Ekle</button>`;
   }
   document.getElementById('cal-detail-overlay').classList.add('open');
   setTimeout(()=>document.getElementById('cal-detail-panel').classList.add('open'),10);
