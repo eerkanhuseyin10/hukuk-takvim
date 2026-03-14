@@ -282,20 +282,36 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     </div>
   </div>
   <nav class="nav">
-    <button class="nav-item active" onclick="showView('dashboard',this)">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>Özet
-    </button>
-    <button class="nav-item" onclick="showView('takvim',this)">
+    <button class="nav-item active" onclick="showView('takvim',this)">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="14" height="13" rx="1.5"/><path d="M5 1v2M11 1v2M1 6h14"/></svg>Takvim
+    </button>
+    <button class="nav-item" onclick="showView('dashboard',this)">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>Özet
     </button>
     <button class="nav-item" onclick="showView('liste',this)">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h10M3 8h10M3 12h6"/></svg>Tüm Kayıtlar
+    </button>
+    <button class="nav-item" onclick="showView('tamamlanan',this)">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8l4 4 8-8"/></svg>Tamamlanan İşler
     </button>
   </nav>
   <div class="sidebar-footer">
     <div class="sync-status">
       <div class="sync-dot" id="sync-dot"></div>
       <span id="sync-text">Bağlı</span>
+    </div>
+
+    <!-- TAMAMLANAN İŞLER -->
+    <div class="view" id="view-tamamlanan">
+      <div class="filter-bar">
+        <input type="text" id="filter-tamamlanan" placeholder="🔍 Arama..." oninput="renderTamamlanan()">
+      </div>
+      <div class="table-wrap">
+        <table class="list-table">
+          <thead><tr><th>Tarih</th><th>Başlık</th><th>Müvekkil</th><th>Tür</th><th>Dal</th><th></th></tr></thead>
+          <tbody id="tamamlanan-tbody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
@@ -304,14 +320,14 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 <div class="main">
   <div class="topbar">
     <div class="topbar-left">
-      <span class="topbar-title" id="topbar-title">Özet</span>
+      <span class="topbar-title" id="topbar-title">Takvim</span>
     </div>
     <button class="btn btn-primary" onclick="openModal(null)">+ Yeni Kayıt</button>
   </div>
 
   <div class="content">
     <!-- ÖZET -->
-    <div class="view active" id="view-dashboard">
+    <div class="view" id="view-dashboard">
       <div class="stats-row" style="grid-template-columns:repeat(5,1fr);gap:6px;">
         <div class="stat-card" onclick="filterDashboard('hepsi')" style="border-top:3px solid var(--navy);">
           <div class="stat-label">Bu Ay</div>
@@ -347,7 +363,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     </div>
 
     <!-- TAKVİM -->
-    <div class="view" id="view-takvim">
+    <div class="view active" id="view-takvim">
       <div class="cal-wrap">
         <div class="cal-nav-bar">
           <button class="btn btn-sm" onclick="changeMonth(-1)">&#8592;</button>
@@ -393,13 +409,13 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 <!-- MOBİL ALT MENÜ -->
 <nav class="mobile-nav">
   <div class="mobile-nav-inner">
-    <button class="mobile-nav-item active" onclick="showView('dashboard',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      Özet
-    </button>
-    <button class="mobile-nav-item" onclick="showView('takvim',this)">
+    <button class="mobile-nav-item active" onclick="showView('takvim',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg>
       Takvim
+    </button>
+    <button class="mobile-nav-item" onclick="showView('dashboard',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Özet
     </button>
     <button class="mobile-nav-item" onclick="openModal(null)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
@@ -408,6 +424,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <button class="mobile-nav-item" onclick="showView('liste',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
       Liste
+    </button>
+    <button class="mobile-nav-item" onclick="showView('tamamlanan',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l5 5L20 7"/></svg>
+      Tamam
     </button>
   </div>
 </nav>
@@ -519,6 +539,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
             <button class="chip" onclick="setChip('dal2','tahkim',this)">Tahkim</button>
             <button class="chip" onclick="setChip('dal2','arabuluculuk',this)">Arabuluculuk</button>
             <button class="chip" onclick="setChip('dal2','randevu',this)">Randevu</button>
+            <button class="chip" onclick="setChip('dal2','kesif',this)">Keşif</button>
           </div>
         </div>
         <div class="dosya-box" id="durusma-dosya-box">
@@ -957,6 +978,7 @@ async function saveRecord(){
   btn.textContent='Kaydet';btn.disabled=false;
   closeModal();await loadRecords();
 tatilleriYukle();
+showView('takvim',document.querySelector('.nav-item.active'));
 
 }
 async function toggleTamamlandi(id){
@@ -1002,7 +1024,7 @@ function titleCase(str){
 function formatDate(s){if(!s)return'—';const d=new Date(s+'T12:00:00');return d.toLocaleDateString('tr-TR',{day:'2-digit',month:'short',year:'numeric'});}
 function formatDateLong(s){if(!s)return'—';const d=new Date(s+'T12:00:00');return d.toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}
 function typeLabel(t){return{durusma:'Duruşma / Randevu',sure:'Süreli İş',genel:'Genel İş',tekrar:'Tekrarlayan İş'}[t]||t;}
-function dalLabel(d){return{ceza:'Ceza',hukuk:'Hukuk',idare:'İdare',icra:'İcra',tahkim:'Tahkim',arabuluculuk:'Arabuluculuk',randevu:'Randevu'}[d]||'—';}
+function dalLabel(d){return{ceza:'Ceza',hukuk:'Hukuk',idare:'İdare',icra:'İcra',tahkim:'Tahkim',arabuluculuk:'Arabuluculuk',randevu:'Randevu',kesif:'Keşif'}[d]||'—';}
 function tebligLabel(t){return{etebligat:'E-Tebligat',tefhim:'Tefhim',fiziki:'Fiziki tebligat'}[t]||t||'—';}
 function getBaslik(r){return r.baslik||r.istipi||r.not||'—';}
 function typeBadgeColor(t){return{durusma:'var(--blue-light)',sure:'var(--amber)',genel:'var(--green-light)'}[t]||'var(--border)';}
@@ -1143,7 +1165,7 @@ function renderDashboard(){
       <td>${r.saat?'<span style="font-weight:600;color:var(--navy);">⏰ '+r.saat+'</span><br>':''}<span style="font-size:11px;">${lbl}</span></td>
       <td>${getBaslik(r)}</td>
       <td>${r.muvekkil||'—'}</td>
-      <td><span class="badge badge-${r.type==='tekrar'?'tekrar-type':r.type}">${typeLabel(r.type)}</span></td>
+      <td><span class="badge badge-${r.type==='tekrar'?'tekrar-type':r.type}">${typeLabel(r.type,r.dal)}</span></td>
       <td>${dalLabel(r.dal)}</td>
       <td><div class="action-btns">
         <button class="icon-btn" onclick="event.stopPropagation();openModal(records.find(x=>x.id===${r.id}))">Düzenle</button>
@@ -1277,7 +1299,7 @@ function renderCalDetail(){
     return `<div style="border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:10px;${tStyle}">
       <div style="padding:12px 14px;background:var(--surface2);display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);">
         <div style="width:10px;height:10px;border-radius:50%;background:${dot};flex-shrink:0;"></div>
-        <span class="badge badge-${r.type==='tekrar'?'tekrar-type':r.type}" style="font-size:11px;">${typeLabel(r.type)}</span>
+        <span class="badge badge-${r.type==='tekrar'?'tekrar-type':r.type}" style="font-size:11px;">${typeLabel(r.type,r.dal)}</span>
         ${r.dal?`<span style="font-size:11px;color:var(--text2);">${dalLabel(r.dal)}</span>`:''}
         ${r.saat?`<span style="font-size:12px;font-weight:600;color:var(--navy);">⏰ ${r.saat}</span>`:''}
       </div>
@@ -1385,7 +1407,7 @@ function renderListe(){
     html+=`<tr onclick="toggleDetail(${r.id})" style="${rowStyle}">
       <td>${formatDate(r.date)}${r.saat?'<br><small style="color:var(--text2)">'+r.saat+'</small>':''}</td>
       <td>${getBaslik(r)}${r.tekrarTipi?'<br><span class="badge badge-tekrar">↻ '+tekrarTipiLabel(r.tekrarTipi)+'</span>':r.tekrarAnaId?'<br><span class="badge badge-tekrar">↻ Tekrar</span>':''}</td><td>${r.muvekkil||'—'}</td>
-      <td><span class="badge badge-${r.type==="tekrar"?"tekrar-type":r.type}">${typeLabel(r.type)}</span></td>
+      <td><span class="badge badge-${r.type==="tekrar"?"tekrar-type":r.type}">${typeLabel(r.type,r.dal)}</span></td>
       <td>${dalLabel(r.dal)}</td><td>${r.dava||'—'}</td>
       <td><div class="action-btns">
         <button class="icon-btn" style="${r.tamamlandi?'color:#22c55e;border-color:#22c55e;':''}" onclick="event.stopPropagation();toggleTamamlandi(${r.id})" title="${r.tamamlandi?'Tamamlandı - geri al':'Tamamlandı işaretle'}">${r.tamamlandi?'✓':'○'}</button>
@@ -1403,15 +1425,35 @@ function renderListe(){
   tb.innerHTML=html;
 }
 
+function renderTamamlanan(){
+  const fs=(document.getElementById('filter-tamamlanan').value||'').toLowerCase();
+  let f=records.filter(r=>r.tamamlandi&&!r.tekrarAnaId);
+  if(fs)f=f.filter(r=>(getBaslik(r)+r.muvekkil+r.dava).toLowerCase().includes(fs));
+  f.sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const tb=document.getElementById('tamamlanan-tbody');
+  if(!f.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:18px;">Tamamlanan iş yok</td></tr>';return;}
+  tb.innerHTML=f.map(r=>`<tr onclick="openKayitModal(${r.id})" style="opacity:0.7;">
+    <td>${formatDate(r.date)}</td>
+    <td style="text-decoration:line-through;">${getBaslik(r)}</td>
+    <td>${r.muvekkil||'—'}</td>
+    <td><span class="badge badge-${r.type==='tekrar'?'tekrar-type':r.type}">${typeLabel(r.type,r.dal)}</span></td>
+    <td>${dalLabel(r.dal)}</td>
+    <td><div class="action-btns">
+      <button class="icon-btn" style="color:#22c55e;" onclick="event.stopPropagation();toggleTamamlandi(${r.id})">↩ Geri Al</button>
+      <button class="icon-btn del" onclick="event.stopPropagation();deleteRecord(${r.id})">Sil</button>
+    </div></td>
+  </tr>`).join('');
+}
 function showView(v,el){
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.nav-item,.mobile-nav-item').forEach(x=>x.classList.remove('active'));
   document.getElementById('view-'+v).classList.add('active');
   if(el)el.classList.add('active');
-  document.getElementById('topbar-title').textContent={dashboard:'Özet',takvim:'Takvim',liste:'Tüm Kayıtlar'}[v]||'Özet';
+  document.getElementById('topbar-title').textContent={dashboard:'Özet',takvim:'Takvim',liste:'Tüm Kayıtlar',tamamlanan:'Tamamlanan İşler'}[v]||'Takvim';
   if(v==='takvim')renderCal();
   if(v==='liste')renderListe();
   if(v==='dashboard')renderDashboard();
+  if(v==='tamamlanan')renderTamamlanan();
 }
 
 loadRecords();
