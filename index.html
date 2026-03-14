@@ -116,6 +116,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .cal-cell.other-month{background:#fafafa;}
 .cal-cell.other-month .cal-day{color:var(--text3);}
 .cal-cell.today{background:var(--navy-light);}
+.cal-cell.tatil-gun{background:#fff5f5;}
 .cal-cell.today .cal-day{color:var(--navy);font-weight:700;}
 .cal-day{font-size:12px;font-weight:500;margin-bottom:2px;}
 .cal-event{font-size:10px;padding:2px 4px;border-radius:3px;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;line-height:1.3;}
@@ -900,31 +901,32 @@ async function saveRecord(){
   if(ST.type==='sure'){
     if(!ST.hesaplananTarih){alert('Lütfen tebliğ tarihi, hukuk dalı, süre birimi ve miktarı girin.');return;}
     const yil=document.getElementById('f-dava-yil').value,no=document.getElementById('f-dava-no').value.trim();
-    rec={type:'sure',date:ST.hesaplananTarih,baslik:titleCase(selectedIstipi)||'Süreli İş',tebligTarihi:document.getElementById('f-teblig-tarihi').value,tebligSekli:ST.teblig,dal:ST.dal,sureMiktar:parseInt(document.getElementById('f-sure-miktar').value),sureBirim:ST.birim,istipi:selectedIstipi,istipiVal:selectedIstipi,mahkeme:titleCase(document.getElementById('f-mahkeme').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-muvekkil').value.trim()),not:document.getElementById('f-not-sure').value.trim(),hesapDetay:ST.hesapDetay};
+    rec={type:'sure',date:ST.hesaplananTarih,baslik:titleCase(selectedIstipi)||'Süreli İş',tebligTarihi:document.getElementById('f-teblig-tarihi').value,tebligSekli:ST.teblig,dal:ST.dal,sureMiktar:parseInt(document.getElementById('f-sure-miktar').value),sureBirim:ST.birim,istipi:selectedIstipi,istipiVal:selectedIstipi,mahkeme:titleCase(document.getElementById('f-mahkeme').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-muvekkil').value.trim()),not:sentenceCase(document.getElementById('f-not-sure').value.trim()),hesapDetay:ST.hesapDetay};
   }else if(ST.type==='durusma'){
     const date=document.getElementById('f-durusma-tarih').value;if(!date){alert('Tarih zorunludur.');return;}
     const yil=document.getElementById('f-durusma-yil').value,no=document.getElementById('f-durusma-no').value.trim();
-    rec={type:'durusma',date,baslik:titleCase(document.getElementById('f-durusma-mahkeme-adi').value.trim())||'Duruşma / Randevu',saat:document.getElementById('f-durusma-saat').value,dal:ST.dal2,mahkeme:titleCase(document.getElementById('f-durusma-mahkeme-adi').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-durusma-muvekkil').value.trim()),not:document.getElementById('f-durusma-not').value.trim(),tekrarTipi:ST_TEKRAR_D||null,tekrarBitis:ST_TEKRAR_D&&document.getElementById('f-tekrar-bitis-d').value?document.getElementById('f-tekrar-bitis-d').value:null};
+    rec={type:'durusma',date,baslik:titleCase(document.getElementById('f-durusma-mahkeme-adi').value.trim())||'Duruşma / Randevu',saat:document.getElementById('f-durusma-saat').value,dal:ST.dal2,mahkeme:titleCase(document.getElementById('f-durusma-mahkeme-adi').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-durusma-muvekkil').value.trim()),not:sentenceCase(document.getElementById('f-durusma-not').value.trim()),tekrarTipi:ST_TEKRAR_D||null,tekrarBitis:ST_TEKRAR_D&&document.getElementById('f-tekrar-bitis-d').value?document.getElementById('f-tekrar-bitis-d').value:null};
   }else if(ST.type==='tekrar'){
     const date=document.getElementById('f-tekrar-tarih').value;
     if(!date){alert('Başlangıç tarihi zorunludur.');return;}
     if(!ST_TEKRAR_SIKLIK){alert('Tekrar sıklığı seçiniz.');return;}
-    rec={type:'tekrar',date,baslik:titleCase(document.getElementById('f-tekrar-baslik').value.trim())||'Tekrarlayan İş',not:document.getElementById('f-tekrar-aciklama').value.trim(),tekrarTipi:ST_TEKRAR_SIKLIK,tekrarBitis:document.getElementById('f-tekrar-bitis2').value||null};
+    rec={type:'tekrar',date,baslik:titleCase(document.getElementById('f-tekrar-baslik').value.trim())||'Tekrarlayan İş',not:sentenceCase(document.getElementById('f-tekrar-aciklama').value.trim()),tekrarTipi:ST_TEKRAR_SIKLIK,tekrarBitis:document.getElementById('f-tekrar-bitis2').value||null};
   }else if(ST.type==='tekrar'){
     const date=document.getElementById('f-tekrar-tarih').value;
     if(!date){alert('Başlangıç tarihi zorunludur.');return;}
     if(!ST_TEKRAR_SIKLIK){alert('Tekrar sıklığı seçiniz.');return;}
-    rec={type:'tekrar',date,baslik:titleCase(document.getElementById('f-tekrar-baslik').value.trim())||'Tekrarlayan İş',not:document.getElementById('f-tekrar-aciklama').value.trim(),tekrarTipi:ST_TEKRAR_SIKLIK,tekrarBitis:document.getElementById('f-tekrar-bitis2').value||null};
+    rec={type:'tekrar',date,baslik:titleCase(document.getElementById('f-tekrar-baslik').value.trim())||'Tekrarlayan İş',not:sentenceCase(document.getElementById('f-tekrar-aciklama').value.trim()),tekrarTipi:ST_TEKRAR_SIKLIK,tekrarBitis:document.getElementById('f-tekrar-bitis2').value||null};
   }else{
     const date=document.getElementById('f-genel-tarih').value;if(!date){alert('Tarih zorunludur.');return;}
     const yil=document.getElementById('f-genel-yil').value,no=document.getElementById('f-genel-no').value.trim();
-    rec={type:'genel',date,baslik:titleCase(document.getElementById('f-genel-baslik').value.trim())||'Genel İş',saat:document.getElementById('f-genel-saat').value,mahkeme:titleCase(document.getElementById('f-genel-mahkeme').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-genel-muvekkil').value.trim()),not:document.getElementById('f-genel-aciklama').value.trim()};
+    rec={type:'genel',date,baslik:titleCase(document.getElementById('f-genel-baslik').value.trim())||'Genel İş',saat:document.getElementById('f-genel-saat').value,mahkeme:titleCase(document.getElementById('f-genel-mahkeme').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-genel-muvekkil').value.trim()),not:sentenceCase(document.getElementById('f-genel-aciklama').value.trim())};
   }
   const btn=document.getElementById('save-btn');btn.textContent='Kaydediliyor...';btn.disabled=true;
   if(ST.editId){const{error}=await sb.from('kayitlar').update(localToDB(rec)).eq('id',ST.editId);if(error){alert('Güncelleme hatası: '+error.message);}}
   else{const{error}=await sb.from('kayitlar').insert(localToDB(rec));if(error){alert('Kayıt hatası: '+error.message);}}
   btn.textContent='Kaydet';btn.disabled=false;
   closeModal();await loadRecords();
+tatilleriYukle();
 
 }
 async function toggleTamamlandi(id){
@@ -959,6 +961,10 @@ async function deleteTekrarHepsi(anaId){
 }
 
 // ── YARDIMCILAR ───────────────────────────────────────────────────
+function sentenceCase(str){
+  if(!str) return str;
+  return str.charAt(0).toLocaleUpperCase('tr-TR')+str.slice(1);
+}
 function titleCase(str){
   if(!str) return str;
   return str.replace(/\S+/g, w=>w.charAt(0).toLocaleUpperCase('tr-TR')+w.slice(1).toLocaleLowerCase('tr-TR'));
@@ -1118,6 +1124,51 @@ function renderDashboard(){
 }
 
 // ── TAKVİM ────────────────────────────────────────────────────────
+// ── RESMİ TATİLLER ───────────────────────────────────────────────
+// Fallback - API çalışmazsa kullanılır
+const TATILLER_FALLBACK = {
+  "01-01": "Yılbaşı",
+  "04-23": "Ulusal Egemenlik ve Çocuk Bayramı",
+  "05-01": "Emek ve Dayanışma Günü",
+  "05-19": "Atatürk'ü Anma, Gençlik ve Spor Bayramı",
+  "07-15": "Demokrasi ve Millî Birlik Günü",
+  "08-30": "Zafer Bayramı",
+  "10-29": "Cumhuriyet Bayramı",
+  "2026-03-19":"Ramazan Bayramı Arifesi","2026-03-20":"Ramazan Bayramı 1. Günü","2026-03-21":"Ramazan Bayramı 2. Günü","2026-03-22":"Ramazan Bayramı 3. Günü",
+  "2026-05-26":"Kurban Bayramı Arifesi","2026-05-27":"Kurban Bayramı 1. Günü","2026-05-28":"Kurban Bayramı 2. Günü","2026-05-29":"Kurban Bayramı 3. Günü","2026-05-30":"Kurban Bayramı 4. Günü",
+  "2027-03-08":"Ramazan Bayramı Arifesi","2027-03-09":"Ramazan Bayramı 1. Günü","2027-03-10":"Ramazan Bayramı 2. Günü","2027-03-11":"Ramazan Bayramı 3. Günü",
+  "2027-05-15":"Kurban Bayramı Arifesi","2027-05-16":"Kurban Bayramı 1. Günü","2027-05-17":"Kurban Bayramı 2. Günü","2027-05-18":"Kurban Bayramı 3. Günü","2027-05-19":"Kurban Bayramı 4. Günü",
+};
+let TATILLER_API = {}; // API'den yüklenen tatiller
+
+async function tatilleriYukle(){
+  const buYil = new Date().getFullYear();
+  for(const yil of [buYil, buYil+1]){
+    try{
+      const res = await fetch('https://date.nager.at/api/v3/PublicHolidays/'+yil+'/TR');
+      if(!res.ok) continue;
+      const data = await res.json();
+      data.forEach(t=>{
+        TATILLER_API[t.date] = t.localName;
+      });
+    }catch(e){}
+  }
+  renderCal(); // tatiller yüklenince takvimi yenile
+}
+
+
+function getTatil(dateStr){
+  if(!dateStr) return null;
+  // API'den gelen tatiller
+  if(TATILLER_API[dateStr]) return TATILLER_API[dateStr];
+  // Fallback: tam tarih
+  if(TATILLER_FALLBACK[dateStr]) return TATILLER_FALLBACK[dateStr];
+  // Fallback: ay-gün (sabit tatiller)
+  const md = dateStr.slice(5);
+  if(TATILLER_FALLBACK[md]) return TATILLER_FALLBACK[md];
+  return null;
+}
+
 // ── TAKVİM SWIPE ─────────────────────────────────────────────────
 let _calTouchX=0;
 function calTouchStart(e){_calTouchX=e.touches[0].clientX;}
@@ -1146,8 +1197,11 @@ function renderCal(){
     let prefix=r.tamamlandi?'✓ ':(r.tekrarTipi||r.tekrarAnaId)?'↻ ':'';
     return`<span class="cal-event ${cls}" onmousedown="calDragStart(event,${r.id})" onclick="event.stopPropagation()" style="cursor:grab;">${prefix}${r.muvekkil||getBaslik(r)}</span>`;
   }).join('')+(evs.length>3?`<span style="font-size:9px;color:var(--text3);display:block;">+${evs.length-3}</span>`:'');
+    const tatil=c.date?getTatil(c.date):null;
     const clickAttr=c.date?`onclick="showCalDetail('${c.date}')" data-date="${c.date}"`:'' ;
-    return`<div class="cal-cell${c.other?' other-month':''}${c.isToday?' today':''}" ${clickAttr}><div class="cal-day">${c.other&&!c.day?'':c.day}</div>${eh}</div>`;
+    const tatilHTML=tatil?`<div style="font-size:8px;color:#dc2626;font-weight:600;line-height:1.2;margin-bottom:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${tatil}</div>`:'';
+    const dayStyle=tatil?'color:#dc2626;font-weight:700;':'';
+    return`<div class="cal-cell${c.other?' other-month':''}${c.isToday?' today':''}" ${clickAttr}><div class="cal-day" style="${dayStyle}">${c.other&&!c.day?'':c.day}</div>${tatilHTML}${eh}</div>`;
   }).join('');
 }
 
@@ -1157,7 +1211,10 @@ let _calDetailDate=null,_calDetailExpanded=null;
 function showCalDetail(dateStr, expandId){
   _calDetailDate=dateStr;
   _calDetailExpanded=expandId||null;
-  document.getElementById('cal-detail-date').textContent=formatDateLong(dateStr);
+  const tatilBilgi=getTatil(dateStr);
+  document.getElementById('cal-detail-date').textContent=formatDateLong(dateStr)+(tatilBilgi?' — '+tatilBilgi:'');
+  if(tatilBilgi){document.getElementById('cal-detail-date').style.color='#dc2626';}
+  else{document.getElementById('cal-detail-date').style.color='';}
   renderCalDetail();
   document.getElementById('cal-detail-overlay').classList.add('open');
   setTimeout(()=>document.getElementById('cal-detail-panel').classList.add('open'),10);
