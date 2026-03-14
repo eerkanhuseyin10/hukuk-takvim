@@ -1114,107 +1114,74 @@ function renderCal(){
 }
 
 // ── TAKVİM DETAY PANELİ ───────────────────────────────────────────
-function showCalDetail(dateStr){
-  const evs=records.filter(r=>r.date===dateStr);
+function showCalDetail(dateStr, expandId){
+  _calDetailDate=dateStr;
+  _calDetailExpanded=expandId||null;
   document.getElementById('cal-detail-date').textContent=formatDateLong(dateStr);
+  renderCalDetail();
+  document.getElementById('cal-detail-overlay').classList.add('open');
+  setTimeout(()=>document.getElementById('cal-detail-panel').classList.add('open'),10);
+}
+
+let _calDetailDate=null,_calDetailExpanded=null;
+
+function renderCalDetail(){
+  const dateStr=_calDetailDate;
+  const evs=records.filter(r=>r.date===dateStr);
   const container=document.getElementById('cal-detail-items');
   if(!evs.length){
     container.innerHTML=`<div class="cal-detail-empty">Bu tarihte kayıt yok.</div><button class="cal-add-btn" onclick="closeCalDetail();openModal(null,'${dateStr}')">+ Bu Tarihe Kayıt Ekle</button>`;
-  }else{
-    container.innerHTML=evs.map(r=>{
-      const d=r.hesapDetay;
-      let detailHTML='';
-      if(r.type==='sure'&&d){detailHTML=`<div class="cal-detail-hesap">${buildHesapHTML(d)}</div>`;}
-      return`<div class="cal-detail-item">
-        <div class="cal-detail-item-type">
-          <span class="badge badge-${r.type==="tekrar"?"tekrar-type":r.type}">${typeLabel(r.type)}</span>
-          ${r.dal?'<span style="font-size:11px;color:var(--text2);">'+dalLabel(r.dal)+'</span>':''}
-          ${r.saat?'<span style="font-size:12px;font-weight:600;color:var(--navy);">⏰ '+r.saat+'</span>':''}
-        </div>
-        <div class="cal-detail-item-title">${getBaslik(r)}</div>
-        ${r.muvekkil?`<div class="cal-detail-item-row"><strong>Müvekkil:</strong> ${r.muvekkil}</div>`:''}
-        ${r.mahkeme?`<div class="cal-detail-item-row"><strong>Mahkeme:</strong> ${r.mahkeme}</div>`:''}
-        ${r.dava?`<div class="cal-detail-item-row"><strong>Dava No:</strong> ${r.dava}</div>`:''}
-        ${r.not?`<div class="cal-detail-item-row"><strong>Not:</strong> ${r.not}</div>`:''}
-        ${detailHTML}
-        ${r.tekrarTipi?`<div style="margin-top:8px;padding:6px 10px;background:#e0e7ff;border-radius:8px;font-size:12px;color:#3730a3;display:flex;align-items:center;justify-content:space-between;"><span>↻ ${tekrarTipiLabel(r.tekrarTipi)} tekrarlayan iş${r.tekrarBitis?' · Bitiş: '+formatDate(r.tekrarBitis):''}</span><button style="background:none;border:none;cursor:pointer;color:#dc2626;font-size:11px;font-family:inherit;" onclick="deleteTekrarHepsi(${r.id})">Tümünü sil</button></div>`:''}
-        ${r.tekrarAnaId?`<div style="margin-top:8px;padding:6px 10px;background:#e0e7ff;border-radius:8px;font-size:12px;color:#3730a3;">↻ Tekrarlayan iş (otomatik oluşturuldu)</div>`:''}
-        <div class="cal-detail-item-actions">
-          <button class="icon-btn" style="${r.tamamlandi?'color:#22c55e;border-color:#22c55e;font-weight:600;':''}" onclick="toggleTamamlandi(${r.id})">${r.tamamlandi?'✓ Tamamlandı':'○ Tamamlandı işaretle'}</button>
+    return;
+  }
+  const typeDot={sure:'#ef4444',durusma:'#3b82f6',genel:'#22c55e',tekrar:'#f59e0b'};
+  let html=evs.map(r=>{
+    const isExp=_calDetailExpanded===r.id;
+    const dot=typeDot[r.type]||'#9aa0ac';
+    const tStyle=r.tamamlandi?'opacity:0.5;':'';
+    const d=r.hesapDetay;
+    let expHTML='';
+    if(isExp){
+      let detHTML='';
+      if(r.type==='sure'&&d) detHTML=`<div style="margin-top:8px;border-radius:8px;overflow:hidden;border:1px solid var(--border);">${buildHesapHTML(d)}</div>`;
+      expHTML=`<div style="padding:10px 14px 14px;border-top:1px solid var(--border);background:var(--surface);">
+        ${r.muvekkil?`<div style="font-size:12px;color:var(--text2);margin-bottom:4px;"><b>Müvekkil:</b> ${r.muvekkil}</div>`:''}
+        ${r.mahkeme?`<div style="font-size:12px;color:var(--text2);margin-bottom:4px;"><b>Mahkeme:</b> ${r.mahkeme}</div>`:''}
+        ${r.dava?`<div style="font-size:12px;color:var(--text2);margin-bottom:4px;"><b>Dava No:</b> ${r.dava}</div>`:''}
+        ${r.not?`<div style="font-size:12px;color:var(--text2);margin-bottom:4px;"><b>Not:</b> ${r.not}</div>`:''}
+        ${detHTML}
+        ${r.tekrarTipi?`<div style="margin-top:8px;padding:5px 10px;background:#fef3c7;border-radius:6px;font-size:11px;color:#92400e;display:flex;justify-content:space-between;">
+          <span>↻ ${tekrarTipiLabel(r.tekrarTipi)}${r.tekrarBitis?' · Bitiş: '+formatDate(r.tekrarBitis):''}</span>
+          <button style="background:none;border:none;cursor:pointer;color:#dc2626;font-size:11px;font-family:inherit;" onclick="deleteTekrarHepsi(${r.id})">Tümünü sil</button>
+        </div>`:''}
+        ${r.tekrarAnaId?`<div style="margin-top:8px;padding:5px 10px;background:#fef3c7;border-radius:6px;font-size:11px;color:#92400e;">↻ Tekrarlayan iş</div>`:''}
+        <div style="display:flex;gap:7px;margin-top:10px;">
+          <button class="icon-btn" style="${r.tamamlandi?'color:#22c55e;border-color:#22c55e;font-weight:600;':''}" onclick="toggleTamamlandi(${r.id})">${r.tamamlandi?'✓ Tamamlandı':'○ Tamamlandı'}</button>
           <button class="icon-btn" onclick="closeCalDetail();openModal(records.find(x=>x.id===${r.id}))">Düzenle</button>
           <button class="icon-btn del" onclick="deleteRecord(${r.id})">Sil</button>
         </div>
       </div>`;
-    }).join('')+`<div style="width:100%;padding-top:4px;"><button class="cal-add-btn" onclick="closeCalDetail();openModal(null,'${dateStr}')">+ Bu Tarihe Kayıt Ekle</button></div>`;
-  }
-  document.getElementById('cal-detail-overlay').classList.add('open');
-  setTimeout(()=>document.getElementById('cal-detail-panel').classList.add('open'),10);
-}
-// ── SÜRÜKLEME (mouse events) ──────────────────────────────────────
-let _drag = {active:false, recId:null, ghost:null, startX:0, startY:0};
-
-function calDragStart(e, id){
-  if(e.button !== 0) return;
-  _drag.recId = id;
-  _drag.startX = e.clientX;
-  _drag.startY = e.clientY;
-  _drag.active = false;
-
-  const ghost = document.createElement('div');
-  const rec = records.find(r=>r.id===id);
-  ghost.textContent = rec ? (rec.muvekkil||getBaslik(rec)) : '';
-  ghost.style.cssText = 'position:fixed;padding:6px 12px;background:var(--navy);color:#fff;border-radius:8px;font-size:12px;pointer-events:none;z-index:9999;opacity:0;transition:opacity .1s;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
-  document.body.appendChild(ghost);
-  _drag.ghost = ghost;
-
-  document.addEventListener('mousemove', calMouseMove);
-  document.addEventListener('mouseup', calMouseUp);
-  e.preventDefault();
-}
-
-function calMouseMove(e){
-  if(!_drag.recId) return;
-  const dx = Math.abs(e.clientX - _drag.startX);
-  const dy = Math.abs(e.clientY - _drag.startY);
-  if(!_drag.active && (dx > 5 || dy > 5)){
-    _drag.active = true;
-    _drag.ghost.style.opacity = '0.95';
-  }
-  if(_drag.active && _drag.ghost){
-    _drag.ghost.style.left = (e.clientX + 12) + 'px';
-    _drag.ghost.style.top = (e.clientY - 16) + 'px';
-    // Hücreleri vurgula
-    document.querySelectorAll('.cal-cell.drag-over').forEach(x=>x.classList.remove('drag-over'));
-    const el = document.elementFromPoint(e.clientX, e.clientY);
-    const cell = el && el.closest('.cal-cell');
-    if(cell && cell.dataset.date) cell.classList.add('drag-over');
-  }
-}
-
-async function calMouseUp(e){
-  document.removeEventListener('mousemove', calMouseMove);
-  document.removeEventListener('mouseup', calMouseUp);
-  document.querySelectorAll('.cal-cell.drag-over').forEach(x=>x.classList.remove('drag-over'));
-  if(_drag.ghost){ _drag.ghost.remove(); _drag.ghost = null; }
-
-  if(_drag.active && _drag.recId){
-    const el = document.elementFromPoint(e.clientX, e.clientY);
-    const cell = el && el.closest('.cal-cell');
-    const dateStr = cell && cell.dataset.date;
-    if(dateStr){
-      const rec = records.find(r=>r.id===_drag.recId);
-      if(rec && rec.date !== dateStr){
-        if(rec.tekrarAnaId){ alert('Otomatik tekrar kayıtları taşınamaz.'); }
-        else {
-          const{error} = await sb.from('kayitlar').update({date:dateStr}).eq('id',_drag.recId);
-          if(error) alert('Taşıma hatası: '+error.message);
-          else await loadRecords();
-        }
-      }
     }
-  }
-  _drag = {active:false, recId:null, ghost:null, startX:0, startY:0};
+    return `<div style="border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:6px;${tStyle}">
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;background:var(--surface);" onclick="toggleCalItem(${r.id})">
+        <div style="width:10px;height:10px;border-radius:50%;background:${dot};flex-shrink:0;"></div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${r.tamamlandi?'✓ ':''}${getBaslik(r)}</div>
+          ${r.muvekkil||r.saat?`<div style="font-size:11px;color:var(--text2);margin-top:1px;">${r.muvekkil||''}${r.saat?' · ⏰'+r.saat:''}</div>`:''}
+        </div>
+        <div style="font-size:11px;color:var(--text3);flex-shrink:0;">${isExp?'▲':'▼'}</div>
+      </div>
+      ${expHTML}
+    </div>`;
+  }).join('');
+  html+=`<div style="padding-top:4px;"><button class="cal-add-btn" onclick="closeCalDetail();openModal(null,'${dateStr}')">+ Bu Tarihe Kayıt Ekle</button></div>`;
+  container.innerHTML=html;
 }
+
+function toggleCalItem(id){
+  _calDetailExpanded=_calDetailExpanded===id?null:id;
+  renderCalDetail();
+}
+
 function closeCalDetail(){
   document.getElementById('cal-detail-panel').classList.remove('open');
   document.getElementById('cal-detail-overlay').classList.remove('open');
