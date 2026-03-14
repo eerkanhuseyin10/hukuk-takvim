@@ -301,18 +301,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
       <span id="sync-text">Bağlı</span>
     </div>
 
-    <!-- TAMAMLANAN İŞLER -->
-    <div class="view" id="view-tamamlanan">
-      <div class="filter-bar">
-        <input type="text" id="filter-tamamlanan" placeholder="🔍 Arama..." oninput="renderTamamlanan()">
-      </div>
-      <div class="table-wrap">
-        <table class="list-table">
-          <thead><tr><th>Tarih</th><th>Başlık</th><th>Müvekkil</th><th>Tür</th><th>Dal</th><th></th></tr></thead>
-          <tbody id="tamamlanan-tbody"></tbody>
-        </table>
-      </div>
-    </div>
+
   </div>
 </div>
 
@@ -402,8 +391,19 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
         </table>
       </div>
     </div>
+    <!-- TAMAMLANAN İŞLER -->
+    <div class="view" id="view-tamamlanan">
+      <div class="filter-bar">
+        <input type="text" id="filter-tamamlanan" placeholder="🔍 Arama..." oninput="renderTamamlanan()">
+      </div>
+      <div class="table-wrap">
+        <table class="list-table">
+          <thead><tr><th>Tarih</th><th>Başlık</th><th>Müvekkil</th><th>Tür</th><th>Dal</th><th></th></tr></thead>
+          <tbody id="tamamlanan-tbody"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
-</div>
 </div>
 
 <!-- MOBİL ALT MENÜ -->
@@ -1030,7 +1030,7 @@ function typeLabel(t,dal){
   }
   return{sure:'Süreli İş',genel:'Genel İş',tekrar:'Tekrarlayan'}[t]||t;
 }
-function dalLabel(d){return{ceza:'Ceza',hukuk:'Hukuk',idare:'İdare',icra:'İcra',tahkim:'Tahkim',arabuluculuk:'Arabuluculuk',randevu:'Randevu',kesif:'Keşif'}[d]||'—';}
+function dalLabel(d){return{ceza:'Ceza',hukuk:'Hukuk',idare:'İdare',icra:'İcra',tahkim:'Tahkim'}[d]||'—';}
 function tebligLabel(t){return{etebligat:'E-Tebligat',tefhim:'Tefhim',fiziki:'Fiziki tebligat'}[t]||t||'—';}
 function getBaslik(r){return r.baslik||r.istipi||r.not||'—';}
 function typeBadgeColor(t){return{durusma:'var(--blue-light)',sure:'var(--amber)',genel:'var(--green-light)'}[t]||'var(--border)';}
