@@ -2039,7 +2039,13 @@ function toggleKararForm(){
 }
 function toggleErtelendiForm(){
   const f=document.getElementById('ertelendi-form');
-  f.style.display=f.style.display==='none'?'block':'none';
+  const isOpening = f.style.display==='none';
+  f.style.display=isOpening?'block':'none';
+  if(isOpening){
+    // Her açılışta tarihi temizle
+    const t=document.getElementById('ertelendi-tarih');
+    if(t){t.value='';t.defaultValue='';}
+  }
   // Karar formu kapat
   document.getElementById('karar-form').style.display='none';
 }
