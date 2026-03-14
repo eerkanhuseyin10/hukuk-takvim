@@ -190,8 +190,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .istipi-item:last-child{border-bottom:none;}
 .istipi-item:hover,.istipi-item.sel{background:var(--navy-light);}
 .istipi-item.sel{font-weight:500;color:var(--navy);}
-.yil-picker{display:flex;align-items:center;gap:4px;}
-.yil-select{padding:9px 8px;font-size:14px;font-weight:600;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface);color:var(--text);font-family:inherit;cursor:pointer;-webkit-appearance:none;text-align:center;}
+.yil-picker{display:flex;align-items:center;gap:6px;}
+.yil-select{padding:9px 10px;font-size:14px;font-weight:600;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface);color:var(--text);font-family:inherit;cursor:pointer;width:90px;}
 .yil-select:focus{outline:none;border-color:var(--navy);}
 .yil-val{display:none;}
 
@@ -415,19 +415,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
           <div class="fg">
             <label>Esas No</label>
             <div style="display:flex;gap:6px;align-items:center;">
-              <div class="yil-picker">
-                <button class="yil-btn" onclick="changeYil('f-dava-yil',-1)">‹</button>
-                <div class="yil-drum" id="f-dava-yil-drum" 
-                  onmousedown="drumStart(event,'f-dava-yil')" 
-                  ontouchstart="drumStart(event,'f-dava-yil')"
-                  onwheel="drumWheel(event,'f-dava-yil')">
-                  <div class="yil-drum-inner" id="f-dava-yil-drum-inner"></div>
-                </div>
-                <input type="hidden" id="f-dava-yil" value="2026">
-                <button class="yil-btn" onclick="changeYil('f-dava-yil',1)">›</button>
-              </div>
-              <span style="color:var(--text3);">/</span>
-              <input type="text" id="f-dava-no" style="flex:1;" placeholder="No">
+      <div style="display:flex;gap:8px;align-items:center;">
+              <select id="f-dava-yil" style="padding:9px 10px;font-size:14px;border:1px solid var(--border2);border-radius:10px;background:var(--surface);color:var(--text);font-family:inherit;width:90px;"><option value="2020">2020</option><option value="2021">2021</option><option value="2022">2022</option><option value="2023">2023</option><option value="2024">2024</option><option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option></select>
+              <span style="color:var(--text3);font-size:16px;">/</span>
+              <input type="text" id="f-dava-no" style="flex:1;" placeholder="Esas No">
+            </div>
             </div>
           </div>
           <div class="fg" style="margin-bottom:0;"><input type="text" id="f-muvekkil" placeholder="Müvekkil"></div>
@@ -460,19 +452,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
           <div class="fg">
             <label>Esas No</label>
             <div style="display:flex;gap:6px;align-items:center;">
-              <div class="yil-picker">
-                <button class="yil-btn" onclick="changeYil('f-durusma-yil',-1)">‹</button>
-                <div class="yil-drum" id="f-durusma-yil-drum" 
-                  onmousedown="drumStart(event,'f-durusma-yil')" 
-                  ontouchstart="drumStart(event,'f-durusma-yil')"
-                  onwheel="drumWheel(event,'f-durusma-yil')">
-                  <div class="yil-drum-inner" id="f-durusma-yil-drum-inner"></div>
-                </div>
-                <input type="hidden" id="f-durusma-yil" value="2026">
-                <button class="yil-btn" onclick="changeYil('f-durusma-yil',1)">›</button>
-              </div>
-              <span style="color:var(--text3);">/</span>
+      <div style="display:flex;gap:8px;align-items:center;">
+              <select id="f-durusma-yil" style="padding:9px 10px;font-size:14px;border:1px solid var(--border2);border-radius:10px;background:var(--surface);color:var(--text);font-family:inherit;width:90px;"><option value="2020">2020</option><option value="2021">2021</option><option value="2022">2022</option><option value="2023">2023</option><option value="2024">2024</option><option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option></select>
+              <span style="color:var(--text3);font-size:16px;">/</span>
               <input type="text" id="f-durusma-no" style="flex:1;" placeholder="Esas No">
+            </div>
             </div>
           </div>
           <div class="fg" style="margin-bottom:0;"><input type="text" id="f-durusma-muvekkil" placeholder="Müvekkil"></div>
@@ -497,19 +481,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
           <div class="fg">
             <label>Esas No</label>
             <div style="display:flex;gap:6px;align-items:center;">
-              <div class="yil-picker">
-                <button class="yil-btn" onclick="changeYil('f-genel-yil',-1)">‹</button>
-                <div class="yil-drum" id="f-genel-yil-drum" 
-                  onmousedown="drumStart(event,'f-genel-yil')" 
-                  ontouchstart="drumStart(event,'f-genel-yil')"
-                  onwheel="drumWheel(event,'f-genel-yil')">
-                  <div class="yil-drum-inner" id="f-genel-yil-drum-inner"></div>
-                </div>
-                <input type="hidden" id="f-genel-yil" value="2026">
-                <button class="yil-btn" onclick="changeYil('f-genel-yil',1)">›</button>
-              </div>
-              <span style="color:var(--text3);">/</span>
+      <div style="display:flex;gap:8px;align-items:center;">
+              <select id="f-genel-yil" style="padding:9px 10px;font-size:14px;border:1px solid var(--border2);border-radius:10px;background:var(--surface);color:var(--text);font-family:inherit;width:90px;"><option value="2020">2020</option><option value="2021">2021</option><option value="2022">2022</option><option value="2023">2023</option><option value="2024">2024</option><option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option></select>
+              <span style="color:var(--text3);font-size:16px;">/</span>
               <input type="text" id="f-genel-no" style="flex:1;" placeholder="Esas No">
+            </div>
             </div>
           </div>
           <div class="fg" style="margin-bottom:0;"><input type="text" id="f-genel-muvekkil" placeholder="Müvekkil"></div>
