@@ -1012,7 +1012,7 @@ function renderDashboard(){
     gecenEl.innerHTML=gecenList.map(r=>{
       const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);
       const diff=Math.abs(Math.round((d-today)/86400000));
-      return`<div class="urgent-item" style="border-left-color:#f59e0b;" onclick="showCalDetail('${r.date}')">
+      return`<div class="urgent-item" style="border-left-color:#f59e0b;" onclick="showCalDetail('${r.date}',${r.id})">
         <div>
           <div class="u-title">${r.muvekkil||'Müvekkil belirtilmedi'} — ${getBaslik(r)}</div>
           <div class="u-sub">${r.dava||''} ${r.dal?'· '+dalLabel(r.dal):''}</div>
@@ -1068,7 +1068,7 @@ function renderDashboard(){
   if(!displayList.length){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:18px;">Kayıt yok</td></tr>';return;}
   tb.innerHTML=displayList.map(r=>{
     const lbl=gunKaldiLabel(r.date,r.type);
-    return `<tr onclick="showCalDetail('${r.date}')">
+    return `<tr onclick="showCalDetail('${r.date}',${r.id})">
       <td>${formatDate(r.date)}${r.saat?'<br><small style="color:var(--text2)">'+r.saat+'</small>':''}<br>${lbl}</td>
       <td>${getBaslik(r)}</td>
       <td>${r.muvekkil||'—'}</td>
