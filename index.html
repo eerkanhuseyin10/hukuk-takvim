@@ -83,7 +83,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .list-table tbody tr:hover td{background:var(--surface2);}
 .list-table tbody tr{cursor:pointer;}
 .mahkeme-wrap{position:relative;}
-.mahkeme-dropdown{position:absolute;top:100%;left:0;right:0;background:var(--surface);border:1px solid var(--border2);border-top:none;border-radius:0 0 var(--radius) var(--radius);z-index:50;max-height:260px;overflow-y:auto;display:none;box-shadow:0 4px 12px rgba(0,0,0,0.1);}
+.mahkeme-dropdown{position:absolute;top:100%;left:0;right:0;background:var(--surface);border:1px solid var(--border2);border-top:none;border-radius:0 0 var(--radius) var(--radius);z-index:50;max-height:180px;overflow-y:auto;display:none;box-shadow:0 4px 12px rgba(0,0,0,0.1);}
 .mahkeme-dropdown-item{padding:9px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--border);}
 .mahkeme-dropdown-item:last-child{border-bottom:none;}
 .mahkeme-dropdown-item:hover{background:var(--navy-light);}
@@ -120,9 +120,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .cal-cell:hover{background:var(--surface2);}
 .cal-cell.other-month{background:#fafafa;}
 .cal-cell.other-month .cal-day{color:var(--text3);}
-.cal-cell.today{background:var(--surface);}
+.cal-cell.today{background:var(--navy-light);}
 .cal-cell.tatil-gun{background:#fff5f5;}
-.cal-cell.today .cal-day{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:var(--navy);color:#fff!important;border-radius:50%;font-weight:700;font-size:11px;}
+.cal-cell.today .cal-day{color:var(--navy);font-weight:700;}
 .cal-day{font-size:12px;font-weight:500;margin-bottom:2px;}
 .cal-event{font-size:10px;padding:2px 4px;border-radius:3px;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;line-height:1.3;}
 .ev-durusma{background:var(--blue-light);color:var(--blue-dark);}
@@ -162,15 +162,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
 /* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(15,22,40,0.5);display:flex;align-items:flex-end;justify-content:center;z-index:200;padding:0;}
-.durusma-sonuc-overlay{position:fixed;inset:0;background:rgba(15,22,40,0.5);display:flex;align-items:flex-end;justify-content:center;z-index:270;padding:0;}
-.durusma-sonuc-modal{background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:80vh;overflow-y:auto;margin:0 auto;padding-bottom:20px;}
-@media(min-width:640px){.durusma-sonuc-overlay{align-items:center;padding:16px;}.durusma-sonuc-modal{border-radius:var(--radius-lg);}}
-.sonuc-btn{width:100%;padding:14px 16px;font-size:14px;font-weight:500;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;background:var(--surface);color:var(--text);font-family:inherit;text-align:left;margin-bottom:8px;display:flex;align-items:center;gap:10px;transition:all .15s;}
-.sonuc-btn:hover{background:var(--surface2);}
-.sonuc-btn.ertelendi{border-color:#f59e0b;color:#92400e;}
-.sonuc-btn.karar{border-color:#22c55e;color:#166534;}
-.sonuc-btn.mazeret{border-color:#3b82f6;color:#1e40af;}
-.ertelendi-form{display:none;background:var(--navy-light);border-radius:var(--radius);padding:12px;margin-bottom:8px;}
 .kayit-modal-overlay{position:fixed;inset:0;background:rgba(15,22,40,0.5);display:flex;align-items:flex-end;justify-content:center;z-index:250;padding:0;}
 .muvekkil-modal-overlay{position:fixed;inset:0;background:rgba(15,22,40,0.5);display:flex;align-items:flex-end;justify-content:center;z-index:260;padding:0;}
 .muvekkil-modal{background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-width:640px;max-height:90vh;overflow-y:auto;overflow-x:hidden;margin:0 auto;}
@@ -182,19 +173,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .muvekkil-is-item:hover{background:var(--surface2);}
 .muvekkil-is-item:last-child{border-bottom:none;}
 .mv-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.mv-link{color:var(--navy);font-weight:500;text-decoration:underline;cursor:pointer;display:inline-block;padding:2px 4px;margin:-2px -4px;}
+.mv-link{color:var(--navy);font-weight:500;text-decoration:underline;cursor:pointer;}
 .mv-link:hover{color:var(--navy-dark);}
 .kayit-modal{background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-width:580px;max-height:90vh;overflow-y:auto;overflow-x:hidden;margin:0 auto;}
-@media(min-width:640px){.durusma-sonuc-overlay{position:fixed;inset:0;background:rgba(15,22,40,0.5);display:flex;align-items:flex-end;justify-content:center;z-index:270;padding:0;}
-.durusma-sonuc-modal{background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:80vh;overflow-y:auto;margin:0 auto;padding-bottom:20px;}
-@media(min-width:640px){.durusma-sonuc-overlay{align-items:center;padding:16px;}.durusma-sonuc-modal{border-radius:var(--radius-lg);}}
-.sonuc-btn{width:100%;padding:14px 16px;font-size:14px;font-weight:500;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;background:var(--surface);color:var(--text);font-family:inherit;text-align:left;margin-bottom:8px;display:flex;align-items:center;gap:10px;transition:all .15s;}
-.sonuc-btn:hover{background:var(--surface2);}
-.sonuc-btn.ertelendi{border-color:#f59e0b;color:#92400e;}
-.sonuc-btn.karar{border-color:#22c55e;color:#166534;}
-.sonuc-btn.mazeret{border-color:#3b82f6;color:#1e40af;}
-.ertelendi-form{display:none;background:var(--navy-light);border-radius:var(--radius);padding:12px;margin-bottom:8px;}
-.kayit-modal-overlay{align-items:center;padding:16px;}.kayit-modal{border-radius:var(--radius-lg);}}
+@media(min-width:640px){.kayit-modal-overlay{align-items:center;padding:16px;}.kayit-modal{border-radius:var(--radius-lg);}}
 .kayit-modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 13px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:1;}
 .kayit-modal-body{padding:16px 20px 24px;}
 .kayit-row{display:flex;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;}
@@ -395,7 +377,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
         </div>
         <div class="cal-grid" id="cal-grid" ontouchstart="calTouchStart(event)" ontouchend="calTouchEnd(event)"></div>
         <div class="cal-legend">
-          <span><div class="cal-legend-dot" style="background:var(--blue-light)"></div>Duruşma / Randevu</span>
+          <span><div class="cal-legend-dot" style="background:var(--blue-light)"></div>Duruşma</span>
           <span><div class="cal-legend-dot" style="background:#ef4444"></div>Süreli İş</span>
           <span><div class="cal-legend-dot" style="background:var(--green-light)"></div>Genel İş</span>
           <span><div class="cal-legend-dot" style="background:#fbbf24"></div>Tekrarlayan</span>
@@ -406,7 +388,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <!-- LİSTE -->
     <div class="view" id="view-liste">
       <div class="filter-bar">
-        <input type="text" id="filter-search" placeholder="🔍 Arama..." oninput="renderListe()" autocomplete="new-password">
+        <input type="text" id="filter-search" placeholder="🔍 Arama..." oninput="renderListe()">
         <select id="filter-type" onchange="renderListe()">
           <option value="">Tüm Türler</option>
           <option value="durusma">Duruşma / Randevu</option>
@@ -425,7 +407,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <!-- TAMAMLANAN İŞLER -->
     <div class="view" id="view-tamamlanan">
       <div class="filter-bar">
-        <input type="text" id="filter-tamamlanan" placeholder="🔍 Arama..." oninput="renderTamamlanan()" autocomplete="new-password">
+        <input type="text" id="filter-tamamlanan" placeholder="🔍 Arama..." oninput="renderTamamlanan()">
       </div>
       <div class="table-wrap">
         <table class="list-table">
@@ -533,18 +515,18 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
         <div class="sure-hesap" id="sure-hesap-box"></div>
         <div class="dosya-box">
           <div class="dosya-box-title">Dosya Bilgileri</div>
-          <div class="fg"><div class="mahkeme-wrap"><input type="text" id="f-mahkeme" placeholder="Gönderen (opsiyonel)" autocomplete="new-password" oninput="showMahkemeDropdown('f-mahkeme','dd-mahkeme')" onfocus="showMahkemeDropdown('f-mahkeme','dd-mahkeme')" onblur="setTimeout(()=>{const d=document.getElementById('dd-mahkeme');if(d)d.style.display='none';},200)"><div class="mahkeme-dropdown" id="dd-mahkeme"></div></div></div>
+          <div class="fg"><div class="mahkeme-wrap"><input type="text" id="f-mahkeme" placeholder="Gönderen (opsiyonel)" autocomplete="off" oninput="showMahkemeDropdown('f-mahkeme','dd-mahkeme')" onfocus="showMahkemeDropdown('f-mahkeme','dd-mahkeme')" onblur="setTimeout(()=>{const d=document.getElementById('dd-mahkeme');if(d)d.style.display='none';},200)"><div class="mahkeme-dropdown" id="dd-mahkeme"></div></div></div>
           <div class="fg">
             <label>Esas No</label>
             <div style="display:flex;gap:6px;align-items:center;">
       <div style="display:flex;gap:8px;align-items:center;">
               <select id="f-dava-yil" style="padding:9px 10px;font-size:14px;border:1px solid var(--border2);border-radius:10px;background:var(--surface);color:var(--text);font-family:inherit;width:90px;"><option value="2020">2020</option><option value="2021">2021</option><option value="2022">2022</option><option value="2023">2023</option><option value="2024">2024</option><option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option></select>
               <span style="color:var(--text3);font-size:16px;">/</span>
-              <input type="text" id="f-dava-no" style="flex:1;" placeholder="Esas No" autocomplete="new-password">
+              <input type="text" id="f-dava-no" style="flex:1;" placeholder="Esas No">
             </div>
             </div>
           </div>
-          <div class="fg" style="margin-bottom:0;"><input type="text" id="f-muvekkil" placeholder="Müvekkil" autocomplete="new-password"></div>
+          <div class="fg" style="margin-bottom:0;"><input type="text" id="f-muvekkil" placeholder="Müvekkil"></div>
         </div>
         <div class="fg" style="margin-bottom:0;">
           <label>Açıklama (opsiyonel)</label>
@@ -554,8 +536,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
       <!-- DURUŞMA -->
       <div id="form-durusma" style="display:none;">
-        <div class="fg" id="durusma-mahkeme-box"><label id="durusma-baslik-label">Mahkeme Adı</label><div class="mahkeme-wrap"><input type="text" id="f-durusma-mahkeme-adi" placeholder="Mahkeme adını girin" autocomplete="new-password" oninput="showMahkemeDropdown('f-durusma-mahkeme-adi','dd-durusma-mahkeme')" onfocus="showMahkemeDropdown('f-durusma-mahkeme-adi','dd-durusma-mahkeme')" onblur="setTimeout(()=>{const d=document.getElementById('dd-durusma-mahkeme');if(d)d.style.display='none';},200)"><div class="mahkeme-dropdown" id="dd-durusma-mahkeme"></div></div></div>
-        <div class="fg"><label>Müvekkil</label><input type="text" id="f-durusma-muvekkil" placeholder="Müvekkil adı" autocomplete="new-password"></div>
+        <div class="fg" id="durusma-mahkeme-box"><label id="durusma-baslik-label">Mahkeme Adı</label><div class="mahkeme-wrap"><input type="text" id="f-durusma-mahkeme-adi" placeholder="Mahkeme adını girin" autocomplete="off" oninput="showMahkemeDropdown('f-durusma-mahkeme-adi','dd-durusma-mahkeme')" onfocus="showMahkemeDropdown('f-durusma-mahkeme-adi','dd-durusma-mahkeme')" onblur="setTimeout(()=>{const d=document.getElementById('dd-durusma-mahkeme');if(d)d.style.display='none';},200)"><div class="mahkeme-dropdown" id="dd-durusma-mahkeme"></div></div></div>
+        <div class="fg"><label>Müvekkil</label><input type="text" id="f-durusma-muvekkil" placeholder="Müvekkil adı"></div>
         <div class="frow">
           <div class="fg"><label>Tarih</label><input type="date" id="f-durusma-tarih"></div>
           <div class="fg"><label>Saat</label><input type="time" id="f-durusma-saat"></div>
@@ -571,8 +553,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
             <button class="chip" onclick="setChip('dal2','arabuluculuk',this)">Arabuluculuk</button>
             <button class="chip" onclick="setChip('dal2','randevu',this)">Randevu</button>
             <button class="chip" onclick="setChip('dal2','kesif',this)">Keşif</button>
-            <button class="chip" onclick="setChip('dal2','tevkil',this)">Tevkil</button>
-            <button class="chip" onclick="setChip('dal2','cmk',this)">CMK</button>
           </div>
         </div>
         <div class="dosya-box" id="durusma-dosya-box">
@@ -582,7 +562,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
             <div style="display:flex;gap:6px;align-items:center;">
               <select id="f-durusma-yil" style="padding:9px 10px;font-size:14px;border:1px solid var(--border2);border-radius:10px;background:var(--surface);color:var(--text);font-family:inherit;width:92px;"><option value="2020">2020</option><option value="2021">2021</option><option value="2022">2022</option><option value="2023">2023</option><option value="2024">2024</option><option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option></select>
               <span style="color:var(--text3);font-size:16px;">/</span>
-              <input type="text" id="f-durusma-no" style="flex:1;" placeholder="Esas No" autocomplete="new-password">
+              <input type="text" id="f-durusma-no" style="flex:1;" placeholder="Esas No">
             </div>
           </div>
         </div>
@@ -591,7 +571,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
       <!-- GENEL İŞ -->
       <div id="form-genel" style="display:none;">
-        <div class="fg"><label>İş Başlığı</label><input type="text" id="f-genel-baslik" placeholder="İş başlığı girin" autocomplete="new-password"></div>
+        <div class="fg"><label>İş Başlığı</label><input type="text" id="f-genel-baslik" placeholder="İş başlığı girin"></div>
         <div class="frow">
           <div class="fg"><label>Tarih</label><input type="date" id="f-genel-tarih"></div>
           <div class="fg"><label>Saat (opsiyonel)</label><input type="time" id="f-genel-saat"></div>
@@ -616,24 +596,24 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
           <span class="collapsible-arrow">▶</span>
         </div>
         <div class="collapsible-body">
-          <div class="fg"><label>Mahkeme</label><div class="mahkeme-wrap"><input type="text" id="f-genel-mahkeme" placeholder="Mahkeme" autocomplete="new-password" oninput="showMahkemeDropdown('f-genel-mahkeme','dd-genel-mahkeme')" onfocus="showMahkemeDropdown('f-genel-mahkeme','dd-genel-mahkeme')" onblur="setTimeout(()=>{const d=document.getElementById('dd-genel-mahkeme');if(d)d.style.display='none';},200)"><div class="mahkeme-dropdown" id="dd-genel-mahkeme"></div></div></div>
+          <div class="fg"><label>Mahkeme</label><div class="mahkeme-wrap"><input type="text" id="f-genel-mahkeme" placeholder="Mahkeme" autocomplete="off" oninput="showMahkemeDropdown('f-genel-mahkeme','dd-genel-mahkeme')" onfocus="showMahkemeDropdown('f-genel-mahkeme','dd-genel-mahkeme')" onblur="setTimeout(()=>{const d=document.getElementById('dd-genel-mahkeme');if(d)d.style.display='none';},200)"><div class="mahkeme-dropdown" id="dd-genel-mahkeme"></div></div></div>
           <div class="fg">
             <label>Esas No</label>
             <div style="display:flex;gap:6px;align-items:center;">
       <div style="display:flex;gap:8px;align-items:center;">
               <select id="f-genel-yil" style="padding:9px 10px;font-size:14px;border:1px solid var(--border2);border-radius:10px;background:var(--surface);color:var(--text);font-family:inherit;width:90px;"><option value="2020">2020</option><option value="2021">2021</option><option value="2022">2022</option><option value="2023">2023</option><option value="2024">2024</option><option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option></select>
               <span style="color:var(--text3);font-size:16px;">/</span>
-              <input type="text" id="f-genel-no" style="flex:1;" placeholder="Esas No" autocomplete="new-password">
+              <input type="text" id="f-genel-no" style="flex:1;" placeholder="Esas No">
             </div>
             </div>
           </div>
-          <div class="fg" style="margin-bottom:0;"><input type="text" id="f-genel-muvekkil" placeholder="Müvekkil" autocomplete="new-password"></div>
+          <div class="fg" style="margin-bottom:0;"><input type="text" id="f-genel-muvekkil" placeholder="Müvekkil"></div>
         </div>
       </div>
 
       <!-- TEKRARLAYAN İŞ -->
       <div id="form-tekrar" style="display:none;">
-        <div class="fg" style="width:100%;"><label>İş Başlığı</label><input type="text" id="f-tekrar-baslik" placeholder="Örn: Kira, Muhasebe, KDV, 4B Prim Borcu..." autocomplete="new-password"></div>
+        <div class="fg" style="width:100%;"><label>İş Başlığı</label><input type="text" id="f-tekrar-baslik" placeholder="Örn: Kira, Muhasebe, KDV, 4B Prim Borcu..."></div>
         <div class="fg"><label>Başlangıç Tarihi</label><input type="date" id="f-tekrar-tarih"></div>
         <div class="fg">
           <label>Tekrar Sıklığı</label>
@@ -665,353 +645,28 @@ const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSI
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 const MAHKEMELER = [
-  // ── BALIKESİR CEZA MAHKEMELERİ ──
-  "Balıkesir 1. Ağır Ceza Mahkemesi","Balıkesir 2. Ağır Ceza Mahkemesi",
-  "Balıkesir 3. Ağır Ceza Mahkemesi","Balıkesir 4. Ağır Ceza Mahkemesi",
-  "Balıkesir 1. Asliye Ceza Mahkemesi","Balıkesir 2. Asliye Ceza Mahkemesi",
-  "Balıkesir 3. Asliye Ceza Mahkemesi","Balıkesir 4. Asliye Ceza Mahkemesi",
-  "Balıkesir 5. Asliye Ceza Mahkemesi","Balıkesir 6. Asliye Ceza Mahkemesi",
-  "Balıkesir 7. Asliye Ceza Mahkemesi","Balıkesir 8. Asliye Ceza Mahkemesi",
-  "Balıkesir 9. Asliye Ceza Mahkemesi",
-  "Balıkesir Çocuk Mahkemesi","Balıkesir Çocuk Ağır Ceza Mahkemesi",
-  "Balıkesir İnfaz Hâkimliği",
+  "Balıkesir 1. Asliye Hukuk Mahkemesi","Balıkesir 2. Asliye Hukuk Mahkemesi","Balıkesir 3. Asliye Hukuk Mahkemesi",
+  "Balıkesir 1. Asliye Ticaret Mahkemesi","Balıkesir 1. Sulh Hukuk Mahkemesi","Balıkesir 2. Sulh Hukuk Mahkemesi",
   "Balıkesir 1. Sulh Ceza Hâkimliği","Balıkesir 2. Sulh Ceza Hâkimliği",
-  // ── BALIKESİR HUKUK MAHKEMELERİ ──
-  "Balıkesir 1. Asliye Hukuk Mahkemesi","Balıkesir 2. Asliye Hukuk Mahkemesi",
-  "Balıkesir 3. Asliye Hukuk Mahkemesi","Balıkesir 4. Asliye Hukuk Mahkemesi",
-  "Balıkesir 5. Asliye Hukuk Mahkemesi",
-  "Balıkesir Asliye Ticaret Mahkemesi",
-  "Balıkesir 1. Sulh Hukuk Mahkemesi","Balıkesir 2. Sulh Hukuk Mahkemesi",
-  "Balıkesir 3. Sulh Hukuk Mahkemesi",
-  "Balıkesir 1. Aile Mahkemesi","Balıkesir 2. Aile Mahkemesi","Balıkesir 3. Aile Mahkemesi",
-  "Balıkesir 1. İş Mahkemesi","Balıkesir 2. İş Mahkemesi",
+  "Balıkesir 1. Ağır Ceza Mahkemesi","Balıkesir 2. Ağır Ceza Mahkemesi","Balıkesir 3. Ağır Ceza Mahkemesi",
+  "Balıkesir 1. Asliye Ceza Mahkemesi","Balıkesir 2. Asliye Ceza Mahkemesi","Balıkesir 3. Asliye Ceza Mahkemesi","Balıkesir 4. Asliye Ceza Mahkemesi",
   "Balıkesir 1. İcra Hukuk Mahkemesi","Balıkesir 2. İcra Hukuk Mahkemesi",
-  "Balıkesir Kadastro Mahkemesi","Balıkesir Tüketici Mahkemesi",
-  "Balıkesir İdare Mahkemesi","Balıkesir Vergi Mahkemesi",
-  // ── BALIKESİR DİĞER ──
-  "Balıkesir Cumhuriyet Başsavcılığı",
-  "Balıkesir İcra Müdürlüğü",
-  "Balıkesir Arabuluculuk Merkezi",
-  "Balıkesir Bölge Adliye Mahkemesi",
-  "Balıkesir Bölge İdare Mahkemesi",
-  // ── SAVAŞTEPE ──
-  "Savaştepe Asliye Hukuk Mahkemesi","Savaştepe Asliye Ceza Mahkemesi",
-  "Savaştepe Sulh Hukuk Mahkemesi","Savaştepe Sulh Ceza Mahkemesi",
-  "Savaştepe İcra Hukuk Mahkemesi","Savaştepe İcra Ceza Mahkemesi",
-  "Savaştepe Cumhuriyet Başsavcılığı","Savaştepe İcra Müdürlüğü",
-  "Savaştepe Emniyet Müdürlüğü","Savaştepe Jandarma Komutanlığı",
-  // ── BALIKESİR İLÇE ADLİYELERİ ──
-  "Bandırma Ağır Ceza Mahkemesi","Bandırma Asliye Ceza Mahkemesi",
-  "Bandırma Asliye Hukuk Mahkemesi","Bandırma Aile Mahkemesi","Bandırma İş Mahkemesi",
-  "Bandırma Cumhuriyet Başsavcılığı","Bandırma İcra Müdürlüğü",
-  "Edremit Ağır Ceza Mahkemesi","Edremit Asliye Ceza Mahkemesi",
-  "Edremit Asliye Hukuk Mahkemesi","Edremit Cumhuriyet Başsavcılığı",
+  "Balıkesir İş Mahkemesi","Balıkesir 1. Aile Mahkemesi","Balıkesir 2. Aile Mahkemesi",
+  "Balıkesir İdare Mahkemesi","Balıkesir Vergi Mahkemesi","Balıkesir Kadastro Mahkemesi",
+  "Balıkesir Tüketici Mahkemesi","Balıkesir Çocuk Mahkemesi","Balıkesir Çocuk Ağır Ceza Mahkemesi",
+  "Bandırma Asliye Hukuk Mahkemesi","Bandırma Ağır Ceza Mahkemesi","Bandırma Asliye Ceza Mahkemesi",
+  "Bandırma Aile Mahkemesi","Bandırma İş Mahkemesi",
+  "Edremit Asliye Hukuk Mahkemesi","Edremit Asliye Ceza Mahkemesi","Edremit Ağır Ceza Mahkemesi",
   "Burhaniye Asliye Hukuk Mahkemesi","Burhaniye Asliye Ceza Mahkemesi",
-  "Gönen Asliye Hukuk Mahkemesi","Gönen Asliye Ceza Mahkemesi",
-  "Erdek Asliye Hukuk Mahkemesi",
-  "Manyas Asliye Hukuk Mahkemesi",
-  "Sındırgı Asliye Hukuk Mahkemesi","Sındırgı Asliye Ceza Mahkemesi",
+  "Erdek Asliye Hukuk Mahkemesi","Gönen Asliye Hukuk Mahkemesi","Gönen Asliye Ceza Mahkemesi",
+  "Manyas Asliye Hukuk Mahkemesi","Sındırgı Asliye Hukuk Mahkemesi",
   "Susurluk Asliye Hukuk Mahkemesi","Susurluk Asliye Ceza Mahkemesi",
-  "Bigadiç Asliye Hukuk Mahkemesi","Bigadiç Asliye Ceza Mahkemesi",
-  "Dursunbey Asliye Hukuk Mahkemesi","Dursunbey Asliye Ceza Mahkemesi",
-  "İvrindi Asliye Hukuk Mahkemesi","İvrindi Asliye Ceza Mahkemesi",
-  "Kepsut Asliye Hukuk Mahkemesi","Kepsut Asliye Ceza Mahkemesi",
-  // ── İZMİR CEZA MAHKEMELERİ ──
-  "İzmir 1. Ağır Ceza Mahkemesi",
-  "İzmir 2. Ağır Ceza Mahkemesi",
-  "İzmir 3. Ağır Ceza Mahkemesi",
-  "İzmir 4. Ağır Ceza Mahkemesi",
-  "İzmir 5. Ağır Ceza Mahkemesi",
-  "İzmir 6. Ağır Ceza Mahkemesi",
-  "İzmir 7. Ağır Ceza Mahkemesi",
-  "İzmir 8. Ağır Ceza Mahkemesi",
-  "İzmir 9. Ağır Ceza Mahkemesi",
-  "İzmir 10. Ağır Ceza Mahkemesi",
-  "İzmir 11. Ağır Ceza Mahkemesi",
-  "İzmir 12. Ağır Ceza Mahkemesi",
-  "İzmir 13. Ağır Ceza Mahkemesi",
-  "İzmir 14. Ağır Ceza Mahkemesi",
-  "İzmir 15. Ağır Ceza Mahkemesi",
-  "İzmir 16. Ağır Ceza Mahkemesi",
-  "İzmir 17. Ağır Ceza Mahkemesi",
-  "İzmir 18. Ağır Ceza Mahkemesi",
-  "İzmir 19. Ağır Ceza Mahkemesi",
-  "İzmir 20. Ağır Ceza Mahkemesi",
-  "İzmir 21. Ağır Ceza Mahkemesi",
-  "İzmir 22. Ağır Ceza Mahkemesi",
-  "İzmir 23. Ağır Ceza Mahkemesi",
-  "İzmir 1. Asliye Ceza Mahkemesi",
-  "İzmir 2. Asliye Ceza Mahkemesi",
-  "İzmir 3. Asliye Ceza Mahkemesi",
-  "İzmir 4. Asliye Ceza Mahkemesi",
-  "İzmir 5. Asliye Ceza Mahkemesi",
-  "İzmir 6. Asliye Ceza Mahkemesi",
-  "İzmir 7. Asliye Ceza Mahkemesi",
-  "İzmir 8. Asliye Ceza Mahkemesi",
-  "İzmir 9. Asliye Ceza Mahkemesi",
-  "İzmir 10. Asliye Ceza Mahkemesi",
-  "İzmir 11. Asliye Ceza Mahkemesi",
-  "İzmir 12. Asliye Ceza Mahkemesi",
-  "İzmir 13. Asliye Ceza Mahkemesi",
-  "İzmir 14. Asliye Ceza Mahkemesi",
-  "İzmir 15. Asliye Ceza Mahkemesi",
-  "İzmir 16. Asliye Ceza Mahkemesi",
-  "İzmir 17. Asliye Ceza Mahkemesi",
-  "İzmir 18. Asliye Ceza Mahkemesi",
-  "İzmir 19. Asliye Ceza Mahkemesi",
-  "İzmir 20. Asliye Ceza Mahkemesi",
-  "İzmir 21. Asliye Ceza Mahkemesi",
-  "İzmir 22. Asliye Ceza Mahkemesi",
-  "İzmir 23. Asliye Ceza Mahkemesi",
-  "İzmir 24. Asliye Ceza Mahkemesi",
-  "İzmir 25. Asliye Ceza Mahkemesi",
-  "İzmir 26. Asliye Ceza Mahkemesi",
-  "İzmir 27. Asliye Ceza Mahkemesi",
-  "İzmir 28. Asliye Ceza Mahkemesi",
-  "İzmir 29. Asliye Ceza Mahkemesi",
-  "İzmir 30. Asliye Ceza Mahkemesi",
-  "İzmir 31. Asliye Ceza Mahkemesi",
-  "İzmir 32. Asliye Ceza Mahkemesi",
-  "İzmir 33. Asliye Ceza Mahkemesi",
-  "İzmir 34. Asliye Ceza Mahkemesi",
-  "İzmir 35. Asliye Ceza Mahkemesi",
-  "İzmir 36. Asliye Ceza Mahkemesi",
-  "İzmir 37. Asliye Ceza Mahkemesi",
-  "İzmir 38. Asliye Ceza Mahkemesi",
-  "İzmir 39. Asliye Ceza Mahkemesi",
-  "İzmir 40. Asliye Ceza Mahkemesi",
-  "İzmir 41. Asliye Ceza Mahkemesi",
-  "İzmir 42. Asliye Ceza Mahkemesi",
-  "İzmir 43. Asliye Ceza Mahkemesi",
-  "İzmir 44. Asliye Ceza Mahkemesi",
-  "İzmir 45. Asliye Ceza Mahkemesi",
-  "İzmir 46. Asliye Ceza Mahkemesi",
-  "İzmir 47. Asliye Ceza Mahkemesi",
-  "İzmir 48. Asliye Ceza Mahkemesi",
-  "İzmir 49. Asliye Ceza Mahkemesi",
-  "İzmir 50. Asliye Ceza Mahkemesi",
-  "İzmir 51. Asliye Ceza Mahkemesi",
-  "İzmir 52. Asliye Ceza Mahkemesi",
-  "İzmir 53. Asliye Ceza Mahkemesi",
-  "İzmir 54. Asliye Ceza Mahkemesi",
-  "İzmir 55. Asliye Ceza Mahkemesi",
-  "İzmir 56. Asliye Ceza Mahkemesi",
-  "İzmir 57. Asliye Ceza Mahkemesi",
-  "İzmir 58. Asliye Ceza Mahkemesi",
-  "İzmir 59. Asliye Ceza Mahkemesi",
-  "İzmir 60. Asliye Ceza Mahkemesi",
-  "İzmir 61. Asliye Ceza Mahkemesi",
-  "İzmir 62. Asliye Ceza Mahkemesi",
-  "İzmir 63. Asliye Ceza Mahkemesi",
-  "İzmir 1. Çocuk Ağır Ceza Mahkemesi",
-  "İzmir 2. Çocuk Ağır Ceza Mahkemesi",
-  "İzmir 1. Çocuk Mahkemesi",
-  "İzmir 2. Çocuk Mahkemesi",
-  "İzmir 3. Çocuk Mahkemesi",
-  "İzmir 4. Çocuk Mahkemesi",
-  "İzmir 5. Çocuk Mahkemesi",
-  // ── İZMİR HUKUK MAHKEMELERİ ──
-  "İzmir 1. Asliye Ticaret Mahkemesi",
-  "İzmir 2. Asliye Ticaret Mahkemesi",
-  "İzmir 3. Asliye Ticaret Mahkemesi",
-  "İzmir 4. Asliye Ticaret Mahkemesi",
-  "İzmir 5. Asliye Ticaret Mahkemesi",
-  "İzmir 6. Asliye Ticaret Mahkemesi",
-  "İzmir 7. Asliye Ticaret Mahkemesi",
-  "İzmir 1. İcra Hukuk Mahkemesi",
-  "İzmir 2. İcra Hukuk Mahkemesi",
-  "İzmir 3. İcra Hukuk Mahkemesi",
-  "İzmir 4. İcra Hukuk Mahkemesi",
-  "İzmir 5. İcra Hukuk Mahkemesi",
-  "İzmir 6. İcra Hukuk Mahkemesi",
-  "İzmir 7. İcra Hukuk Mahkemesi",
-  "İzmir 8. İcra Hukuk Mahkemesi",
-  "İzmir 9. İcra Hukuk Mahkemesi",
-  "İzmir 10. İcra Hukuk Mahkemesi",
-  "İzmir 11. İcra Hukuk Mahkemesi",
-  "İzmir 12. İcra Hukuk Mahkemesi",
-  "İzmir 13. İcra Hukuk Mahkemesi",
-  "İzmir 1. İcra Müdürlüğü",
-  "İzmir 2. İcra Müdürlüğü",
-  "İzmir 3. İcra Müdürlüğü",
-  "İzmir 4. İcra Müdürlüğü",
-  "İzmir 5. İcra Müdürlüğü",
-  "İzmir 6. İcra Müdürlüğü",
-  "İzmir 7. İcra Müdürlüğü",
-  "İzmir 8. İcra Müdürlüğü",
-  "İzmir 9. İcra Müdürlüğü",
-  "İzmir 10. İcra Müdürlüğü",
-  "İzmir 11. İcra Müdürlüğü",
-  "İzmir 12. İcra Müdürlüğü",
-  "İzmir 13. İcra Müdürlüğü",
-  "İzmir 14. İcra Müdürlüğü",
-  "İzmir 15. İcra Müdürlüğü",
-  "İzmir 16. İcra Müdürlüğü",
-  "İzmir 17. İcra Müdürlüğü",
-  "İzmir 18. İcra Müdürlüğü",
-  "İzmir 19. İcra Müdürlüğü",
-  "İzmir 20. İcra Müdürlüğü",
-  "İzmir 21. İcra Müdürlüğü",
-  "İzmir 22. İcra Müdürlüğü",
-  "İzmir 23. İcra Müdürlüğü",
-  "İzmir 24. İcra Müdürlüğü",
-  "İzmir 25. İcra Müdürlüğü",
-  "İzmir 26. İcra Müdürlüğü",
-  "İzmir 27. İcra Müdürlüğü",
-  "İzmir 28. İcra Müdürlüğü",
-  "İzmir 1. Sulh Hukuk Mahkemesi",
-  "İzmir 2. Sulh Hukuk Mahkemesi",
-  "İzmir 3. Sulh Hukuk Mahkemesi",
-  "İzmir 4. Sulh Hukuk Mahkemesi",
-  "İzmir 5. Sulh Hukuk Mahkemesi",
-  "İzmir 6. Sulh Hukuk Mahkemesi",
-  "İzmir 7. Sulh Hukuk Mahkemesi",
-  "İzmir 8. Sulh Hukuk Mahkemesi",
-  "İzmir 9. Sulh Hukuk Mahkemesi",
-  "İzmir 10. Sulh Hukuk Mahkemesi",
-  "İzmir 11. Sulh Hukuk Mahkemesi",
-  "İzmir 12. Sulh Hukuk Mahkemesi",
-  "İzmir 13. Sulh Hukuk Mahkemesi",
-  "İzmir 14. Sulh Hukuk Mahkemesi",
-  "İzmir 15. Sulh Hukuk Mahkemesi",
-  "İzmir 16. Sulh Hukuk Mahkemesi",
-  "İzmir 17. Sulh Hukuk Mahkemesi",
-  "İzmir 18. Sulh Hukuk Mahkemesi",
-  "İzmir 19. Sulh Hukuk Mahkemesi",
-  "İzmir 20. Sulh Hukuk Mahkemesi",
-  "İzmir 21. Sulh Hukuk Mahkemesi",
-  "İzmir 1. Tüketici Mahkemesi",
-  "İzmir 2. Tüketici Mahkemesi",
-  "İzmir 3. Tüketici Mahkemesi",
-  "İzmir 4. Tüketici Mahkemesi",
-  "İzmir 5. Tüketici Mahkemesi",
-  "İzmir 6. Tüketici Mahkemesi",
-  "İzmir 7. Tüketici Mahkemesi",
-  "İzmir 8. Tüketici Mahkemesi",
-  "İzmir 9. Tüketici Mahkemesi",
-  "İzmir 10. Tüketici Mahkemesi",
-  "İzmir 1. İş Mahkemesi",
-  "İzmir 2. İş Mahkemesi",
-  "İzmir 3. İş Mahkemesi",
-  "İzmir 4. İş Mahkemesi",
-  "İzmir 5. İş Mahkemesi",
-  "İzmir 6. İş Mahkemesi",
-  "İzmir 7. İş Mahkemesi",
-  "İzmir 8. İş Mahkemesi",
-  "İzmir 9. İş Mahkemesi",
-  "İzmir 10. İş Mahkemesi",
-  "İzmir 11. İş Mahkemesi",
-  "İzmir 12. İş Mahkemesi",
-  "İzmir 13. İş Mahkemesi",
-  "İzmir 14. İş Mahkemesi",
-  "İzmir 15. İş Mahkemesi",
-  "İzmir 16. İş Mahkemesi",
-  "İzmir 17. İş Mahkemesi",
-  "İzmir 18. İş Mahkemesi",
-  "İzmir 19. İş Mahkemesi",
-  "İzmir 20. İş Mahkemesi",
-  "İzmir 21. İş Mahkemesi",
-  "İzmir 22. İş Mahkemesi",
-  "İzmir 23. İş Mahkemesi",
-  "İzmir 1. Aile Mahkemesi",
-  "İzmir 2. Aile Mahkemesi",
-  "İzmir 3. Aile Mahkemesi",
-  "İzmir 4. Aile Mahkemesi",
-  "İzmir 5. Aile Mahkemesi",
-  "İzmir 6. Aile Mahkemesi",
-  "İzmir 7. Aile Mahkemesi",
-  "İzmir 8. Aile Mahkemesi",
-  "İzmir 9. Aile Mahkemesi",
-  "İzmir 10. Aile Mahkemesi",
-  "İzmir 11. Aile Mahkemesi",
-  "İzmir 12. Aile Mahkemesi",
-  "İzmir 13. Aile Mahkemesi",
-  "İzmir 14. Aile Mahkemesi",
-  "İzmir 15. Aile Mahkemesi",
-  "İzmir 16. Aile Mahkemesi",
-  "İzmir 17. Aile Mahkemesi",
-  "İzmir 18. Aile Mahkemesi",
-  "İzmir 19. Aile Mahkemesi",
-  "İzmir 20. Aile Mahkemesi",
-  "İzmir 21. Aile Mahkemesi",
-  "İzmir 22. Aile Mahkemesi",
-  // ── KARŞIYAKA MAHKEMELERİ ──
-  "Karşıyaka 1. Ağır Ceza Mahkemesi",
-  "Karşıyaka 2. Ağır Ceza Mahkemesi",
-  "Karşıyaka 3. Ağır Ceza Mahkemesi",
-  "Karşıyaka 4. Ağır Ceza Mahkemesi",
-  "Karşıyaka 1. Asliye Ceza Mahkemesi",
-  "Karşıyaka 2. Asliye Ceza Mahkemesi",
-  "Karşıyaka 3. Asliye Ceza Mahkemesi",
-  "Karşıyaka 4. Asliye Ceza Mahkemesi",
-  "Karşıyaka 5. Asliye Ceza Mahkemesi",
-  "Karşıyaka 6. Asliye Ceza Mahkemesi",
-  "Karşıyaka 7. Asliye Ceza Mahkemesi",
-  "Karşıyaka 8. Asliye Ceza Mahkemesi",
-  "Karşıyaka 9. Asliye Ceza Mahkemesi",
-  "Karşıyaka 10. Asliye Ceza Mahkemesi",
-  "Karşıyaka 11. Asliye Ceza Mahkemesi",
-  "Karşıyaka 12. Asliye Ceza Mahkemesi",
-  "Karşıyaka Çocuk Mahkemesi",
-  "Karşıyaka 1. İcra Hukuk Mahkemesi",
-  "Karşıyaka 2. İcra Hukuk Mahkemesi",
-  "Karşıyaka 1. İcra Müdürlüğü",
-  "Karşıyaka 2. İcra Müdürlüğü",
-  "Karşıyaka 3. İcra Müdürlüğü",
-  "Karşıyaka 4. İcra Müdürlüğü",
-  "Karşıyaka 1. İş Mahkemesi",
-  "Karşıyaka 2. İş Mahkemesi",
-  "Karşıyaka 3. İş Mahkemesi",
-  "Karşıyaka 4. İş Mahkemesi",
-  "Karşıyaka 1. Sulh Ceza Hâkimliği",
-  "Karşıyaka 2. Sulh Ceza Hâkimliği",
-  "Karşıyaka 1. İnfaz Hâkimliği",
-  "Karşıyaka 2. İnfaz Hâkimliği",
-  "Karşıyaka 1. Asliye Hukuk Mahkemesi",
-  "Karşıyaka 2. Asliye Hukuk Mahkemesi",
-  "Karşıyaka 3. Asliye Hukuk Mahkemesi",
-  "Karşıyaka 4. Asliye Hukuk Mahkemesi",
-  "Karşıyaka 1. Sulh Hukuk Mahkemesi",
-  "Karşıyaka 2. Sulh Hukuk Mahkemesi",
-  "Karşıyaka 3. Sulh Hukuk Mahkemesi",
-  "Karşıyaka 4. Sulh Hukuk Mahkemesi",
-  "Karşıyaka 5. Sulh Hukuk Mahkemesi",
-  "Karşıyaka 6. Sulh Hukuk Mahkemesi",
-  "Karşıyaka 7. Sulh Hukuk Mahkemesi",
-  "Karşıyaka 1. Aile Mahkemesi",
-  "Karşıyaka 2. Aile Mahkemesi",
-  "Karşıyaka 3. Aile Mahkemesi",
-  "Karşıyaka 4. Aile Mahkemesi",
-  "Karşıyaka 5. Aile Mahkemesi",
-  "Karşıyaka 6. Aile Mahkemesi",
-  // ── İZMİR SULH CEZA / İNFAZ ──
-  "İzmir 1. Sulh Ceza Hâkimliği",
-  "İzmir 2. Sulh Ceza Hâkimliği",
-  "İzmir 3. Sulh Ceza Hâkimliği",
-  "İzmir 4. Sulh Ceza Hâkimliği",
-  "İzmir 5. Sulh Ceza Hâkimliği",
-  "İzmir 6. Sulh Ceza Hâkimliği",
-  "İzmir 7. Sulh Ceza Hâkimliği",
-  "İzmir 1. İnfaz Hâkimliği",
-  "İzmir 2. İnfaz Hâkimliği",
-  "İzmir 3. İnfaz Hâkimliği",
-  "İzmir 4. İnfaz Hâkimliği",
-  "İzmir 5. İnfaz Hâkimliği",
-  "İzmir 6. İnfaz Hâkimliği",
-  "İzmir 7. İnfaz Hâkimliği",
-  // ── İZMİR DİĞER ──
-  "İzmir Cumhuriyet Başsavcılığı",
-  "İzmir Bölge Adliye Mahkemesi",
-  "İzmir İdare Mahkemesi","İzmir Vergi Mahkemesi",
-  // ── ÜST MAHKEMELER ──
+  "Balıkesir Bölge Adliye Mahkemesi","İzmir Bölge Adliye Mahkemesi","Bursa Bölge İdare Mahkemesi",
   "Yargıtay","Danıştay","Anayasa Mahkemesi",
-  "Bursa Bölge Adliye Mahkemesi","Bursa Bölge İdare Mahkemesi",
-  "İzmir Bölge İdare Mahkemesi",
-  // ── DİĞER KURUMLAR ──
-  "Balıkesir Emniyet Müdürlüğü","Balıkesir Jandarma Komutanlığı",
-  "Balıkesir Vergi Dairesi Başkanlığı","Balıkesir SGK İl Müdürlüğü",
-  "Balıkesir Tapu Müdürlüğü","Balıkesir Belediyesi",
+  "Balıkesir Cumhuriyet Başsavcılığı","Bandırma Cumhuriyet Başsavcılığı",
+  "Balıkesir İcra Müdürlüğü","Balıkesir Arabuluculuk Merkezi",
 ];
+
 const IS_TIPLERI=['89/1 İtirazı','Adli Kontrol Kararına İtiraz','Adres Bildirme Dilekçesi','AİHM Bakanlık Görüşüne İtiraz','AİHM Başvurusu','Ara Karara İtiraz','Ara Kararın Yerine Getirilmesi','Arabuluculuk Başvurusu','Arabuluculuk Tutanağının Sunulması','AYM Bakanlık Görüşüne İtiraz','AYM Bireysel Başvuru','Basit Yargılama Usulüne İtiraz','Beyan Dilekçesi','Bilirkişi Raporuna İtiraz','Bilirkişi Raporuna Karşı Beyan','Cevap Dilekçesi','Cevaba Cevap Dilekçesi','Dahili Dava Dilekçesi','Değişik İş Kararına İtiraz','Delil Listesi Sunumu','Delil Sunumu','Dosyanın Kesinleşmesi','Dosyanın Yenilenmesi İşlemi','Ek Karar Talebi (Hükmün Tamamlanması)','Esas Hakkında Beyan','Hukuk Dava Açılış','İcra Dosyası Ödeme','İcra İşlemini Şikayet','İdari Dava Açılış','İdari Para Cezasına İtiraz','İhtarnameye Cevap','İhtiyati Hacze İtiraz','İhtiyati Tedbire İtiraz Dilekçesi','İkinci Cevap Dilekçesi','İlamsız İcraya İtiraz','İstinaf Başvuru Dilekçesi','İstinaf Başvurusuna Cevap','İşe İade Başvurusuna Cevap','İtirazın İptali Davası Açılışı','İtirazın Kaldırılması Davası Açılışı','Islah Dilekçesi','Islaha Karşı Beyan Dilekçesi','Kambiyo Takibine İtiraz','Kanun Yararına Bozma Başvurusu','Maaş Haczi İtirazı','Mütalaaya İtiraz','Nihai Karara İtiraz Dilekçesi','Ön Ödemenin Yatırılması','Savunma Dilekçesi','Savunmaya Cevap Dilekçesi','Takipsizlik (KYOK) Kararına İtiraz','Talebin Açıklanması','Tanık Beyanlarına Karşı Beyan','Tanık Bildirimi','Tehiri İcra Kararı Sunumu','Temyiz Başvuru Dilekçesi','Temyiz Başvurusuna Cevap','Tensip Kaynaklı İşlemler','Tutukluluğa İtiraz','Yemin İtirazı','Yemin Teklifi','Şikayet Dilekçesi','Diğer'].sort((a,b)=>a.localeCompare(b,'tr'));
 
 let selectedIstipi='';
@@ -1405,19 +1060,6 @@ function openModal(editRecord,prefillDate){
 }
 function closeModal(){document.getElementById('modal').style.display='none';}
 
-// Enter tuşu ile kaydet
-document.addEventListener('keydown', function(e){
-  if(e.key==='Enter' && document.getElementById('modal').style.display==='flex'){
-    // Textarea veya dropdown içindeyse kaydetme
-    const tag = document.activeElement.tagName.toLowerCase();
-    if(tag==='textarea') return;
-    if(document.activeElement.closest('.istipi-list')) return;
-    if(document.activeElement.closest('.mahkeme-dropdown')) return;
-    e.preventDefault();
-    saveRecord();
-  }
-});
-
 // ── KAYDET ────────────────────────────────────────────────────────
 async function saveRecord(){
   let rec={};
@@ -1431,7 +1073,7 @@ async function saveRecord(){
     rec={type:'durusma',date,baslik:(()=>{
       const mAdi=titleCase(document.getElementById('f-durusma-mahkeme-adi').value.trim());
       if(mAdi) return mAdi;
-      const ozel={tahkim:'Tahkim',arabuluculuk:'Arabuluculuk',randevu:'Randevu',kesif:'Keşif',tevkil:'Tevkil',cmk:'CMK'};
+      const ozel={tahkim:'Tahkim',arabuluculuk:'Arabuluculuk',randevu:'Randevu',kesif:'Keşif'};
       return ozel[ST.dal2]||'Duruşma';
     })(),saat:document.getElementById('f-durusma-saat').value,dal:ST.dal2,mahkeme:titleCase(document.getElementById('f-durusma-mahkeme-adi').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-durusma-muvekkil').value.trim()),not:sentenceCase(document.getElementById('f-durusma-not').value.trim()),tekrarTipi:ST_TEKRAR_D||null,tekrarBitis:ST_TEKRAR_D&&document.getElementById('f-tekrar-bitis-d').value?document.getElementById('f-tekrar-bitis-d').value:null};
   }else if(ST.type==='tekrar'){
@@ -1462,17 +1104,8 @@ showView('takvim',document.querySelector('.nav-item.active'));
 async function toggleTamamlandi(id){
   const rec=records.find(r=>r.id===id);
   if(!rec)return;
-  // Geri al - direkt
-  if(rec.tamamlandi===true){
-    const{error}=await sb.from('kayitlar').update({tamamlandi:false}).eq('id',id);
-    if(error){alert('Hata: '+error.message);return;}
-    await loadRecords();return;
-  }
-  // Tamamlandı yaparken açıklama her zaman zorunlu
-  const not_metni=prompt('⚠️ Açıklama zorunludur.\n\nBu iş hakkında kısa bir not girin:');
-  if(not_metni===null) return;
-  if(!not_metni.trim()){alert('Açıklama girilmeden tamamlandı işaretlenemez.');return;}
-  const{error}=await sb.from('kayitlar').update({tamamlandi:true,not_alani:sentenceCase(not_metni.trim())}).eq('id',id);
+  const yeni=rec.tamamlandi===true?false:true;
+  const{error}=await sb.from('kayitlar').update({tamamlandi:yeni}).eq('id',id);
   if(error){alert('Hata: '+error.message);return;}
   await loadRecords();
   if(document.getElementById('cal-detail-panel').classList.contains('open')){
@@ -1512,7 +1145,7 @@ function formatDate(s){if(!s)return'—';const d=new Date(s+'T12:00:00');return 
 function formatDateLong(s){if(!s)return'—';const d=new Date(s+'T12:00:00');return d.toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}
 function typeLabel(t,dal){
   if(t==='durusma'){
-    const ozel={tahkim:'Tahkim',arabuluculuk:'Arabuluculuk',randevu:'Randevu',kesif:'Keşif',tevkil:'Tevkil',cmk:'CMK'};
+    const ozel={tahkim:'Tahkim',arabuluculuk:'Arabuluculuk',randevu:'Randevu',kesif:'Keşif'};
     return ozel[dal]||'Duruşma';
   }
   return{sure:'Süreli İş',genel:'Genel İş',tekrar:'Tekrarlayan'}[t]||t;
@@ -1576,7 +1209,7 @@ function renderDashboard(){
   // Süresi geçen tamamlanmayan işler
   const gecenList=records.filter(r=>{
     const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);
-    return d<today&&!r.tamamlandi&&(r.type==='sure'||r.type==='durusma')&&!r.tekrarAnaId;
+    return d<today&&!r.tamamlandi&&!r.tekrarAnaId;
   }).sort((a,b)=>new Date(b.date)-new Date(a.date));
   const gecenEl=document.getElementById('gecen-list');
   const gecenTitle=document.getElementById('gecen-title');
@@ -1616,13 +1249,13 @@ function renderDashboard(){
   if(_dashFilter==='hepsi'){
     upcoming=records.filter(r=>buAyFilter(r)&&!r.tamamlandi&&!r.tekrarAnaId).sort((a,b)=>new Date(a.date)-new Date(b.date));
   } else if(_dashFilter==='genel'){
-    upcoming=records.filter(r=>r.type==='genel'&&buAyFilter(r)&&!r.tekrarAnaId).sort((a,b)=>new Date(a.date)-new Date(b.date));
+    upcoming=records.filter(r=>r.type==='genel'&&buAyFilter(r)&&!r.tamamlandi&&!r.tekrarAnaId).sort((a,b)=>new Date(a.date)-new Date(b.date));
   } else if(_dashFilter==='sure'){
-    upcoming=records.filter(r=>r.type==='sure'&&buAyFilter(r)).sort((a,b)=>new Date(a.date)-new Date(b.date));
+    upcoming=records.filter(r=>r.type==='sure'&&buAyFilter(r)&&!r.tamamlandi).sort((a,b)=>new Date(a.date)-new Date(b.date));
   } else if(_dashFilter==='durusma'){
-    upcoming=records.filter(r=>r.type==='durusma'&&buAyFilter(r)).sort((a,b)=>new Date(a.date)-new Date(b.date));
+    upcoming=records.filter(r=>r.type==='durusma'&&buAyFilter(r)&&!r.tamamlandi).sort((a,b)=>new Date(a.date)-new Date(b.date));
   } else if(_dashFilter==='tekrar'){
-    upcoming=records.filter(r=>(r.tekrarTipi||r.tekrarAnaId)&&buAyFilter(r)).sort((a,b)=>new Date(a.date)-new Date(b.date));
+    upcoming=records.filter(r=>(r.tekrarTipi||r.tekrarAnaId)&&buAyFilter(r)&&!r.tamamlandi).sort((a,b)=>new Date(a.date)-new Date(b.date));
   } else if(_dashFilter==='acil'){
     upcoming=urgents;
   }
@@ -1633,16 +1266,10 @@ function renderDashboard(){
   if(yt) yt.innerHTML=(_dashFilter==='hepsi'||_dashFilter===undefined?'Yaklaşan Kayıtlar <span style="font-weight:400;text-transform:none;letter-spacing:0;">(Önümüzdeki 7 Günün İşleri)</span>':titles[_dashFilter]);
 
   // Yaklaşan 7 gün - filtre seçili değilse önümüzdeki 7 gün sure/durusma/tekrar
-  let weekly=_dashFilter==='hepsi'?[
-    ...records.filter(r=>{
-      const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);
-      return d>=today&&d<=in7&&!r.tamamlandi&&!r.tekrarAnaId&&(r.type==='sure'||r.type==='durusma'||r.type==='tekrar'||r.type==='genel');
-    }),
-    ...records.filter(r=>{
-      const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);
-      return d>=today&&d<=in7&&r.tamamlandi&&!r.tekrarAnaId&&(r.type==='sure'||r.type==='durusma'||r.type==='tekrar');
-    })
-  ].sort((a,b)=>new Date(a.date)-new Date(b.date)):upcoming;
+  let weekly=_dashFilter==='hepsi'?records.filter(r=>{
+    const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);
+    return d>=today&&d<=in7&&!r.tamamlandi&&!r.tekrarAnaId&&(r.type==='sure'||r.type==='durusma'||r.type==='tekrar');
+  }).sort((a,b)=>new Date(a.date)-new Date(b.date)):upcoming;
 
   const displayList=_dashFilter==='hepsi'?weekly:upcoming;
 
@@ -1660,10 +1287,10 @@ function renderDashboard(){
       const dayLabel=diff===0?'Bugün':diff===1?'Yarın':diff===-1?'Dün':formatDate(r.date);
       dateHeader=`<tr><td colspan="6" style="padding:10px 13px 5px;background:var(--surface2);border-bottom:2px solid var(--border);border-top:1px solid var(--border);"><span style="font-size:12px;font-weight:700;color:var(--navy);">${dayLabel}</span><span style="font-size:11px;color:var(--text3);margin-left:6px;">${diff===0||diff===1||diff===-1?formatDate(r.date):''}</span></td></tr>`;
     }
-    return dateHeader+`<tr onclick="openKayitModal(${r.id})" style="cursor:pointer;${r.tamamlandi?'opacity:0.5;':''}">
+    return dateHeader+`<tr onclick="openKayitModal(${r.id})" style="cursor:pointer;">
       <td>${r.saat?'<span style="font-weight:600;color:var(--navy);">⏰ '+r.saat+'</span><br>':''}<span style="font-size:11px;">${lbl}</span></td>
-      <td style="${r.tamamlandi?'text-decoration:line-through;color:var(--text3);':''}">${r.tamamlandi?'✓ ':''}${getBaslik(r)}</td>
-      <td onclick="event.stopPropagation();if('${r.muvekkil}')openMuvekkilModal('${r.muvekkil}')" style="cursor:pointer;">${r.muvekkil?`<span class='mv-link'>${r.muvekkil}</span>`:'—'}</td>
+      <td>${getBaslik(r)}</td>
+      <td>${r.muvekkil?`<span class='mv-link' onclick='event.stopPropagation();openMuvekkilModal("${r.muvekkil}")'>${r.muvekkil}</span>`:'—'}</td>
       <td><span class="badge badge-${r.type==='tekrar'?'tekrar-type':r.type}">${typeLabel(r.type,r.dal)}</span></td>
       <td>${dalLabel(r.dal)}</td>
       <td><div class="action-btns">
@@ -1720,71 +1347,6 @@ function getTatil(dateStr){
   return null;
 }
 
-// ── SÜRÜKLEME (mouse events) ──────────────────────────────────────
-let _drag = {active:false, recId:null, ghost:null, startX:0, startY:0};
-
-function calDragStart(e, id){
-  if(e.button !== 0) return;
-  _drag.recId = id;
-  _drag.startX = e.clientX;
-  _drag.startY = e.clientY;
-  _drag.active = false;
-
-  const ghost = document.createElement('div');
-  const rec = records.find(r=>r.id===id);
-  ghost.textContent = rec ? (rec.muvekkil||getBaslik(rec)) : '';
-  ghost.style.cssText = 'position:fixed;padding:6px 12px;background:var(--navy);color:#fff;border-radius:8px;font-size:12px;pointer-events:none;z-index:9999;opacity:0;transition:opacity .1s;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
-  document.body.appendChild(ghost);
-  _drag.ghost = ghost;
-
-  document.addEventListener('mousemove', calMouseMove);
-  document.addEventListener('mouseup', calMouseUp);
-  e.preventDefault();
-}
-
-function calMouseMove(e){
-  if(!_drag.recId) return;
-  const dx = Math.abs(e.clientX - _drag.startX);
-  const dy = Math.abs(e.clientY - _drag.startY);
-  if(!_drag.active && (dx > 5 || dy > 5)){
-    _drag.active = true;
-    _drag.ghost.style.opacity = '0.95';
-  }
-  if(_drag.active && _drag.ghost){
-    _drag.ghost.style.left = (e.clientX + 12) + 'px';
-    _drag.ghost.style.top = (e.clientY - 16) + 'px';
-    document.querySelectorAll('.cal-cell.drag-over').forEach(x=>x.classList.remove('drag-over'));
-    const el = document.elementFromPoint(e.clientX, e.clientY);
-    const cell = el && el.closest('.cal-cell');
-    if(cell && cell.dataset.date) cell.classList.add('drag-over');
-  }
-}
-
-async function calMouseUp(e){
-  document.removeEventListener('mousemove', calMouseMove);
-  document.removeEventListener('mouseup', calMouseUp);
-  document.querySelectorAll('.cal-cell.drag-over').forEach(x=>x.classList.remove('drag-over'));
-  if(_drag.ghost){ _drag.ghost.remove(); _drag.ghost = null; }
-
-  if(_drag.active && _drag.recId){
-    const el = document.elementFromPoint(e.clientX, e.clientY);
-    const cell = el && el.closest('.cal-cell');
-    const dateStr = cell && cell.dataset.date;
-    if(dateStr){
-      const rec = records.find(r=>r.id===_drag.recId);
-      if(rec && rec.date !== dateStr){
-        if(rec.tekrarAnaId){ alert('Otomatik tekrar kayıtları taşınamaz.'); }
-        else {
-          const{error} = await sb.from('kayitlar').update({date:dateStr}).eq('id',_drag.recId);
-          if(error) alert('Taşıma hatası: '+error.message);
-          else await loadRecords();
-        }
-      }
-    }
-  }
-  _drag = {active:false, recId:null, ghost:null, startX:0, startY:0};
-}
-
 // ── TAKVİM SWIPE ─────────────────────────────────────────────────
 let _calTouchX=0;
 function calTouchStart(e){_calTouchX=e.touches[0].clientX;}
@@ -1800,19 +1362,9 @@ function renderCal(){
   const dim=new Date(currentYear,currentMonth+1,0).getDate(),dip=new Date(currentYear,currentMonth,0).getDate();
   const today=new Date();today.setHours(0,0,0,0);
   let cells=[];
-  for(let i=sdow-1;i>0;i--){
-    const prevDate=new Date(currentYear,currentMonth,1-i);
-    const ds=`${prevDate.getFullYear()}-${String(prevDate.getMonth()+1).padStart(2,'0')}-${String(prevDate.getDate()).padStart(2,'0')}`;
-    cells.push({day:dip-i+1,other:true,date:ds});
-  }
+  for(let i=sdow-1;i>0;i--)cells.push({day:dip-i+1,other:true,date:null});
   for(let d=1;d<=dim;d++){const ds=`${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const dt=new Date(currentYear,currentMonth,d);dt.setHours(0,0,0,0);cells.push({day:d,other:false,date:ds,isToday:dt.getTime()===today.getTime()});}
-  let nextDay=1;
-  while(cells.length%7!==0){
-    const nextDate=new Date(currentYear,currentMonth+1,nextDay);
-    const ds=`${nextDate.getFullYear()}-${String(nextDate.getMonth()+1).padStart(2,'0')}-${String(nextDate.getDate()).padStart(2,'0')}`;
-    cells.push({day:nextDay,other:true,date:ds});
-    nextDay++;
-  }
+  while(cells.length%7!==0)cells.push({day:0,other:true,date:null});
   document.getElementById('cal-grid').innerHTML=cells.map(c=>{
     const evs=c.date?records.filter(r=>r.date===c.date).sort((a,b)=>{
     const order={sure:0,durusma:1,tekrar:2,genel:3};
@@ -1822,7 +1374,7 @@ function renderCal(){
     let cls=r.tamamlandi?'ev-tamamlandi':(r.type==='tekrar'||r.tekrarAnaId)?'ev-tekrar':('ev-'+r.type);
     let prefix=r.tamamlandi?'✓ ':(r.tekrarTipi||r.tekrarAnaId)?'↻ ':'';
     return`<span class="cal-event ${cls}" onmousedown="calDragStart(event,${r.id})" onclick="event.stopPropagation()" style="cursor:grab;">${prefix}${r.muvekkil||getBaslik(r)}</span>`;
-  }).join('')+(evs.length>3?`<span style="font-size:11px;color:var(--navy);font-weight:700;display:block;cursor:pointer;padding:1px 3px;border-radius:3px;background:var(--navy-light);" onclick="event.stopPropagation();showCalDetail('${c.date}')">+${evs.length-3} daha</span>`:'');
+  }).join('')+(evs.length>3?`<span style="font-size:9px;color:var(--text3);display:block;">+${evs.length-3}</span>`:'');
     const tatil=c.date?getTatil(c.date):null;
     const clickAttr=c.date?`onclick="showCalDetail('${c.date}')" data-date="${c.date}"`:'' ;
     const tatilHTML=tatil?`<div style="font-size:8px;color:#dc2626;font-weight:600;line-height:1.2;margin-bottom:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${tatil}</div>`:'';
@@ -1890,8 +1442,7 @@ function renderCalDetail(){
         </div>`:''}
         ${r.tekrarAnaId?`<div style="margin-top:8px;padding:5px 10px;background:#fef3c7;border-radius:6px;font-size:11px;color:#92400e;">↻ Tekrarlayan iş</div>`:''}
         <div style="display:flex;gap:7px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">
-          ${r.type==='durusma'&&!r.tamamlandi?`<button class="icon-btn" style="background:#1e40af;color:#fff;border-color:#1e40af;font-weight:600;" onclick="closeCalDetail();openDurusmaSonuc(${r.id})">📋 Sonuç Gir</button>`:''}
-          <button class="icon-btn" style="${r.tamamlandi?'color:#22c55e;border-color:#22c55e;font-weight:600;':''}" onclick="toggleTamamlandi(${r.id})">${r.tamamlandi?'↩ Geri Al':'○ Tamamlandı'}</button>
+          <button class="icon-btn" style="${r.tamamlandi?'color:#22c55e;border-color:#22c55e;font-weight:600;':''}" onclick="toggleTamamlandi(${r.id})">${r.tamamlandi?'✓ Tamamlandı':'○ Tamamlandı'}</button>
           <button class="icon-btn" onclick="closeCalDetail();openModal(records.find(x=>x.id===${r.id}))">Düzenle</button>
           <button class="icon-btn del" onclick="deleteRecord(${r.id})">Sil</button>
         </div>
@@ -1965,7 +1516,7 @@ function openKayitModal(id){
     body+=`<div style="border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:14px;">${buildHesapHTML(d)}</div>`;
   }
   const rows=[
-    r.muvekkil?{l:'Müvekkil',v:`<span onclick="closeKayitModal();openMuvekkilModal('${r.muvekkil}')" style="color:var(--navy);font-weight:600;text-decoration:underline;cursor:pointer;">${r.muvekkil} ›</span>`}:null,
+    r.muvekkil?{l:'Müvekkil',v:r.muvekkil}:null,
     r.mahkeme?{l:'Mahkeme',v:r.mahkeme}:null,
     r.dava?{l:'Dava No',v:r.dava}:null,
     r.dal?{l:'Dal',v:dalLabel(r.dal)}:null,
@@ -1975,10 +1526,8 @@ function openKayitModal(id){
     r.tekrarTipi?{l:'Tekrar',v:'↻ '+tekrarTipiLabel(r.tekrarTipi)+(r.tekrarBitis?' · Bitiş: '+formatDate(r.tekrarBitis):'')}:null,
   ].filter(Boolean);
   body+=rows.map(row=>`<div class="kayit-row"><div class="kayit-row-label">${row.l}</div><div class="kayit-row-val">${row.v}</div></div>`).join('');
-  const isDurusma = r.type==='durusma';
-  body+=`<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;padding-top:4px;">
-    ${isDurusma&&!r.tamamlandi?`<button class="icon-btn" style="flex:1;padding:10px;background:#1e40af;color:#fff;border-color:#1e40af;font-weight:600;" onclick="closeKayitModal();openDurusmaSonuc(${r.id})">📋 Sonuç Gir</button>`:''}
-    <button class="icon-btn" style="flex:1;padding:10px;${r.tamamlandi?'color:#22c55e;border-color:#22c55e;font-weight:600;':''}" onclick="toggleTamamlandi(${r.id});closeKayitModal();">${r.tamamlandi?'↩ Geri Al':'○ Tamamlandı'}</button>
+  body+=`<div style="display:flex;gap:8px;margin-top:16px;padding-top:4px;">
+    <button class="icon-btn" style="flex:1;padding:10px;${r.tamamlandi?'color:#22c55e;border-color:#22c55e;font-weight:600;':''}" onclick="toggleTamamlandi(${r.id});closeKayitModal();">${r.tamamlandi?'✓ Tamamlandı':'○ Tamamlandı İşaretle'}</button>
     <button class="icon-btn" style="flex:1;padding:10px;" onclick="closeKayitModal();openModal(records.find(x=>x.id===${r.id}))">✎ Düzenle</button>
     <button class="icon-btn del" style="padding:10px 14px;" onclick="closeKayitModal();deleteRecord(${r.id})">Sil</button>
   </div>`;
@@ -1992,10 +1541,8 @@ function showMahkemeDropdown(inputId, ddId){
   const input=document.getElementById(inputId);
   const dd=document.getElementById(ddId);
   if(!input||!dd) return;
-  const val=input.value.toLocaleLowerCase('tr-TR').trim();
-  const matches=val
-    ? MAHKEMELER.filter(m=>m.toLocaleLowerCase('tr-TR').includes(val))
-    : MAHKEMELER;
+  const val=input.value.toLocaleLowerCase('tr-TR');
+  const matches=MAHKEMELER.filter(m=>m.toLocaleLowerCase('tr-TR').includes(val)).slice(0,8);
   if(!matches.length){dd.style.display='none';return;}
   dd.innerHTML=matches.map(m=>{
     const safe=m.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
@@ -2009,85 +1556,6 @@ function showMahkemeDropdown(inputId, ddId){
     });
   });
   dd.style.display='block';
-}
-// ── DURUŞMA SONUCU ───────────────────────────────────────────────
-let _durusmaSonucId = null;
-
-function openDurusmaSonuc(id){
-  const r = records.find(x=>x.id===id);
-  if(!r) return;
-  _durusmaSonucId = id;
-  document.getElementById('ds-baslik').textContent = getBaslik(r);
-  document.getElementById('ds-tarih').textContent = formatDate(r.date) + (r.saat?' · ⏰'+r.saat:'');
-  document.getElementById('ertelendi-form').style.display = 'none';
-  document.getElementById('ertelendi-tarih').value = '';
-  document.getElementById('ertelendi-saat').value = r.saat||'';
-  document.getElementById('durusma-sonuc-overlay').style.display = 'flex';
-}
-function closeDurusmaSonuc(){
-  document.getElementById('durusma-sonuc-overlay').style.display = 'none';
-  document.getElementById('karar-form').style.display = 'none';
-  document.getElementById('ertelendi-form').style.display = 'none';
-  const kn = document.getElementById('karar-not'); if(kn) kn.value='';
-  _durusmaSonucId = null;
-}
-function toggleKararForm(){
-  const f=document.getElementById('karar-form');
-  f.style.display=f.style.display==='none'?'block':'none';
-  // Ertelendi formu kapat
-  document.getElementById('ertelendi-form').style.display='none';
-}
-function toggleErtelendiForm(){
-  const f=document.getElementById('ertelendi-form');
-  f.style.display=f.style.display==='none'?'block':'none';
-  // Karar formu kapat
-  document.getElementById('karar-form').style.display='none';
-}
-async function durusmayiErtelendi(){
-  const r = records.find(x=>x.id===_durusmaSonucId);
-  if(!r) return;
-  const yeniTarih = document.getElementById('ertelendi-tarih').value;
-  const yeniSaat = document.getElementById('ertelendi-saat').value;
-  if(!yeniTarih){ alert('Yeni tarih seçiniz.'); return; }
-  const yeniRec = {...localToDB(r), date:yeniTarih, saat:yeniSaat||r.saat||null};
-  delete yeniRec.id;
-  const {error} = await sb.from('kayitlar').insert(yeniRec);
-  if(error){ alert('Hata: '+error.message); return; }
-  // Eski kaydı tamamlandı yap, açıklama ekle
-  await sb.from('kayitlar').update({tamamlandi:true, not_alani:'Ertelendi → '+formatDate(yeniTarih)}).eq('id',r.id);
-  closeDurusmaSonuc();
-  await loadRecords();
-  alert('✓ Duruşma '+formatDate(yeniTarih)+' tarihine ertelendi.');
-}
-async function durusmaSonucKarar(){
-  if(!_durusmaSonucId) return;
-  const not_metni = document.getElementById('karar-not').value.trim();
-  if(!not_metni){ alert('Karar notu zorunludur.'); return; }
-  await sb.from('kayitlar').update({tamamlandi:true, not_alani:'Karar verildi: '+sentenceCase(not_metni)}).eq('id',_durusmaSonucId);
-  closeDurusmaSonuc();
-  await loadRecords();
-}
-async function durusmaSonucMazeret(){
-  const r = records.find(x=>x.id===_durusmaSonucId);
-  if(!r) return;
-  // 1 hafta sonra genel iş ekle
-  const yeniTarih = new Date(r.date+'T12:00:00');
-  yeniTarih.setDate(yeniTarih.getDate()+7);
-  const tarihStr = yeniTarih.toISOString().split('T')[0];
-  const yeniRec = {
-    type:'genel', date:tarihStr,
-    baslik:'Duruşma Tarihini Öğren',
-    not_alani:getBaslik(r)+' - mazeret sonrası yeni tarihi öğren',
-    muvekkil:r.muvekkil||null, mahkeme:r.mahkeme||null, dava:r.dava||null,
-    dal:r.dal||null, tamamlandi:false
-  };
-  const {error} = await sb.from('kayitlar').insert(yeniRec);
-  if(error){ alert('Hata: '+error.message); return; }
-  // Orijinal duruşmayı tamamlandı yap
-  await sb.from('kayitlar').update({tamamlandi:true, not_alani:'Mazeret gönderildi → '+formatDate(tarihStr)+' tarihinde takip edilecek'}).eq('id',_durusmaSonucId);
-  closeDurusmaSonuc();
-  await loadRecords();
-  alert('✓ Mazeret kaydedildi. '+formatDate(tarihStr)+' tarihine hatırlatıcı eklendi.');
 }
 function closeCalDetail(){
   document.getElementById('cal-detail-panel').classList.remove('open');
@@ -2114,7 +1582,7 @@ function renderListe(){
       <td><span class="badge badge-${r.type==="tekrar"?"tekrar-type":r.type}">${typeLabel(r.type,r.dal)}</span></td>
       <td>${dalLabel(r.dal)}</td><td>${r.dava||'—'}</td>
       <td><div class="action-btns">
-        <button class="icon-btn" style="${r.tamamlandi?'color:#22c55e;border-color:#22c55e;':''}" onclick="event.stopPropagation();toggleTamamlandi(${r.id})" title="${r.tamamlandi?'Geri Al':'Tamamlandı işaretle'}">${r.tamamlandi?'↩ Geri Al':'○'}</button>
+        <button class="icon-btn" style="${r.tamamlandi?'color:#22c55e;border-color:#22c55e;':''}" onclick="event.stopPropagation();toggleTamamlandi(${r.id})" title="${r.tamamlandi?'Tamamlandı - geri al':'Tamamlandı işaretle'}">${r.tamamlandi?'✓':'○'}</button>
         <button class="icon-btn" onclick="event.stopPropagation();openModal(records.find(x=>x.id===${r.id}))">Düzenle</button>
         <button class="icon-btn del" onclick="event.stopPropagation();deleteRecord(${r.id})">Sil</button>
       </div></td>
@@ -2143,7 +1611,7 @@ function renderTamamlanan(){
     <td><span class="badge badge-${r.type==='tekrar'?'tekrar-type':r.type}">${typeLabel(r.type,r.dal)}</span></td>
     <td>${dalLabel(r.dal)}</td>
     <td><div class="action-btns">
-      <button class="icon-btn" style="color:#22c55e;font-weight:600;" onclick="event.stopPropagation();toggleTamamlandi(${r.id}).then(()=>renderTamamlanan())">↩ Geri Al</button>
+      <button class="icon-btn" style="color:#22c55e;" onclick="event.stopPropagation();toggleTamamlandi(${r.id})">↩ Geri Al</button>
       <button class="icon-btn del" onclick="event.stopPropagation();deleteRecord(${r.id})">Sil</button>
     </div></td>
   </tr>`).join('');
@@ -2173,43 +1641,6 @@ loadRecords();
       <button class="btn" onclick="closeMuvekkilModal()">✕</button>
     </div>
     <div id="mv-body" style="padding-bottom:20px;"></div>
-  </div>
-</div>
-<div class="durusma-sonuc-overlay" id="durusma-sonuc-overlay" style="display:none;" onclick="closeDurusmaSonuc()">
-  <div class="durusma-sonuc-modal" onclick="event.stopPropagation()">
-    <div style="width:40px;height:4px;background:var(--border2);border-radius:2px;margin:10px auto 8px;"></div>
-    <div style="padding:12px 20px 16px;border-bottom:1px solid var(--border);">
-      <div style="font-size:15px;font-weight:700;" id="ds-baslik"></div>
-      <div style="font-size:12px;color:var(--text2);margin-top:2px;" id="ds-tarih"></div>
-    </div>
-    <div style="padding:16px 20px;">
-      <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;">Duruşma Sonucu</div>
-      
-      <button class="sonuc-btn ertelendi" onclick="toggleErtelendiForm()">
-        <span>📅</span><span>Ertelendi</span>
-      </button>
-      <div class="ertelendi-form" id="ertelendi-form">
-        <label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Yeni Duruşma Tarihi</label>
-        <input type="date" id="ertelendi-tarih" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;">
-        <input type="time" id="ertelendi-saat" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;margin-top:8px;">
-        <button onclick="durusmayiErtelendi()" style="width:100%;margin-top:10px;padding:12px;background:var(--navy);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Yeni Tarihe Ekle</button>
-      </div>
-
-      <button class="sonuc-btn karar" onclick="toggleKararForm()">
-        <span>✅</span><span>Karar Verildi</span>
-      </button>
-      <div class="ertelendi-form" id="karar-form" style="display:none;">
-        <label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Karar Notu <span style="color:#dc2626;">*zorunlu</span></label>
-        <textarea id="karar-not" placeholder="Örn: Beraat, mahkumiyet, tazminat kararı..." style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;height:80px;resize:vertical;"></textarea>
-        <button onclick="durusmaSonucKarar()" style="width:100%;margin-top:10px;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Kaydet ve Tamamlandı İşaretle</button>
-      </div>
-
-      <button class="sonuc-btn mazeret" onclick="durusmaSonucMazeret()">
-        <span>📋</span><span>Mazeret Gönderildi</span>
-      </button>
-
-      <button class="btn" style="width:100%;margin-top:4px;" onclick="closeDurusmaSonuc()">Vazgeç</button>
-    </div>
   </div>
 </div>
 <div class="kayit-modal-overlay" id="kayit-modal" style="display:none;" onclick="closeKayitModal()">
