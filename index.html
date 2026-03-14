@@ -309,9 +309,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
           <div class="stat-label" style="color:#92400e;">Tekrarlayan İş</div><div class="stat-val" style="color:#92400e;" id="stat-tekrar">—</div>
         </div>
       </div>
-      <div class="section-title">Acil Süreler</div>
-      <div class="urgents" id="urgents-list"></div>
-      <div class="section-title" id="yaklasan-title">Yaklaşan Kayıtlar <span style="font-weight:400;text-transform:none;letter-spacing:0;">(Önümüzdeki 7 günün işleri)</span></div>
+
+      <div class="section-title" id="gecen-title" style="display:none;">Süresi Geçen / Tamamlanmayan İşler</div>
+      <div class="urgents" id="gecen-list" style="display:none;margin-bottom:18px;"></div>
+      <div class="section-title" id="yaklasan-title">Yaklaşan Kayıtlar <span style="font-weight:400;text-transform:none;letter-spacing:0;">(Önümüzdeki 7 Günün İşleri)</span></div>
       <div class="table-wrap">
         <table class="list-table">
           <thead><tr><th>Tarih / Son Gün</th><th>Başlık</th><th>Müvekkil</th><th>Tür</th><th>Dal</th><th></th></tr></thead>
@@ -998,9 +999,33 @@ function renderDashboard(){
   const urgents=records.filter(r=>{const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);return r.type==='sure'&&d>=today&&d<=in7&&!r.tekrarAnaId;}).sort((a,b)=>new Date(a.date)-new Date(b.date));
   // acil kart kaldırıldı
 
-  // Acil süreler
-  const ul=document.getElementById('urgents-list');
-  ul.innerHTML=!urgents.length?'<div style="font-size:13px;color:var(--text3);padding:8px 0;">Acil süre yok.</div>':urgents.map(r=>{const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);const diff=Math.round((d-today)/86400000);return`<div class="urgent-item" onclick="showCalDetail('${r.date}')"><div><div class="u-title">${r.muvekkil||'Müvekkil belirtilmedi'} — ${getBaslik(r)}</div><div class="u-sub">${r.dava||''} ${r.dal?'· '+dalLabel(r.dal):''}</div></div><div class="urgent-days">${diff===0?'Bugün':diff+' gün'}</div></div>`;}).join('');
+  // Süresi geçen tamamlanmayan işler
+  const gecenList=records.filter(r=>{
+    const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);
+    return d<today&&!r.tamamlandi&&(r.type==='sure'||r.type==='durusma')&&!r.tekrarAnaId;
+  }).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const gecenEl=document.getElementById('gecen-list');
+  const gecenTitle=document.getElementById('gecen-title');
+  if(gecenList.length){
+    gecenTitle.style.display='block';
+    gecenEl.style.display='flex';
+    gecenEl.innerHTML=gecenList.map(r=>{
+      const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);
+      const diff=Math.abs(Math.round((d-today)/86400000));
+      return`<div class="urgent-item" style="border-left-color:#f59e0b;" onclick="showCalDetail('${r.date}')">
+        <div>
+          <div class="u-title">${r.muvekkil||'Müvekkil belirtilmedi'} — ${getBaslik(r)}</div>
+          <div class="u-sub">${r.dava||''} ${r.dal?'· '+dalLabel(r.dal):''}</div>
+        </div>
+        <div class="urgent-days" style="color:#f59e0b;">${diff===0?'Bugün':diff+' gün geçti'}</div>
+      </div>`;
+    }).join('');
+  } else {
+    gecenTitle.style.display='none';
+    gecenEl.style.display='none';
+  }
+
+  // Acil süreler kaldırıldı
 
   // Kart vurgusu
   document.querySelectorAll('.stat-card').forEach(x=>x.style.cssText='');
@@ -1029,7 +1054,7 @@ function renderDashboard(){
   // Başlık güncelle
   const titles={hepsi:'Bu Aydaki Tüm İşler',genel:'Bu Aydaki Genel İşler',sure:'Bu Aydaki Süreli İşler',tekrar:'Bu Aydaki Tekrarlayan İşler',acil:'Acil Süreler (7 Gün)'};
   const yt=document.getElementById('yaklasan-title');
-  if(yt) yt.innerHTML=(_dashFilter==='hepsi'||_dashFilter===undefined?'Yaklaşan Kayıtlar <span style="font-weight:400;text-transform:none;letter-spacing:0;">(Önümüzdeki 7 günün işleri)</span>':titles[_dashFilter]);
+  if(yt) yt.innerHTML=(_dashFilter==='hepsi'||_dashFilter===undefined?'Yaklaşan Kayıtlar <span style="font-weight:400;text-transform:none;letter-spacing:0;">(Önümüzdeki 7 Günün İşleri)</span>':titles[_dashFilter]);
 
   // Yaklaşan 7 gün - filtre seçili değilse önümüzdeki 7 gün sure/durusma/tekrar
   let weekly=_dashFilter==='hepsi'?records.filter(r=>{
