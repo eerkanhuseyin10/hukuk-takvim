@@ -915,11 +915,10 @@ function renderCal(){
     const eh=evs.slice(0,3).map(r=>{
     let cls=r.tamamlandi?'ev-tamamlandi':(r.tekrarTipi||r.tekrarAnaId)?'ev-tekrar':('ev-'+r.type);
     let prefix=r.tamamlandi?'✓ ':(r.tekrarTipi||r.tekrarAnaId)?'↻ ':'';
-    return`<span class="cal-event ${cls}" draggable="true" ondragstart="calDragStart(event,${r.id})" onclick="event.stopPropagation()">${prefix}${r.muvekkil||getBaslik(r)}</span>`;
+    return`<span class="cal-event ${cls}" onmousedown="calDragStart(event,${r.id})" onclick="event.stopPropagation()" style="cursor:grab;">${prefix}${r.muvekkil||getBaslik(r)}</span>`;
   }).join('')+(evs.length>3?`<span style="font-size:9px;color:var(--text3);display:block;">+${evs.length-3}</span>`:'');
-    const ca=c.date?`onclick="showCalDetail('${c.date}')"`:'' ;
-    const dropAttr=c.date?`ondragover="calDragOver(event)" ondrop="calDrop(event,'${c.date}')" ondragenter="calDragEnter(this)" ondragleave="calDragLeave(this)"`:'';
-    return`<div class="cal-cell${c.other?' other-month':''}${c.isToday?' today':''}" ${ca} ${dropAttr}><div class="cal-day">${c.other&&!c.day?'':c.day}</div>${eh}</div>`;
+    const clickAttr=c.date?`onclick="if(!_drag.active)showCalDetail('${c.date}')" data-date="${c.date}"`:'' ;
+    return`<div class="cal-cell${c.other?' other-month':''}${c.isToday?' today':''}" ${clickAttr}><div class="cal-day">${c.other&&!c.day?'':c.day}</div>${eh}</div>`;
   }).join('');
 }
 
@@ -960,37 +959,70 @@ function showCalDetail(dateStr){
   document.getElementById('cal-detail-overlay').classList.add('open');
   setTimeout(()=>document.getElementById('cal-detail-panel').classList.add('open'),10);
 }
-// ── SÜRÜKLEME ─────────────────────────────────────────────────────
-let _dragRecId = null;
+// ── SÜRÜKLEME (mouse events) ──────────────────────────────────────
+let _drag = {active:false, recId:null, ghost:null, startX:0, startY:0};
+
 function calDragStart(e, id){
-  _dragRecId = id;
-  e.dataTransfer.effectAllowed = 'move';
-  e.dataTransfer.setData('text/plain', id);
-  e.target.style.opacity = '0.5';
-  setTimeout(()=>{ if(e.target) e.target.style.opacity=''; }, 0);
-}
-function calDragOver(e){
+  if(e.button !== 0) return;
+  _drag.recId = id;
+  _drag.startX = e.clientX;
+  _drag.startY = e.clientY;
+  _drag.active = false;
+
+  const ghost = document.createElement('div');
+  const rec = records.find(r=>r.id===id);
+  ghost.textContent = rec ? (rec.muvekkil||getBaslik(rec)) : '';
+  ghost.style.cssText = 'position:fixed;padding:6px 12px;background:var(--navy);color:#fff;border-radius:8px;font-size:12px;pointer-events:none;z-index:9999;opacity:0;transition:opacity .1s;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+  document.body.appendChild(ghost);
+  _drag.ghost = ghost;
+
+  document.addEventListener('mousemove', calMouseMove);
+  document.addEventListener('mouseup', calMouseUp);
   e.preventDefault();
-  e.dataTransfer.dropEffect = 'move';
 }
-function calDragEnter(cell){
-  cell.classList.add('drag-over');
+
+function calMouseMove(e){
+  if(!_drag.recId) return;
+  const dx = Math.abs(e.clientX - _drag.startX);
+  const dy = Math.abs(e.clientY - _drag.startY);
+  if(!_drag.active && (dx > 5 || dy > 5)){
+    _drag.active = true;
+    _drag.ghost.style.opacity = '0.95';
+  }
+  if(_drag.active && _drag.ghost){
+    _drag.ghost.style.left = (e.clientX + 12) + 'px';
+    _drag.ghost.style.top = (e.clientY - 16) + 'px';
+    // Hücreleri vurgula
+    document.querySelectorAll('.cal-cell.drag-over').forEach(x=>x.classList.remove('drag-over'));
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    const cell = el && el.closest('.cal-cell');
+    if(cell && cell.dataset.date) cell.classList.add('drag-over');
+  }
 }
-function calDragLeave(cell){
-  cell.classList.remove('drag-over');
-}
-async function calDrop(e, dateStr){
-  e.preventDefault();
-  const cell = e.currentTarget;
-  cell.classList.remove('drag-over');
-  if(!_dragRecId) return;
-  const rec = records.find(r=>r.id===_dragRecId);
-  if(!rec || rec.date===dateStr) return;
-  if(rec.tekrarAnaId){ alert('Otomatik tekrar kayıtları taşınamaz.'); return; }
-  const{error} = await sb.from('kayitlar').update({date:dateStr}).eq('id',_dragRecId);
-  if(error){ alert('Taşıma hatası: '+error.message); return; }
-  _dragRecId = null;
-  await loadRecords();
+
+async function calMouseUp(e){
+  document.removeEventListener('mousemove', calMouseMove);
+  document.removeEventListener('mouseup', calMouseUp);
+  document.querySelectorAll('.cal-cell.drag-over').forEach(x=>x.classList.remove('drag-over'));
+  if(_drag.ghost){ _drag.ghost.remove(); _drag.ghost = null; }
+
+  if(_drag.active && _drag.recId){
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    const cell = el && el.closest('.cal-cell');
+    const dateStr = cell && cell.dataset.date;
+    if(dateStr){
+      const rec = records.find(r=>r.id===_drag.recId);
+      if(rec && rec.date !== dateStr){
+        if(rec.tekrarAnaId){ alert('Otomatik tekrar kayıtları taşınamaz.'); }
+        else {
+          const{error} = await sb.from('kayitlar').update({date:dateStr}).eq('id',_drag.recId);
+          if(error) alert('Taşıma hatası: '+error.message);
+          else await loadRecords();
+        }
+      }
+    }
+  }
+  _drag = {active:false, recId:null, ghost:null, startX:0, startY:0};
 }
 function closeCalDetail(){
   document.getElementById('cal-detail-panel').classList.remove('open');
