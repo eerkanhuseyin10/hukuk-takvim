@@ -817,12 +817,10 @@ async function saveRecord(){
 async function toggleTamamlandi(id){
   const rec=records.find(r=>r.id===id);
   if(!rec)return;
-  const yeni=!rec.tamamlandi;
+  const yeni=rec.tamamlandi===true?false:true;
   const{error}=await sb.from('kayitlar').update({tamamlandi:yeni}).eq('id',id);
   if(error){alert('Hata: '+error.message);return;}
-  rec.tamamlandi=yeni;
-  renderAll();
-  // detay panelini güncelle
+  await loadRecords();
   if(document.getElementById('cal-detail-panel').classList.contains('open')){
     showCalDetail(rec.date);
   }
