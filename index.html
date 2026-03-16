@@ -1897,7 +1897,7 @@ function renderCalDetail(){
         ${r.muvekkil?`<div style="font-size:13px;color:var(--text2);margin-bottom:4px;"><b>Müvekkil:</b> ${r.muvekkil}</div>`:''}
         ${r.mahkeme?`<div style="font-size:13px;color:var(--text2);margin-bottom:4px;"><b>Mahkeme:</b> ${r.mahkeme}</div>`:''}
         ${r.dava?`<div style="font-size:13px;color:var(--text2);margin-bottom:4px;"><b>Dava No:</b> ${r.dava}</div>`:''}
-        ${r.not?`<div style="font-size:13px;color:var(--text2);margin-bottom:4px;"><b>Not:</b> ${r.not}</div>`:''}
+        ${r.not?`<div style="font-size:13px;color:var(--text2);margin-bottom:4px;"><b>Not:</b> ${r.not.split('\n').map(s=>s.includes('tarihinde oluşturuldu')&&s.includes('Planlandığı tarih')?'<strong>'+s+'</strong>':s).join('<br>')}</div>`:''}
         ${detHTML}
         ${r.tekrarTipi?`<div style="margin-top:8px;padding:5px 10px;background:#fef3c7;border-radius:6px;font-size:11px;color:#92400e;display:flex;justify-content:space-between;">
           <span>↻ ${tekrarTipiLabel(r.tekrarTipi)}${r.tekrarBitis?' · Bitiş: '+formatDate(r.tekrarBitis):''}</span>
@@ -1990,7 +1990,15 @@ function openKayitModal(id){
     r.dal?{l:'Dal',v:dalLabel(r.dal)}:null,
     r.saat?{l:'Saat',v:'⏰ '+r.saat}:null,
     {l:'Tarih',v:formatDate(r.date)},
-    r.not?{l:'Not',v:r.not}:null,
+    r.not?{l:'Not',v:(()=>{
+      const satirlar=r.not.split('\n');
+      return satirlar.map(s=>{
+        if(s.includes('tarihinde oluşturuldu') && s.includes('Planlandığı tarih')){
+          return '<strong>'+s+'</strong>';
+        }
+        return s;
+      }).join('<br>');
+    })()}:null,
     r.tekrarTipi?{l:'Tekrar',v:'↻ '+tekrarTipiLabel(r.tekrarTipi)+(r.tekrarBitis?' · Bitiş: '+formatDate(r.tekrarBitis):'')}:null,
   ].filter(Boolean);
   body+=rows.map(row=>`<div class="kayit-row"><div class="kayit-row-label">${row.l}</div><div class="kayit-row-val">${row.v}</div></div>`).join('');
