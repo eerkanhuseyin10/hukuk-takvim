@@ -2049,30 +2049,169 @@ function openDurusmaSonuc(id){
   _durusmaSonucId = id;
   document.getElementById('ds-baslik').textContent = getBaslik(r);
   document.getElementById('ds-tarih').textContent = formatDate(r.date) + (r.saat?' · ⏰'+r.saat:'');
-  document.getElementById('ertelendi-form').style.display = 'none';
-  document.getElementById('ertelendi-tarih').value = '';
-  document.getElementById('ertelendi-saat').value = r.saat||'';
+  renderSonucButonlari(r.dal);
   document.getElementById('durusma-sonuc-overlay').style.display = 'flex';
+}
+
+function toggleSonucForm(formId, clearInput){
+  ['ertelendi-form','karar-form','anlasmama-form','ikinci-oturum-form','gorusme-ertelendi-form'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.style.display='none';
+  });
+  const f=document.getElementById(formId);
+  if(f){
+    f.style.display='block';
+    if(clearInput){
+      ['ertelendi-tarih','ikinci-oturum-tarih'].forEach(tid=>{
+        const t=document.getElementById(tid);
+        if(t){t.value='';t.defaultValue='';}
+      });
+    }
+  }
+}
+
+function renderSonucButonlari(dal){
+  const container=document.getElementById('sonuc-butonlar');
+  if(!dal) dal='';
+
+  if(dal==='arabuluculuk'){
+    container.innerHTML=`
+      <button class="sonuc-btn karar" onclick="toggleSonucForm('anlasmama-form',false)"><span>🤝</span><span>Anlaşma</span></button>
+      <div class="ertelendi-form" id="anlasmama-form">
+        <label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Anlaşma Notu <span style="color:#dc2626;">*zorunlu</span></label>
+        <textarea id="karar-not" placeholder="Anlaşma detayları..." style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;height:80px;resize:vertical;"></textarea>
+        <button onclick="durusmaSonucKarar()" style="width:100%;margin-top:10px;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Kaydet ve Tamamlandı İşaretle</button>
+      </div>
+      <button class="sonuc-btn ertelendi" onclick="durusmaSonucAnlasmama()"><span>❌</span><span>Anlaşamama</span></button>
+      <button class="sonuc-btn mazeret" onclick="toggleSonucForm('ikinci-oturum-form',true)"><span>📅</span><span>2. Oturum</span></button>
+      <div class="ertelendi-form" id="ikinci-oturum-form">
+        <label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">2. Oturum Tarihi</label>
+        <input type="date" id="ikinci-oturum-tarih" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;">
+        <input type="time" id="ikinci-oturum-saat" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;margin-top:8px;">
+        <button onclick="durusmaSonucIkinciOturum()" style="width:100%;margin-top:10px;padding:12px;background:var(--navy);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Yeni Tarihe Ekle</button>
+      </div>`;
+  } else if(dal==='randevu'){
+    container.innerHTML=`
+      <button class="sonuc-btn karar" onclick="toggleSonucForm('karar-form',false)"><span>✅</span><span>Görüşme Yapıldı</span></button>
+      <div class="ertelendi-form" id="karar-form">
+        <label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Görüşme Notu <span style="color:#dc2626;">*zorunlu</span></label>
+        <textarea id="karar-not" placeholder="Görüşme detayları..." style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;height:80px;resize:vertical;"></textarea>
+        <button onclick="durusmaSonucKarar()" style="width:100%;margin-top:10px;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Kaydet ve Tamamlandı İşaretle</button>
+      </div>
+      <button class="sonuc-btn ertelendi" onclick="toggleSonucForm('gorusme-ertelendi-form',true)"><span>📅</span><span>Görüşme Ertelendi</span></button>
+      <div class="ertelendi-form" id="gorusme-ertelendi-form">
+        <label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Yeni Randevu Tarihi</label>
+        <input type="date" id="ertelendi-tarih" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;">
+        <input type="time" id="ertelendi-saat" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;margin-top:8px;">
+        <button onclick="durusmayiErtelendi()" style="width:100%;margin-top:10px;padding:12px;background:var(--navy);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Yeni Tarihe Ekle</button>
+      </div>
+      <button class="sonuc-btn mazeret" onclick="durusmaSonucIptal()"><span>🚫</span><span>İptal Edildi</span></button>`;
+  } else if(dal==='kesif'){
+    container.innerHTML=`
+      <button class="sonuc-btn karar" onclick="toggleSonucForm('karar-form',false)"><span>✅</span><span>Keşif Yapıldı</span></button>
+      <div class="ertelendi-form" id="karar-form">
+        <label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Keşif Notu <span style="color:#dc2626;">*zorunlu</span></label>
+        <textarea id="karar-not" placeholder="Keşif detayları..." style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;height:80px;resize:vertical;"></textarea>
+        <button onclick="durusmaSonucKarar()" style="width:100%;margin-top:10px;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Kaydet ve Tamamlandı İşaretle</button>
+      </div>
+      <button class="sonuc-btn mazeret" onclick="durusmaSonucMazeretSadece()"><span>📋</span><span>Mazeret Gönderildi</span></button>`;
+  } else if(dal==='tevkil'){
+    container.innerHTML=`
+      <button class="sonuc-btn karar" onclick="toggleSonucForm('karar-form',false)"><span>✅</span><span>Duruşma Yapıldı</span></button>
+      <div class="ertelendi-form" id="karar-form">
+        <label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Duruşma Notu <span style="color:#dc2626;">*zorunlu</span></label>
+        <textarea id="karar-not" placeholder="Duruşma detayları..." style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;height:80px;resize:vertical;"></textarea>
+        <button onclick="durusmaSonucKarar()" style="width:100%;margin-top:10px;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Kaydet ve Tamamlandı İşaretle</button>
+      </div>
+      <button class="sonuc-btn ertelendi" onclick="toggleSonucForm('ertelendi-form',true)"><span>📅</span><span>Ertelendi</span></button>
+      <div class="ertelendi-form" id="ertelendi-form">
+        <label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Yeni Duruşma Tarihi</label>
+        <input type="date" id="ertelendi-tarih" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;">
+        <input type="time" id="ertelendi-saat" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;margin-top:8px;">
+        <button onclick="durusmayiErtelendi()" style="width:100%;margin-top:10px;padding:12px;background:var(--navy);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Yeni Tarihe Ekle</button>
+      </div>`;
+  } else {
+    container.innerHTML=`
+      <button class="sonuc-btn ertelendi" onclick="toggleSonucForm('ertelendi-form',true)"><span>📅</span><span>Ertelendi</span></button>
+      <div class="ertelendi-form" id="ertelendi-form">
+        <label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Yeni Duruşma Tarihi</label>
+        <input type="date" id="ertelendi-tarih" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;">
+        <input type="time" id="ertelendi-saat" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;margin-top:8px;">
+        <button onclick="durusmayiErtelendi()" style="width:100%;margin-top:10px;padding:12px;background:var(--navy);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Yeni Tarihe Ekle</button>
+      </div>
+      <button class="sonuc-btn karar" onclick="toggleSonucForm('karar-form',false)"><span>✅</span><span>Karar Verildi</span></button>
+      <div class="ertelendi-form" id="karar-form">
+        <label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Karar Notu <span style="color:#dc2626;">*zorunlu</span></label>
+        <textarea id="karar-not" placeholder="Örn: Beraat, mahkumiyet, tazminat kararı..." style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;height:80px;resize:vertical;"></textarea>
+        <button onclick="durusmaSonucKarar()" style="width:100%;margin-top:10px;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Kaydet ve Tamamlandı İşaretle</button>
+      </div>
+      <button class="sonuc-btn mazeret" onclick="durusmaSonucMazeret()"><span>📋</span><span>Mazeret Gönderildi</span></button>`;
+  }
 }
 function closeDurusmaSonuc(){
   document.getElementById('durusma-sonuc-overlay').style.display = 'none';
-  document.getElementById('karar-form').style.display = 'none';
-  document.getElementById('ertelendi-form').style.display = 'none';
-  const kn = document.getElementById('karar-not'); if(kn) kn.value='';
   _durusmaSonucId = null;
 }
-function toggleKararForm(){
-  const f=document.getElementById('karar-form');
-  f.style.display=f.style.display==='none'?'block':'none';
-  // Ertelendi formu kapat
-  document.getElementById('ertelendi-form').style.display='none';
+
+async function durusmaSonucAnlasmama(){
+  const r = records.find(x=>x.id===_durusmaSonucId);
+  if(!r) return;
+  // 2 hafta sonraya hukuk dava açılış süreli iş olarak not ekle
+  const yeniTarih = new Date(r.date+'T12:00:00');
+  yeniTarih.setDate(yeniTarih.getDate()+14);
+  const tarihStr = yeniTarih.toISOString().split('T')[0];
+  const yeniRec = {
+    type:'genel', date:tarihStr,
+    baslik:'Hukuk Davası Açılışı Değerlendir',
+    not_alani:'Arabuluculuk anlaşmazlıkla sonuçlandı. Dava açılışı değerlendir.',
+    muvekkil:r.muvekkil||null, mahkeme:r.mahkeme||null, dava:r.dava||null,
+    dal:'hukuk', tamamlandi:false
+  };
+  const {error} = await sb.from('kayitlar').insert(localToDB(yeniRec));
+  if(error){ alert('Hata: '+error.message); return; }
+  const eskiNot=r.not?r.not+'\n':'';
+  await sb.from('kayitlar').update({tamamlandi:true, not_alani:eskiNot+'Anlaşamama ile sonuçlandı → '+formatDate(tarihStr)+' tarihine hatırlatma eklendi'}).eq('id',r.id);
+  closeDurusmaSonuc();
+  await loadRecords();
+  alert('✓ Anlaşamama kaydedildi. '+formatDate(tarihStr)+' tarihine hatırlatma eklendi.');
 }
-function toggleErtelendiForm(){
-  const f=document.getElementById('ertelendi-form');
-  f.style.display=f.style.display==='none'?'block':'none';
-  // Karar formu kapat
-  document.getElementById('karar-form').style.display='none';
+
+async function durusmaSonucIkinciOturum(){
+  const r = records.find(x=>x.id===_durusmaSonucId);
+  if(!r) return;
+  const yeniTarih = document.getElementById('ikinci-oturum-tarih').value;
+  const yeniSaat = document.getElementById('ikinci-oturum-saat').value;
+  if(!yeniTarih){ alert('Yeni tarih seçiniz.'); return; }
+  const yeniRec = {...localToDB(r), date:yeniTarih, saat:yeniSaat||r.saat||null};
+  delete yeniRec.id;
+  const {error} = await sb.from('kayitlar').insert(yeniRec);
+  if(error){ alert('Hata: '+error.message); return; }
+  const eskiNot=r.not?r.not+'\n':'';
+  await sb.from('kayitlar').update({tamamlandi:true, not_alani:eskiNot+'2. Oturum → '+formatDate(yeniTarih)}).eq('id',r.id);
+  closeDurusmaSonuc();
+  await loadRecords();
+  alert('✓ 2. Oturum '+formatDate(yeniTarih)+' tarihine eklendi.');
 }
+
+async function durusmaSonucIptal(){
+  const r = records.find(x=>x.id===_durusmaSonucId);
+  if(!r) return;
+  const eskiNot=r.not?r.not+'\n':'';
+  await sb.from('kayitlar').update({tamamlandi:true, not_alani:eskiNot+'İptal edildi'}).eq('id',r.id);
+  closeDurusmaSonuc();
+  await loadRecords();
+}
+
+async function durusmaSonucMazeretSadece(){
+  const r = records.find(x=>x.id===_durusmaSonucId);
+  if(!r) return;
+  const eskiNot=r.not?r.not+'\n':'';
+  await sb.from('kayitlar').update({not_alani:eskiNot+'Mazeret gönderildi'}).eq('id',r.id);
+  closeDurusmaSonuc();
+  await loadRecords();
+  alert('✓ Mazeret notu eklendi.');
+}
+
+
 async function durusmayiErtelendi(){
   const r = records.find(x=>x.id===_durusmaSonucId);
   if(!r) return;
@@ -2230,31 +2369,8 @@ loadRecords();
     </div>
     <div style="padding:16px 20px;">
       <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;">Duruşma Sonucu</div>
-      
-      <button class="sonuc-btn ertelendi" onclick="toggleErtelendiForm()">
-        <span>📅</span><span>Ertelendi</span>
-      </button>
-      <div class="ertelendi-form" id="ertelendi-form">
-        <label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Yeni Duruşma Tarihi</label>
-        <input type="date" id="ertelendi-tarih" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;">
-        <input type="time" id="ertelendi-saat" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;margin-top:8px;">
-        <button onclick="durusmayiErtelendi()" style="width:100%;margin-top:10px;padding:12px;background:var(--navy);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Yeni Tarihe Ekle</button>
-      </div>
-
-      <button class="sonuc-btn karar" onclick="toggleKararForm()">
-        <span>✅</span><span>Karar Verildi</span>
-      </button>
-      <div class="ertelendi-form" id="karar-form" style="display:none;">
-        <label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Karar Notu <span style="color:#dc2626;">*zorunlu</span></label>
-        <textarea id="karar-not" placeholder="Örn: Beraat, mahkumiyet, tazminat kararı..." style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;height:80px;resize:vertical;"></textarea>
-        <button onclick="durusmaSonucKarar()" style="width:100%;margin-top:10px;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Kaydet ve Tamamlandı İşaretle</button>
-      </div>
-
-      <button class="sonuc-btn mazeret" onclick="durusmaSonucMazeret()">
-        <span>📋</span><span>Mazeret Gönderildi</span>
-      </button>
-
-      <button class="btn" style="width:100%;margin-top:4px;" onclick="closeDurusmaSonuc()">Vazgeç</button>
+      <div id="sonuc-butonlar"></div>
+      <button class="btn" style="width:100%;margin-top:8px;" onclick="closeDurusmaSonuc()">Vazgeç</button>
     </div>
   </div>
 </div>
