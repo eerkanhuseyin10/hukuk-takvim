@@ -1417,16 +1417,15 @@ document.addEventListener('keydown', function(e){
 
 // Geri butonu ile modal kapat
 window.addEventListener('popstate', function(){
-  if(document.getElementById('durusma-sonuc-overlay').style.display==='flex'){closeDurusmaSonuc();return;}
-  if(document.getElementById('muvekkil-modal').style.display==='flex'){
-    document.getElementById('muvekkil-modal').style.display='none';
-    if(_oncekiKayitId){openKayitModal(_oncekiKayitId);_oncekiKayitId=null;}
-    return;
+  if(_navStack.length){
+    _navGeri();
+  } else {
+    if(document.getElementById('durusma-sonuc-overlay').style.display==='flex'){closeDurusmaSonuc();return;}
+    if(document.getElementById('kayit-modal').style.display==='flex'){closeKayitModal();return;}
+    if(document.getElementById('modal').style.display==='flex'){closeModal();return;}
+    if(document.getElementById('cal-detail-panel').classList.contains('open')){closeCalDetail();return;}
   }
-  if(document.getElementById('kayit-modal').style.display==='flex'){closeKayitModal();return;}
-  if(document.getElementById('modal').style.display==='flex'){closeModal();return;}
-  if(document.getElementById('cal-detail-panel').classList.contains('open')){closeCalDetail();return;}
-});
+});;
 
 // Enter tuşu ile kaydet
 document.addEventListener('keydown', function(e){
@@ -1850,7 +1849,7 @@ function renderCal(){
 let _calDetailDate=null,_calDetailExpanded=null;
 
 function showCalDetail(dateStr, expandId){
-  history.pushState({modal:'cal-detail'},'');
+  _navPush('calDetail', dateStr);
   _calDetailDate=dateStr;
   _calDetailExpanded=expandId||null;
   const tatilBilgi=getTatil(dateStr);
@@ -1969,27 +1968,74 @@ function openMuvekkilModal(isim, kayitId){
 }
 function closeMuvekkilModal(){
   document.getElementById('muvekkil-modal').style.display='none';
+  const idx=_navStack.findIndex(x=>x.type==='muvekkil');
+  if(idx!==-1) _navStack.splice(idx);
 }
 let _oncekiKayitId = null;
 
+// ── NAVİGASYON STACK ─────────────────────────────────────────────
+const _navStack = [];
+
+function _navPush(type, data){
+  _navStack.push({type, data});
+  history.pushState({nav: _navStack.length}, '');
+}
+
+function _navGeri(){
+  if(!_navStack.length) return;
+  const current = _navStack.pop();
+  // Şu anki modalı kapat
+  _tumModallariKapat();
+  // Bir önceki stack'e dön
+  if(_navStack.length){
+    const prev = _navStack[_navStack.length-1];
+    if(prev.type==='kayit') { _openKayitDirekt(prev.data); }
+    else if(prev.type==='muvekkil') { _openMuvekkilDirekt(prev.data.isim, prev.data.kayitId); }
+    else if(prev.type==='calDetail') { showCalDetail(prev.data); }
+  }
+}
+
+function _tumModallariKapat(){
+  document.getElementById('muvekkil-modal').style.display='none';
+  document.getElementById('kayit-modal').style.display='none';
+  document.getElementById('modal').style.display='none';
+  document.getElementById('durusma-sonuc-overlay').style.display='none';
+  closeCalDetail();
+}
+
+// Direkt aç (stack'e eklemeden)
+function _openKayitDirekt(id){
+  const r=records.find(x=>x.id===id);
+  if(!r) return;
+  // openKayitModal içeriğini render et ama pushState yapma
+  _renderKayitModal(r);
+  document.getElementById('kayit-modal').style.display='flex';
+}
+
+function _openMuvekkilDirekt(isim, kayitId){
+  _oncekiKayitId = kayitId||null;
+  _renderMuvekkilModal(isim);
+  document.getElementById('muvekkil-modal').style.display='flex';
+}
+
 function acMuvekkilden(isim, kayitId){
   _oncekiKayitId = kayitId;
-  history.pushState({modal:'muvekkil'},'');
-  openMuvekkilModal(isim, kayitId);
+  _navPush('muvekkil', {isim, kayitId});
+  _openMuvekkilDirekt(isim, kayitId);
 }
 
 function muvekkildenGeri(){
-  document.getElementById('muvekkil-modal').style.display='none';
-  if(_oncekiKayitId){
-    const id=_oncekiKayitId;
-    _oncekiKayitId=null;
-    openKayitModal(id);
-  }
+  history.back();
 }
 function openKayitModal(id){
-  history.pushState({modal:'kayit-detay'},'');
   const r=records.find(x=>x.id===id);
   if(!r)return;
+  _navPush('kayit', id);
+  _navPush('kayit', id);
+  _renderKayitModal(r);
+}
+
+function _renderKayitModal(r){
   const typeDot={sure:'#ef4444',durusma:'#3b82f6',genel:'#22c55e',tekrar:'#f59e0b'};
   document.getElementById('km-type-dot').style.background=typeDot[r.type]||'#9aa0ac';
   document.getElementById('km-title').textContent=getBaslik(r);
@@ -2025,10 +2071,12 @@ function openKayitModal(id){
     <button class="icon-btn del" style="padding:10px 14px;" onclick="closeKayitModal();deleteRecord(${r.id})">Sil</button>
   </div>`;
   document.getElementById('km-body').innerHTML=body;
-  document.getElementById('kayit-modal').style.display='flex';
 }
 function closeKayitModal(){
   document.getElementById('kayit-modal').style.display='none';
+  // Stack'ten bu modalı çıkar
+  const idx=_navStack.findIndex(x=>x.type==='kayit');
+  if(idx!==-1) _navStack.splice(idx);
 }
 function showMahkemeDropdown(inputId, ddId){
   const input=document.getElementById(inputId);
@@ -2286,6 +2334,8 @@ async function durusmaSonucMazeret(){
 function closeCalDetail(){
   document.getElementById('cal-detail-panel').classList.remove('open');
   document.getElementById('cal-detail-overlay').classList.remove('open');
+  const idx=_navStack.findIndex(x=>x.type==='calDetail');
+  if(idx!==-1) _navStack.splice(idx);
 }
 
 // Swipe ile modal kapatma
