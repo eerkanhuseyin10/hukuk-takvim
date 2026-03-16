@@ -1978,7 +1978,7 @@ function openKayitModal(id){
     body+=`<div style="border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:14px;">${buildHesapHTML(d)}</div>`;
   }
   const rows=[
-    r.muvekkil?{l:'Müvekkil',v:`<span onclick="_oncekiKayitId=${r.id};document.getElementById('muvekkil-modal').style.display='none';openMuvekkilModal('${r.muvekkil}',${r.id});" style="color:var(--navy);font-weight:600;text-decoration:underline;cursor:pointer;">${r.muvekkil} ›</span>`}:null,
+    r.muvekkil?{l:'Müvekkil',v:`<span onclick="_oncekiKayitId=${r.id};document.getElementById('muvekkil-modal').style.acMuvekkilden('${r.muvekkil}',${r.id})" style="color:var(--navy);font-weight:600;text-decoration:underline;cursor:pointer;">${r.muvekkil} ›</span>`}:null,
     r.mahkeme?{l:'Mahkeme',v:r.mahkeme}:null,
     r.dava?{l:'Dava No',v:r.dava}:null,
     r.dal?{l:'Dal',v:dalLabel(r.dal)}:null,
@@ -2189,7 +2189,7 @@ loadRecords();
     <div style="width:40px;height:4px;background:var(--border2);border-radius:2px;margin:10px auto 0;"></div>
     <div class="muvekkil-modal-header">
       <div style="display:flex;align-items:center;gap:8px;">
-        <button onclick="history.back()" style="background:none;border:none;cursor:pointer;padding:4px 6px 4px 0;color:var(--navy);font-size:20px;line-height:1;display:flex;align-items:center;">&#8592;</button>
+        <button onclick="muvekkildenGeri()" style="background:none;border:none;cursor:pointer;padding:4px 6px 4px 0;color:var(--navy);font-size:20px;line-height:1;display:flex;align-items:center;">&#8592;</button>
         <div>
           <h2 id="mv-isim" style="font-size:16px;font-weight:700;"></h2>
           <div id="mv-ozet" style="font-size:12px;color:var(--text2);margin-top:2px;"></div>
