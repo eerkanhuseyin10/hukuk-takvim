@@ -1206,7 +1206,7 @@ async function genelIsleriTasi(){
   // Tarihi geçmiş, tamamlanmamış, genel işleri bul (tekrar hariç)
   const tasınacaklar=records.filter(r=>{
     const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);
-    return r.type==='genel'&&!r.tamamlandi&&!r.tekrarAnaId&&d<bugun&&r.date!==bugunStr;
+    return r.type==='genel'&&!r.tamamlandi&&!r.tekrarAnaId&&d<bugun;
   });
   if(!tasınacaklar.length) return;
   for(const r of tasınacaklar){
