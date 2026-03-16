@@ -1926,7 +1926,6 @@ function toggleCalItem(id){
 function openMuvekkilModal(isim, kayitId){
   if(!isim||isim==='—') return;
   _oncekiKayitId = kayitId || null;
-  history.pushState({modal:'muvekkil'},'');
   const tumIsler = records.filter(r=>r.muvekkil===isim);
   const aktif = tumIsler.filter(r=>!r.tamamlandi).sort((a,b)=>new Date(a.date)-new Date(b.date));
   const tamamlanan = tumIsler.filter(r=>r.tamamlandi).sort((a,b)=>new Date(b.date)-new Date(a.date));
@@ -1972,6 +1971,21 @@ function closeMuvekkilModal(){
   document.getElementById('muvekkil-modal').style.display='none';
 }
 let _oncekiKayitId = null;
+
+function acMuvekkilden(isim, kayitId){
+  _oncekiKayitId = kayitId;
+  history.pushState({modal:'muvekkil'},'');
+  openMuvekkilModal(isim, kayitId);
+}
+
+function muvekkildenGeri(){
+  document.getElementById('muvekkil-modal').style.display='none';
+  if(_oncekiKayitId){
+    const id=_oncekiKayitId;
+    _oncekiKayitId=null;
+    openKayitModal(id);
+  }
+}
 function openKayitModal(id){
   history.pushState({modal:'kayit-detay'},'');
   const r=records.find(x=>x.id===id);
