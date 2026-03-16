@@ -1978,7 +1978,7 @@ function openKayitModal(id){
     body+=`<div style="border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:14px;">${buildHesapHTML(d)}</div>`;
   }
   const rows=[
-    r.muvekkil?{l:'Müvekkil',v:`<span onclick="_oncekiKayitId=${r.id};document.getElementById('muvekkil-modal').style.acMuvekkilden('${r.muvekkil}',${r.id})" style="color:var(--navy);font-weight:600;text-decoration:underline;cursor:pointer;">${r.muvekkil} ›</span>`}:null,
+    r.muvekkil?{l:'Müvekkil',v:`<span onclick="acMuvekkilden('${r.muvekkil}',${r.id})" style="color:var(--navy);font-weight:600;text-decoration:underline;cursor:pointer;">${r.muvekkil} ›</span>`}:null,
     r.mahkeme?{l:'Mahkeme',v:r.mahkeme}:null,
     r.dava?{l:'Dava No',v:r.dava}:null,
     r.dal?{l:'Dal',v:dalLabel(r.dal)}:null,
