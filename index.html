@@ -551,7 +551,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
             <button class="chip" onclick="setChip('dal2','ceza',this)">Ceza</button>
             <button class="chip" onclick="setChip('dal2','icra',this)">İcra</button>
             <button class="chip" onclick="setChip('dal2','idare',this)">İdari</button>
-            <button class="chip" onclick="setChip('dal2','tahkim',this)">Tahkim</button>
             <button class="chip" onclick="setChip('dal2','arabuluculuk',this)">Arabuluculuk</button>
             <button class="chip" onclick="setChip('dal2','randevu',this)">Randevu</button>
             <button class="chip" onclick="setChip('dal2','kesif',this)">Keşif</button>
@@ -2054,7 +2053,7 @@ function openDurusmaSonuc(id){
 }
 
 function toggleSonucForm(formId, clearInput){
-  ['ertelendi-form','karar-form','anlasmama-form','ikinci-oturum-form','gorusme-ertelendi-form'].forEach(id=>{
+  ['ertelendi-form','karar-form','anlasmama-form','ikinci-oturum-form','gorusme-ertelendi-form','iptal-form'].forEach(id=>{
     const el=document.getElementById(id); if(el) el.style.display='none';
   });
   const f=document.getElementById(formId);
@@ -2104,7 +2103,12 @@ function renderSonucButonlari(dal){
         <input type="time" id="ertelendi-saat" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;margin-top:8px;">
         <button onclick="durusmayiErtelendi()" style="width:100%;margin-top:10px;padding:12px;background:var(--navy);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Yeni Tarihe Ekle</button>
       </div>
-      <button class="sonuc-btn mazeret" onclick="durusmaSonucIptal()"><span>🚫</span><span>İptal Edildi</span></button>`;
+      <button class="sonuc-btn mazeret" onclick="toggleSonucForm('iptal-form',false)"><span>🚫</span><span>İptal Edildi</span></button>
+      <div class="ertelendi-form" id="iptal-form">
+        <label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">İptal Notu (opsiyonel)</label>
+        <textarea id="iptal-not" placeholder="İptal gerekçesi..." style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;height:60px;resize:vertical;"></textarea>
+        <button onclick="durusmaSonucIptal()" style="width:100%;margin-top:10px;padding:12px;background:#ef4444;color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">İptal Edildi Olarak Kaydet</button>
+      </div>`;
   } else if(dal==='kesif'){
     container.innerHTML=`
       <button class="sonuc-btn karar" onclick="toggleSonucForm('karar-form',false)"><span>✅</span><span>Keşif Yapıldı</span></button>
@@ -2195,8 +2199,10 @@ async function durusmaSonucIkinciOturum(){
 async function durusmaSonucIptal(){
   const r = records.find(x=>x.id===_durusmaSonucId);
   if(!r) return;
+  const iptalNot = (document.getElementById('iptal-not')||{}).value||'';
   const eskiNot=r.not?r.not+'\n':'';
-  await sb.from('kayitlar').update({tamamlandi:true, not_alani:eskiNot+'İptal edildi'}).eq('id',r.id);
+  const tamNot=eskiNot+'İptal edildi'+(iptalNot.trim()?' → '+iptalNot.trim():'');
+  await sb.from('kayitlar').update({tamamlandi:true, not_alani:tamNot}).eq('id',r.id);
   closeDurusmaSonuc();
   await loadRecords();
 }
@@ -2205,10 +2211,10 @@ async function durusmaSonucMazeretSadece(){
   const r = records.find(x=>x.id===_durusmaSonucId);
   if(!r) return;
   const eskiNot=r.not?r.not+'\n':'';
-  await sb.from('kayitlar').update({not_alani:eskiNot+'Mazeret gönderildi'}).eq('id',r.id);
+  await sb.from('kayitlar').update({tamamlandi:true, not_alani:eskiNot+'Mazeret gönderildi'}).eq('id',r.id);
   closeDurusmaSonuc();
   await loadRecords();
-  alert('✓ Mazeret notu eklendi.');
+  alert('✓ Mazeret gönderildi olarak kaydedildi.');
 }
 
 
