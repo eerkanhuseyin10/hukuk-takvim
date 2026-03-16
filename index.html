@@ -1329,7 +1329,6 @@ function hesapla(){
 
 // ── MODAL ─────────────────────────────────────────────────────────
 function openModal(editRecord,prefillDate){
-  history.pushState({modal:'kayit-ekle'},'');
   ST={type:'sure',teblig:'',dal:'',dal2:'',birim:'',hesaplananTarih:null,hesapDetay:null,editId:null,prefillDate:prefillDate||''};
   selectedIstipi='';
   document.querySelectorAll('.chip,.type-tab,.sure-birim-btn').forEach(c=>c.classList.remove('sel'));
@@ -1424,17 +1423,7 @@ document.addEventListener('keydown', function(e){
 });
 
 // Geri butonu ile modal kapat
-window.addEventListener('popstate', function(){
-  if(document.getElementById('durusma-sonuc-overlay').style.display==='flex'){closeDurusmaSonuc();return;}
-  if(document.getElementById('muvekkil-modal').style.display==='flex'){
-    document.getElementById('muvekkil-modal').style.display='none';
-    if(_oncekiKayitId){openKayitModal(_oncekiKayitId);_oncekiKayitId=null;}
-    return;
-  }
-  if(document.getElementById('kayit-modal').style.display==='flex'){closeKayitModal();return;}
-  if(document.getElementById('modal').style.display==='flex'){closeModal();return;}
-  if(document.getElementById('cal-detail-panel').classList.contains('open')){closeCalDetail();return;}
-});
+;
 
 // Enter tuşu ile kaydet
 document.addEventListener('keydown', function(e){
@@ -1858,7 +1847,6 @@ function renderCal(){
 let _calDetailDate=null,_calDetailExpanded=null;
 
 function showCalDetail(dateStr, expandId){
-  history.pushState({modal:'cal-detail'},'');
   _calDetailDate=dateStr;
   _calDetailExpanded=expandId||null;
   const tatilBilgi=getTatil(dateStr);
@@ -1931,10 +1919,8 @@ function toggleCalItem(id){
   renderCalDetail();
 }
 
-function openMuvekkilModal(isim, kayitId){
+function openMuvekkilModal(isim){
   if(!isim||isim==='—') return;
-  _oncekiKayitId = kayitId || null;
-  history.pushState({modal:'muvekkil'},'');
   const tumIsler = records.filter(r=>r.muvekkil===isim);
   const aktif = tumIsler.filter(r=>!r.tamamlandi).sort((a,b)=>new Date(a.date)-new Date(b.date));
   const tamamlanan = tumIsler.filter(r=>r.tamamlandi).sort((a,b)=>new Date(b.date)-new Date(a.date));
@@ -1979,9 +1965,7 @@ function openMuvekkilModal(isim, kayitId){
 function closeMuvekkilModal(){
   document.getElementById('muvekkil-modal').style.display='none';
 }
-let _oncekiKayitId = null;
 function openKayitModal(id){
-  history.pushState({modal:'kayit-detay'},'');
   const r=records.find(x=>x.id===id);
   if(!r)return;
   const typeDot={sure:'#ef4444',durusma:'#3b82f6',genel:'#22c55e',tekrar:'#f59e0b'};
@@ -1993,15 +1977,13 @@ function openKayitModal(id){
     body+=`<div style="border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:14px;">${buildHesapHTML(d)}</div>`;
   }
   const rows=[
-    r.muvekkil?{l:'Müvekkil',v:`<span onclick="acMuvekkilden('${r.muvekkil}',${r.id})" style="color:var(--navy);font-weight:600;text-decoration:underline;cursor:pointer;">${r.muvekkil} ›</span>`}:null,
+    r.muvekkil?{l:'Müvekkil',v:`<span onclick="openMuvekkilModal('${r.muvekkil}')" style="color:var(--navy);font-weight:600;text-decoration:underline;cursor:pointer;">${r.muvekkil} ›</span>`}:null,
     r.mahkeme?{l:'Mahkeme',v:r.mahkeme}:null,
     r.dava?{l:'Dava No',v:r.dava}:null,
     r.dal?{l:'Dal',v:dalLabel(r.dal)}:null,
     r.saat?{l:'Saat',v:'⏰ '+r.saat}:null,
     {l:'Tarih',v:formatDate(r.date)},
-    r.not?{l:'Not',v:(()=>{
-      return r.not.split('\n').map(s=>s.includes('tarihinde oluşturuldu')&&s.includes('Planlandığı tarih')?'<strong>'+s+'</strong>':s).join('<br>');
-    })()}:null,
+    r.not?{l:'Not',v:r.not}:null,
     r.tekrarTipi?{l:'Tekrar',v:'↻ '+tekrarTipiLabel(r.tekrarTipi)+(r.tekrarBitis?' · Bitiş: '+formatDate(r.tekrarBitis):'')}:null,
   ].filter(Boolean);
   body+=rows.map(row=>`<div class="kayit-row"><div class="kayit-row-label">${row.l}</div><div class="kayit-row-val">${row.v}</div></div>`).join('');
@@ -2268,7 +2250,6 @@ loadRecords();
     <div style="width:40px;height:4px;background:var(--border2);border-radius:2px;margin:10px auto 0;"></div>
     <div class="muvekkil-modal-header">
       <div style="display:flex;align-items:center;gap:8px;">
-        <button onclick="muvekkildenGeri()" style="background:none;border:none;cursor:pointer;padding:4px 6px 4px 0;color:var(--navy);font-size:20px;line-height:1;display:flex;align-items:center;">&#8592;</button>
         <div>
           <h2 id="mv-isim" style="font-size:16px;font-weight:700;"></h2>
           <div id="mv-ozet" style="font-size:12px;color:var(--text2);margin-top:2px;"></div>
