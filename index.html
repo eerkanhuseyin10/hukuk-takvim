@@ -1208,12 +1208,12 @@ async function genelIsleriTasi(){
     const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);
     return r.type==='genel'&&!r.tamamlandi&&!r.tekrarAnaId&&d<bugun;
   });
-  if(!tasınacaklar.length) return;
+  if(!tasınacaklar.length) return false;
   for(const r of tasınacaklar){
     await sb.from('kayitlar').update({date:bugunStr}).eq('id',r.id);
+    r.date=bugunStr;
   }
-  // Taşınan kayıtları güncelle
-  tasınacaklar.forEach(r=>{r.date=bugunStr;});
+  return true;
 }
 
 async function loadRecords(){
@@ -1228,10 +1228,11 @@ async function loadRecords(){
     const{data:data2}=await sb.from('kayitlar').select('*').order('date',{ascending:true});
     records=(data2||[]).map(dbToLocal);
   }
-  // Geçmiş genel işleri bugüne taşı
-  await genelIsleriTasi();
   setSyncStatus('ok','Bağlı');
   renderAll();
+  // Geçmiş genel işleri bugüne taşı
+  const tasindi = await genelIsleriTasi();
+  if(tasindi) renderAll();
   bildirimDurumGuncelle();
   hatirlaticiKontrol();
 }
