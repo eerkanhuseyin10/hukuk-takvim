@@ -242,8 +242,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .istipi-list{max-height:160px;overflow-y:auto;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface);}
 .istipi-item{padding:9px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--border);}
 .istipi-item:last-child{border-bottom:none;}
-.istipi-item:hover{background:var(--navy-light);}
-.istipi-item.sel{background:var(--navy-light);font-weight:500;color:var(--navy);}
+.istipi-item:hover,.istipi-item.sel{background:var(--navy-light);}
+.istipi-item.sel{font-weight:500;color:var(--navy);}
 .yil-picker{display:flex;align-items:center;gap:6px;}
 .yil-select{padding:9px 10px;font-size:14px;font-weight:600;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface);color:var(--text);font-family:inherit;cursor:pointer;width:90px;}
 .yil-select:focus{outline:none;border-color:var(--navy);}
@@ -999,7 +999,6 @@ const IS_TIPLERI=['89/1 İtirazı','Adli Kontrol Kararına İtiraz','Adres Bildi
 
 let selectedIstipi='';
 let records=[],ST={type:'sure',teblig:'',dal:'',dal2:'',birim:'',hesaplananTarih:null,hesapDetay:null,editId:null,prefillDate:''};
-let _bildirimGonderildi=false;
 let currentMonth=new Date().getMonth(),currentYear=new Date().getFullYear(),openDetailId=null;
 
 // ── İŞ TİPİ ──────────────────────────────────────────────────────
@@ -1201,11 +1200,9 @@ async function olusturTekrarKayitlari(anaRec){
 }
 // ── GEÇMİŞ GENEL İŞLERİ BUGÜNE TAŞI ────────────────────────────
 async function genelIsleriTasi(){
-  const bugun=new Date();
-  const yil=bugun.getFullYear();
-  const ay=String(bugun.getMonth()+1).padStart(2,'0');
-  const gun=String(bugun.getDate()).padStart(2,'0');
-  const bugunStr=yil+'-'+ay+'-'+gun;
+  const bugun=new Date();bugun.setHours(0,0,0,0);
+  const bugunStr=bugun.toISOString().split('T')[0];
+  // Doğrudan Supabase'e sorgu at - records'a bağımlı değil
   const{error}=await sb.from('kayitlar')
     .update({date:bugunStr})
     .eq('type','genel')
@@ -1229,13 +1226,24 @@ async function loadRecords(){
   }
   // Geçmiş genel işleri bugüne taşı
   await genelIsleriTasi();
-  // Güncel veriyi tekrar çek
-  const{data:dataFinal}=await sb.from('kayitlar').select('*').order('date',{ascending:true});
-  if(dataFinal) records=dataFinal.map(dbToLocal);
+  const{data:_dataFinal}=await sb.from('kayitlar').select('*').order('date',{ascending:true});
+  if(_dataFinal) records=_dataFinal.map(dbToLocal);
   setSyncStatus('ok','Bağlı');
   renderAll();
   bildirimDurumGuncelle();
-  if(!_bildirimGonderildi){_bildirimGonderildi=true;hatirlaticiKontrol();}
+  hatirlaticiKontrol();
+}
+
+async function genelIsleriTasi(){
+  const _b=new Date();
+  const _bs=_b.getFullYear()+'-'+String(_b.getMonth()+1).padStart(2,'0')+'-'+String(_b.getDate()).padStart(2,'0');
+  const{error}=await sb.from('kayitlar')
+    .update({date:_bs})
+    .eq('type','genel')
+    .eq('tamamlandi',false)
+    .is('tekrar_ana_id',null)
+    .lt('date',_bs);
+  return !error;
 }
 function setSyncStatus(s,t){
   document.getElementById('sync-dot').className='sync-dot'+(s==='error'?' error':s==='loading'?' loading':'');
@@ -1417,15 +1425,16 @@ document.addEventListener('keydown', function(e){
 
 // Geri butonu ile modal kapat
 window.addEventListener('popstate', function(){
-  if(_navStack.length){
-    _navGeri();
-  } else {
-    if(document.getElementById('durusma-sonuc-overlay').style.display==='flex'){closeDurusmaSonuc();return;}
-    if(document.getElementById('kayit-modal').style.display==='flex'){closeKayitModal();return;}
-    if(document.getElementById('modal').style.display==='flex'){closeModal();return;}
-    if(document.getElementById('cal-detail-panel').classList.contains('open')){closeCalDetail();return;}
+  if(document.getElementById('durusma-sonuc-overlay').style.display==='flex'){closeDurusmaSonuc();return;}
+  if(document.getElementById('muvekkil-modal').style.display==='flex'){
+    document.getElementById('muvekkil-modal').style.display='none';
+    if(_oncekiKayitId){openKayitModal(_oncekiKayitId);_oncekiKayitId=null;}
+    return;
   }
-});;
+  if(document.getElementById('kayit-modal').style.display==='flex'){closeKayitModal();return;}
+  if(document.getElementById('modal').style.display==='flex'){closeModal();return;}
+  if(document.getElementById('cal-detail-panel').classList.contains('open')){closeCalDetail();return;}
+});
 
 // Enter tuşu ile kaydet
 document.addEventListener('keydown', function(e){
@@ -1464,12 +1473,12 @@ async function saveRecord(){
   }else{
     const date=document.getElementById('f-genel-tarih').value;if(!date){alert('Tarih zorunludur.');return;}
     const yil=document.getElementById('f-genel-yil').value,no=document.getElementById('f-genel-no').value.trim();
-    const bugun=new Date();
-    const bugunStr=bugun.getFullYear()+'-'+String(bugun.getMonth()+1).padStart(2,'0')+'-'+String(bugun.getDate()).padStart(2,'0');
-    const olusturmaNotSatiri=formatDate(bugunStr)+' tarihinde oluşturuldu. Planlandığı tarih: '+formatDate(date)+'.';
-    const mevcutNot=sentenceCase(document.getElementById('f-genel-aciklama').value.trim());
-    const tamNot=mevcutNot?mevcutNot+'\n'+olusturmaNotSatiri:olusturmaNotSatiri;
-    rec={type:'genel',date,baslik:titleCase(document.getElementById('f-genel-baslik').value.trim())||'Genel İş',saat:document.getElementById('f-genel-saat').value,mahkeme:titleCase(document.getElementById('f-genel-mahkeme').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-genel-muvekkil').value.trim()),not:tamNot};
+    const _bugun=new Date();
+    const _bugunStr=_bugun.getFullYear()+'-'+String(_bugun.getMonth()+1).padStart(2,'0')+'-'+String(_bugun.getDate()).padStart(2,'0');
+    const _olusturmaNotSatiri=formatDate(_bugunStr)+' tarihinde oluşturuldu. Planlandığı tarih: '+formatDate(date)+'.';
+    const _mevcutNot=sentenceCase(document.getElementById('f-genel-aciklama').value.trim());
+    const _tamNot=_mevcutNot?_mevcutNot+'\n'+_olusturmaNotSatiri:_olusturmaNotSatiri;
+    rec={type:'genel',date,baslik:titleCase(document.getElementById('f-genel-baslik').value.trim())||'Genel İş',saat:document.getElementById('f-genel-saat').value,mahkeme:titleCase(document.getElementById('f-genel-mahkeme').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-genel-muvekkil').value.trim()),not:_tamNot};
   }
   const btn=document.getElementById('save-btn');btn.textContent='Kaydediliyor...';btn.disabled=true;
   if(ST.editId){const{error}=await sb.from('kayitlar').update(localToDB(rec)).eq('id',ST.editId);if(error){alert('Güncelleme hatası: '+error.message);}}
@@ -1494,8 +1503,8 @@ async function toggleTamamlandi(id){
   const not_metni=prompt('⚠️ Açıklama zorunludur.\n\nBu iş hakkında kısa bir not girin:');
   if(not_metni===null) return;
   if(!not_metni.trim()){alert('Açıklama girilmeden tamamlandı işaretlenemez.');return;}
-  const eskiNot=rec.not?rec.not+'\n':'';
-  const{error}=await sb.from('kayitlar').update({tamamlandi:true,not_alani:eskiNot+sentenceCase(not_metni.trim())}).eq('id',id);
+  const _eskiNot1=rec.not?rec.not+'\n':'';
+  const{error}=await sb.from('kayitlar').update({tamamlandi:true,not_alani:_eskiNot1+sentenceCase(not_metni.trim())}).eq('id',id);
   if(error){alert('Hata: '+error.message);return;}
   await loadRecords();
   if(document.getElementById('cal-detail-panel').classList.contains('open')){
@@ -1677,7 +1686,7 @@ function renderDashboard(){
     return dateHeader+`<tr onclick="openKayitModal(${r.id})" style="cursor:pointer;${r.tamamlandi?'opacity:0.5;':''}">
       <td>${r.saat?'<span style="font-weight:600;color:var(--navy);">⏰ '+r.saat+'</span><br>':''}<span style="font-size:11px;">${lbl}</span></td>
       <td style="${r.tamamlandi?'text-decoration:line-through;color:var(--text3);':''}">${r.tamamlandi?'✓ ':''}${getBaslik(r)}</td>
-      <td style="padding:0;">${r.muvekkil?`<span class='mv-link' onclick="event.stopPropagation();openMuvekkilModal('${r.muvekkil}')" style="display:block;padding:12px 13px;cursor:pointer;">${r.muvekkil}</span>`:'<span style="padding:12px 13px;display:block;">—</span>'}</td>
+      <td style="padding:0;">${r.muvekkil?`<span class='mv-link' onclick="event.stopPropagation();openMuvekkilModal('${r.muvekkil}')" style="display:block;padding:9px 13px;cursor:pointer;">${r.muvekkil}</span>`:'<span style="padding:9px 13px;display:block;">—</span>'}</td>
       <td><span class="badge badge-${r.type==='tekrar'?'tekrar-type':r.type}">${typeLabel(r.type,r.dal)}</span></td>
       <td>${dalLabel(r.dal)}</td>
       <td><div class="action-btns">
@@ -1849,7 +1858,7 @@ function renderCal(){
 let _calDetailDate=null,_calDetailExpanded=null;
 
 function showCalDetail(dateStr, expandId){
-  _navPush('calDetail', dateStr);
+  history.pushState({modal:'cal-detail'},'');
   _calDetailDate=dateStr;
   _calDetailExpanded=expandId||null;
   const tatilBilgi=getTatil(dateStr);
@@ -1925,6 +1934,7 @@ function toggleCalItem(id){
 function openMuvekkilModal(isim, kayitId){
   if(!isim||isim==='—') return;
   _oncekiKayitId = kayitId || null;
+  history.pushState({modal:'muvekkil'},'');
   const tumIsler = records.filter(r=>r.muvekkil===isim);
   const aktif = tumIsler.filter(r=>!r.tamamlandi).sort((a,b)=>new Date(a.date)-new Date(b.date));
   const tamamlanan = tumIsler.filter(r=>r.tamamlandi).sort((a,b)=>new Date(b.date)-new Date(a.date));
@@ -1968,74 +1978,12 @@ function openMuvekkilModal(isim, kayitId){
 }
 function closeMuvekkilModal(){
   document.getElementById('muvekkil-modal').style.display='none';
-  const idx=_navStack.findIndex(x=>x.type==='muvekkil');
-  if(idx!==-1) _navStack.splice(idx);
 }
 let _oncekiKayitId = null;
-
-// ── NAVİGASYON STACK ─────────────────────────────────────────────
-const _navStack = [];
-
-function _navPush(type, data){
-  _navStack.push({type, data});
-  history.pushState({nav: _navStack.length}, '');
-}
-
-function _navGeri(){
-  if(!_navStack.length) return;
-  const current = _navStack.pop();
-  // Şu anki modalı kapat
-  _tumModallariKapat();
-  // Bir önceki stack'e dön
-  if(_navStack.length){
-    const prev = _navStack[_navStack.length-1];
-    if(prev.type==='kayit') { _openKayitDirekt(prev.data); }
-    else if(prev.type==='muvekkil') { _openMuvekkilDirekt(prev.data.isim, prev.data.kayitId); }
-    else if(prev.type==='calDetail') { showCalDetail(prev.data); }
-  }
-}
-
-function _tumModallariKapat(){
-  document.getElementById('muvekkil-modal').style.display='none';
-  document.getElementById('kayit-modal').style.display='none';
-  document.getElementById('modal').style.display='none';
-  document.getElementById('durusma-sonuc-overlay').style.display='none';
-  closeCalDetail();
-}
-
-// Direkt aç (stack'e eklemeden)
-function _openKayitDirekt(id){
-  const r=records.find(x=>x.id===id);
-  if(!r) return;
-  // openKayitModal içeriğini render et ama pushState yapma
-  _renderKayitModal(r);
-  document.getElementById('kayit-modal').style.display='flex';
-}
-
-function _openMuvekkilDirekt(isim, kayitId){
-  _oncekiKayitId = kayitId||null;
-  _renderMuvekkilModal(isim);
-  document.getElementById('muvekkil-modal').style.display='flex';
-}
-
-function acMuvekkilden(isim, kayitId){
-  _oncekiKayitId = kayitId;
-  _navPush('muvekkil', {isim, kayitId});
-  _openMuvekkilDirekt(isim, kayitId);
-}
-
-function muvekkildenGeri(){
-  history.back();
-}
 function openKayitModal(id){
+  history.pushState({modal:'kayit-detay'},'');
   const r=records.find(x=>x.id===id);
   if(!r)return;
-  _navPush('kayit', id);
-  _navPush('kayit', id);
-  _renderKayitModal(r);
-}
-
-function _renderKayitModal(r){
   const typeDot={sure:'#ef4444',durusma:'#3b82f6',genel:'#22c55e',tekrar:'#f59e0b'};
   document.getElementById('km-type-dot').style.background=typeDot[r.type]||'#9aa0ac';
   document.getElementById('km-title').textContent=getBaslik(r);
@@ -2052,13 +2000,7 @@ function _renderKayitModal(r){
     r.saat?{l:'Saat',v:'⏰ '+r.saat}:null,
     {l:'Tarih',v:formatDate(r.date)},
     r.not?{l:'Not',v:(()=>{
-      const satirlar=r.not.split('\n');
-      return satirlar.map(s=>{
-        if(s.includes('tarihinde oluşturuldu') && s.includes('Planlandığı tarih')){
-          return '<strong>'+s+'</strong>';
-        }
-        return s;
-      }).join('<br>');
+      return r.not.split('\n').map(s=>s.includes('tarihinde oluşturuldu')&&s.includes('Planlandığı tarih')?'<strong>'+s+'</strong>':s).join('<br>');
     })()}:null,
     r.tekrarTipi?{l:'Tekrar',v:'↻ '+tekrarTipiLabel(r.tekrarTipi)+(r.tekrarBitis?' · Bitiş: '+formatDate(r.tekrarBitis):'')}:null,
   ].filter(Boolean);
@@ -2071,12 +2013,10 @@ function _renderKayitModal(r){
     <button class="icon-btn del" style="padding:10px 14px;" onclick="closeKayitModal();deleteRecord(${r.id})">Sil</button>
   </div>`;
   document.getElementById('km-body').innerHTML=body;
+  document.getElementById('kayit-modal').style.display='flex';
 }
 function closeKayitModal(){
   document.getElementById('kayit-modal').style.display='none';
-  // Stack'ten bu modalı çıkar
-  const idx=_navStack.findIndex(x=>x.type==='kayit');
-  if(idx!==-1) _navStack.splice(idx);
 }
 function showMahkemeDropdown(inputId, ddId){
   const input=document.getElementById(inputId);
@@ -2104,13 +2044,12 @@ function showMahkemeDropdown(inputId, ddId){
 let _durusmaSonucId = null;
 
 function openDurusmaSonuc(id){
-  history.pushState({modal:'durusma-sonuc'},'');
   const r = records.find(x=>x.id===id);
   if(!r) return;
   _durusmaSonucId = id;
   document.getElementById('ds-baslik').textContent = getBaslik(r);
   document.getElementById('ds-tarih').textContent = formatDate(r.date) + (r.saat?' · ⏰'+r.saat:'');
-  renderSonucButonlari(r.dal);
+  renderSonucButonlari(r.dal||'');
   document.getElementById('durusma-sonuc-overlay').style.display = 'flex';
 }
 
@@ -2132,150 +2071,62 @@ function toggleSonucForm(formId, clearInput){
 
 function renderSonucButonlari(dal){
   const container=document.getElementById('sonuc-butonlar');
-  if(!dal) dal='';
-
   if(dal==='arabuluculuk'){
-    container.innerHTML=`
-      <button class="sonuc-btn karar" onclick="toggleSonucForm('anlasmama-form',false)"><span>🤝</span><span>Anlaşma</span></button>
-      <div class="ertelendi-form" id="anlasmama-form">
-        <label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Anlaşma Notu <span style="color:#dc2626;">*zorunlu</span></label>
-        <textarea id="karar-not" placeholder="Anlaşma detayları..." style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;height:80px;resize:vertical;"></textarea>
-        <button onclick="durusmaSonucKarar()" style="width:100%;margin-top:10px;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Kaydet ve Tamamlandı İşaretle</button>
-      </div>
-      <button class="sonuc-btn ertelendi" onclick="durusmaSonucAnlasmama()"><span>❌</span><span>Anlaşamama</span></button>
-      <button class="sonuc-btn mazeret" onclick="toggleSonucForm('ikinci-oturum-form',true)"><span>📅</span><span>2. Oturum</span></button>
-      <div class="ertelendi-form" id="ikinci-oturum-form">
-        <label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">2. Oturum Tarihi</label>
-        <input type="date" id="ikinci-oturum-tarih" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;">
-        <input type="time" id="ikinci-oturum-saat" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;margin-top:8px;">
-        <button onclick="durusmaSonucIkinciOturum()" style="width:100%;margin-top:10px;padding:12px;background:var(--navy);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Yeni Tarihe Ekle</button>
-      </div>`;
+    container.innerHTML=`<button class="sonuc-btn karar" onclick="toggleSonucForm('anlasmama-form',false)"><span>🤝</span><span>Anlaşma</span></button><div class="ertelendi-form" id="anlasmama-form"><label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Anlaşma Notu <span style="color:#dc2626;">*zorunlu</span></label><textarea id="karar-not" placeholder="Anlaşma detayları..." style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;height:80px;resize:vertical;"></textarea><button onclick="durusmaSonucKarar()" style="width:100%;margin-top:10px;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Kaydet</button></div><button class="sonuc-btn ertelendi" onclick="durusmaSonucAnlasmama()"><span>❌</span><span>Anlaşamama</span></button><button class="sonuc-btn mazeret" onclick="toggleSonucForm('ikinci-oturum-form',true)"><span>📅</span><span>2. Oturum</span></button><div class="ertelendi-form" id="ikinci-oturum-form"><label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">2. Oturum Tarihi</label><input type="date" id="ikinci-oturum-tarih" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;"><input type="time" id="ikinci-oturum-saat" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;margin-top:8px;"><button onclick="durusmaSonucIkinciOturum()" style="width:100%;margin-top:10px;padding:12px;background:var(--navy);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Yeni Tarihe Ekle</button></div>`;
   } else if(dal==='randevu'){
-    container.innerHTML=`
-      <button class="sonuc-btn karar" onclick="toggleSonucForm('karar-form',false)"><span>✅</span><span>Görüşme Yapıldı</span></button>
-      <div class="ertelendi-form" id="karar-form">
-        <label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Görüşme Notu <span style="color:#dc2626;">*zorunlu</span></label>
-        <textarea id="karar-not" placeholder="Görüşme detayları..." style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;height:80px;resize:vertical;"></textarea>
-        <button onclick="durusmaSonucKarar()" style="width:100%;margin-top:10px;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Kaydet ve Tamamlandı İşaretle</button>
-      </div>
-      <button class="sonuc-btn ertelendi" onclick="toggleSonucForm('gorusme-ertelendi-form',true)"><span>📅</span><span>Görüşme Ertelendi</span></button>
-      <div class="ertelendi-form" id="gorusme-ertelendi-form">
-        <label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Yeni Randevu Tarihi</label>
-        <input type="date" id="ertelendi-tarih" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;">
-        <input type="time" id="ertelendi-saat" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;margin-top:8px;">
-        <button onclick="durusmayiErtelendi()" style="width:100%;margin-top:10px;padding:12px;background:var(--navy);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Yeni Tarihe Ekle</button>
-      </div>
-      <button class="sonuc-btn mazeret" onclick="toggleSonucForm('iptal-form',false)"><span>🚫</span><span>İptal Edildi</span></button>
-      <div class="ertelendi-form" id="iptal-form">
-        <label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">İptal Notu (opsiyonel)</label>
-        <textarea id="iptal-not" placeholder="İptal gerekçesi..." style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;height:60px;resize:vertical;"></textarea>
-        <button onclick="durusmaSonucIptal()" style="width:100%;margin-top:10px;padding:12px;background:#ef4444;color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">İptal Edildi Olarak Kaydet</button>
-      </div>`;
+    container.innerHTML=`<button class="sonuc-btn karar" onclick="toggleSonucForm('karar-form',false)"><span>✅</span><span>Görüşme Yapıldı</span></button><div class="ertelendi-form" id="karar-form"><label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Görüşme Notu <span style="color:#dc2626;">*zorunlu</span></label><textarea id="karar-not" placeholder="Görüşme detayları..." style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;height:80px;resize:vertical;"></textarea><button onclick="durusmaSonucKarar()" style="width:100%;margin-top:10px;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Kaydet</button></div><button class="sonuc-btn ertelendi" onclick="toggleSonucForm('gorusme-ertelendi-form',true)"><span>📅</span><span>Görüşme Ertelendi</span></button><div class="ertelendi-form" id="gorusme-ertelendi-form"><label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Yeni Randevu Tarihi</label><input type="date" id="ertelendi-tarih" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;"><input type="time" id="ertelendi-saat" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;margin-top:8px;"><button onclick="durusmayiErtelendi()" style="width:100%;margin-top:10px;padding:12px;background:var(--navy);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Yeni Tarihe Ekle</button></div><button class="sonuc-btn mazeret" onclick="toggleSonucForm('iptal-form',false)"><span>🚫</span><span>İptal Edildi</span></button><div class="ertelendi-form" id="iptal-form"><label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">İptal Notu (opsiyonel)</label><textarea id="iptal-not" placeholder="İptal gerekçesi..." style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;height:60px;resize:vertical;"></textarea><button onclick="durusmaSonucIptal()" style="width:100%;margin-top:10px;padding:12px;background:#ef4444;color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">İptal Edildi Olarak Kaydet</button></div>`;
   } else if(dal==='kesif'){
-    container.innerHTML=`
-      <button class="sonuc-btn karar" onclick="toggleSonucForm('karar-form',false)"><span>✅</span><span>Keşif Yapıldı</span></button>
-      <div class="ertelendi-form" id="karar-form">
-        <label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Keşif Notu <span style="color:#dc2626;">*zorunlu</span></label>
-        <textarea id="karar-not" placeholder="Keşif detayları..." style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;height:80px;resize:vertical;"></textarea>
-        <button onclick="durusmaSonucKarar()" style="width:100%;margin-top:10px;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Kaydet ve Tamamlandı İşaretle</button>
-      </div>
-      <button class="sonuc-btn mazeret" onclick="durusmaSonucMazeretSadece()"><span>📋</span><span>Mazeret Gönderildi</span></button>`;
+    container.innerHTML=`<button class="sonuc-btn karar" onclick="toggleSonucForm('karar-form',false)"><span>✅</span><span>Keşif Yapıldı</span></button><div class="ertelendi-form" id="karar-form"><label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Keşif Notu <span style="color:#dc2626;">*zorunlu</span></label><textarea id="karar-not" placeholder="Keşif detayları..." style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;height:80px;resize:vertical;"></textarea><button onclick="durusmaSonucKarar()" style="width:100%;margin-top:10px;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Kaydet</button></div><button class="sonuc-btn mazeret" onclick="durusmaSonucMazeretSadece()"><span>📋</span><span>Mazeret Gönderildi</span></button>`;
   } else if(dal==='tevkil'){
-    container.innerHTML=`
-      <button class="sonuc-btn karar" onclick="toggleSonucForm('karar-form',false)"><span>✅</span><span>Duruşma Yapıldı</span></button>
-      <div class="ertelendi-form" id="karar-form">
-        <label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Duruşma Notu <span style="color:#dc2626;">*zorunlu</span></label>
-        <textarea id="karar-not" placeholder="Duruşma detayları..." style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;height:80px;resize:vertical;"></textarea>
-        <button onclick="durusmaSonucKarar()" style="width:100%;margin-top:10px;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Kaydet ve Tamamlandı İşaretle</button>
-      </div>
-      <button class="sonuc-btn ertelendi" onclick="toggleSonucForm('ertelendi-form',true)"><span>📅</span><span>Ertelendi</span></button>
-      <div class="ertelendi-form" id="ertelendi-form">
-        <label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Yeni Duruşma Tarihi</label>
-        <input type="date" id="ertelendi-tarih" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;">
-        <input type="time" id="ertelendi-saat" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;margin-top:8px;">
-        <button onclick="durusmayiErtelendi()" style="width:100%;margin-top:10px;padding:12px;background:var(--navy);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Yeni Tarihe Ekle</button>
-      </div>`;
+    container.innerHTML=`<button class="sonuc-btn karar" onclick="toggleSonucForm('karar-form',false)"><span>✅</span><span>Duruşma Yapıldı</span></button><div class="ertelendi-form" id="karar-form"><label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Duruşma Notu <span style="color:#dc2626;">*zorunlu</span></label><textarea id="karar-not" placeholder="Duruşma detayları..." style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;height:80px;resize:vertical;"></textarea><button onclick="durusmaSonucKarar()" style="width:100%;margin-top:10px;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Kaydet</button></div><button class="sonuc-btn ertelendi" onclick="toggleSonucForm('ertelendi-form',true)"><span>📅</span><span>Ertelendi</span></button><div class="ertelendi-form" id="ertelendi-form"><label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Yeni Duruşma Tarihi</label><input type="date" id="ertelendi-tarih" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;"><input type="time" id="ertelendi-saat" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;margin-top:8px;"><button onclick="durusmayiErtelendi()" style="width:100%;margin-top:10px;padding:12px;background:var(--navy);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Yeni Tarihe Ekle</button></div>`;
   } else {
-    container.innerHTML=`
-      <button class="sonuc-btn ertelendi" onclick="toggleSonucForm('ertelendi-form',true)"><span>📅</span><span>Ertelendi</span></button>
-      <div class="ertelendi-form" id="ertelendi-form">
-        <label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Yeni Duruşma Tarihi</label>
-        <input type="date" id="ertelendi-tarih" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;">
-        <input type="time" id="ertelendi-saat" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;margin-top:8px;">
-        <button onclick="durusmayiErtelendi()" style="width:100%;margin-top:10px;padding:12px;background:var(--navy);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Yeni Tarihe Ekle</button>
-      </div>
-      <button class="sonuc-btn karar" onclick="toggleSonucForm('karar-form',false)"><span>✅</span><span>Karar Verildi</span></button>
-      <div class="ertelendi-form" id="karar-form">
-        <label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Karar Notu <span style="color:#dc2626;">*zorunlu</span></label>
-        <textarea id="karar-not" placeholder="Örn: Beraat, mahkumiyet, tazminat kararı..." style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;height:80px;resize:vertical;"></textarea>
-        <button onclick="durusmaSonucKarar()" style="width:100%;margin-top:10px;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Kaydet ve Tamamlandı İşaretle</button>
-      </div>
-      <button class="sonuc-btn mazeret" onclick="durusmaSonucMazeret()"><span>📋</span><span>Mazeret Gönderildi</span></button>`;
+    container.innerHTML=`<button class="sonuc-btn ertelendi" onclick="toggleSonucForm('ertelendi-form',true)"><span>📅</span><span>Ertelendi</span></button><div class="ertelendi-form" id="ertelendi-form"><label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Yeni Duruşma Tarihi</label><input type="date" id="ertelendi-tarih" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;"><input type="time" id="ertelendi-saat" style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;margin-top:8px;"><button onclick="durusmayiErtelendi()" style="width:100%;margin-top:10px;padding:12px;background:var(--navy);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Yeni Tarihe Ekle</button></div><button class="sonuc-btn karar" onclick="toggleSonucForm('karar-form',false)"><span>✅</span><span>Karar Verildi</span></button><div class="ertelendi-form" id="karar-form"><label style="font-size:12px;color:var(--text2);font-weight:500;display:block;margin-bottom:6px;">Karar Notu <span style="color:#dc2626;">*zorunlu</span></label><textarea id="karar-not" placeholder="Örn: Beraat, mahkumiyet, tazminat kararı..." style="width:100%;padding:10px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;height:80px;resize:vertical;"></textarea><button onclick="durusmaSonucKarar()" style="width:100%;margin-top:10px;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Kaydet</button></div><button class="sonuc-btn mazeret" onclick="durusmaSonucMazeret()"><span>📋</span><span>Mazeret Gönderildi</span></button>`;
   }
 }
+
 function closeDurusmaSonuc(){
   document.getElementById('durusma-sonuc-overlay').style.display = 'none';
   _durusmaSonucId = null;
 }
 
 async function durusmaSonucAnlasmama(){
-  const r = records.find(x=>x.id===_durusmaSonucId);
-  if(!r) return;
-  // 2 hafta sonraya hukuk dava açılış süreli iş olarak not ekle
-  const yeniTarih = new Date(r.date+'T12:00:00');
-  yeniTarih.setDate(yeniTarih.getDate()+14);
-  const tarihStr = yeniTarih.toISOString().split('T')[0];
-  const yeniRec = {
-    type:'genel', date:tarihStr,
-    baslik:'Hukuk Davası Açılışı Değerlendir',
-    not_alani:'Arabuluculuk anlaşmazlıkla sonuçlandı. Dava açılışı değerlendir.',
-    muvekkil:r.muvekkil||null, mahkeme:r.mahkeme||null, dava:r.dava||null,
-    dal:'hukuk', tamamlandi:false
-  };
-  const {error} = await sb.from('kayitlar').insert(localToDB(yeniRec));
-  if(error){ alert('Hata: '+error.message); return; }
-  const eskiNot=r.not?r.not+'\n':'';
-  await sb.from('kayitlar').update({tamamlandi:true, not_alani:eskiNot+'Anlaşamama ile sonuçlandı → '+formatDate(tarihStr)+' tarihine hatırlatma eklendi'}).eq('id',r.id);
-  closeDurusmaSonuc();
-  await loadRecords();
+  const r=records.find(x=>x.id===_durusmaSonucId);if(!r)return;
+  const yeniTarih=new Date(r.date+'T12:00:00');yeniTarih.setDate(yeniTarih.getDate()+14);
+  const tarihStr=yeniTarih.toISOString().split('T')[0];
+  const yeniRec={type:'genel',date:tarihStr,baslik:'Hukuk Davası Açılışı Değerlendir',not_alani:'Arabuluculuk anlaşmazlıkla sonuçlandı.',muvekkil:r.muvekkil||null,mahkeme:r.mahkeme||null,dava:r.dava||null,dal:'hukuk',tamamlandi:false};
+  await sb.from('kayitlar').insert(localToDB(yeniRec));
+  const _en=r.not?r.not+'\n':'';
+  await sb.from('kayitlar').update({tamamlandi:true,not_alani:_en+'Anlaşamama → '+formatDate(tarihStr)+' tarihine hatırlatma eklendi'}).eq('id',r.id);
+  closeDurusmaSonuc();await loadRecords();
   alert('✓ Anlaşamama kaydedildi. '+formatDate(tarihStr)+' tarihine hatırlatma eklendi.');
 }
 
 async function durusmaSonucIkinciOturum(){
-  const r = records.find(x=>x.id===_durusmaSonucId);
-  if(!r) return;
-  const yeniTarih = document.getElementById('ikinci-oturum-tarih').value;
-  const yeniSaat = document.getElementById('ikinci-oturum-saat').value;
-  if(!yeniTarih){ alert('Yeni tarih seçiniz.'); return; }
-  const yeniRec = {...localToDB(r), date:yeniTarih, saat:yeniSaat||r.saat||null};
-  delete yeniRec.id;
-  const {error} = await sb.from('kayitlar').insert(yeniRec);
-  if(error){ alert('Hata: '+error.message); return; }
-  const eskiNot=r.not?r.not+'\n':'';
-  await sb.from('kayitlar').update({tamamlandi:true, not_alani:eskiNot+'2. Oturum → '+formatDate(yeniTarih)}).eq('id',r.id);
-  closeDurusmaSonuc();
-  await loadRecords();
+  const r=records.find(x=>x.id===_durusmaSonucId);if(!r)return;
+  const yeniTarih=document.getElementById('ikinci-oturum-tarih').value;
+  const yeniSaat=document.getElementById('ikinci-oturum-saat').value;
+  if(!yeniTarih){alert('Yeni tarih seçiniz.');return;}
+  const yeniRec={...localToDB(r),date:yeniTarih,saat:yeniSaat||r.saat||null};delete yeniRec.id;
+  await sb.from('kayitlar').insert(yeniRec);
+  const _en=r.not?r.not+'\n':'';
+  await sb.from('kayitlar').update({tamamlandi:true,not_alani:_en+'2. Oturum → '+formatDate(yeniTarih)}).eq('id',r.id);
+  closeDurusmaSonuc();await loadRecords();
   alert('✓ 2. Oturum '+formatDate(yeniTarih)+' tarihine eklendi.');
 }
 
 async function durusmaSonucIptal(){
-  const r = records.find(x=>x.id===_durusmaSonucId);
-  if(!r) return;
-  const iptalNot = (document.getElementById('iptal-not')||{}).value||'';
-  const eskiNot=r.not?r.not+'\n':'';
-  const tamNot=eskiNot+'İptal edildi'+(iptalNot.trim()?' → '+iptalNot.trim():'');
-  await sb.from('kayitlar').update({tamamlandi:true, not_alani:tamNot}).eq('id',r.id);
-  closeDurusmaSonuc();
-  await loadRecords();
+  const r=records.find(x=>x.id===_durusmaSonucId);if(!r)return;
+  const iptalNot=(document.getElementById('iptal-not')||{}).value||'';
+  const _en=r.not?r.not+'\n':'';
+  await sb.from('kayitlar').update({tamamlandi:true,not_alani:_en+'İptal edildi'+(iptalNot.trim()?' → '+iptalNot.trim():'')}).eq('id',r.id);
+  closeDurusmaSonuc();await loadRecords();
 }
 
 async function durusmaSonucMazeretSadece(){
-  const r = records.find(x=>x.id===_durusmaSonucId);
-  if(!r) return;
-  const eskiNot=r.not?r.not+'\n':'';
-  await sb.from('kayitlar').update({tamamlandi:true, not_alani:eskiNot+'Mazeret gönderildi'}).eq('id',r.id);
-  closeDurusmaSonuc();
-  await loadRecords();
+  const r=records.find(x=>x.id===_durusmaSonucId);if(!r)return;
+  const _en=r.not?r.not+'\n':'';
+  await sb.from('kayitlar').update({tamamlandi:true,not_alani:_en+'Mazeret gönderildi'}).eq('id',r.id);
+  closeDurusmaSonuc();await loadRecords();
   alert('✓ Mazeret gönderildi olarak kaydedildi.');
 }
 
@@ -2334,8 +2185,6 @@ async function durusmaSonucMazeret(){
 function closeCalDetail(){
   document.getElementById('cal-detail-panel').classList.remove('open');
   document.getElementById('cal-detail-overlay').classList.remove('open');
-  const idx=_navStack.findIndex(x=>x.type==='calDetail');
-  if(idx!==-1) _navStack.splice(idx);
 }
 
 // Swipe ile modal kapatma
@@ -2391,7 +2240,7 @@ function renderTamamlanan(){
   tb.innerHTML=f.map(r=>`<tr onclick="openKayitModal(${r.id})" style="opacity:0.7;">
     <td>${formatDate(r.date)}</td>
     <td style="text-decoration:line-through;">${getBaslik(r)}</td>
-    <td style="padding:0;">${r.muvekkil?`<span class='mv-link' onclick="event.stopPropagation();openMuvekkilModal('${r.muvekkil}')" style="display:block;padding:12px 13px;cursor:pointer;">${r.muvekkil}</span>`:'<span style="padding:12px 13px;display:block;">—</span>'}</td>
+    <td style="padding:0;">${r.muvekkil?`<span class='mv-link' onclick="event.stopPropagation();openMuvekkilModal('${r.muvekkil}')" style="display:block;padding:9px 13px;cursor:pointer;">${r.muvekkil}</span>`:'<span style="padding:9px 13px;display:block;">—</span>'}</td>
     <td><span class="badge badge-${r.type==='tekrar'?'tekrar-type':r.type}">${typeLabel(r.type,r.dal)}</span></td>
     <td>${dalLabel(r.dal)}</td>
     <td><div class="action-btns">
