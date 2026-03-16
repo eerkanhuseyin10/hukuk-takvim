@@ -1201,9 +1201,11 @@ async function olusturTekrarKayitlari(anaRec){
 }
 // ── GEÇMİŞ GENEL İŞLERİ BUGÜNE TAŞI ────────────────────────────
 async function genelIsleriTasi(){
-  const bugun=new Date();bugun.setHours(0,0,0,0);
-  const bugunStr=bugun.toISOString().split('T')[0];
-  // Doğrudan Supabase'e sorgu at - records'a bağımlı değil
+  const bugun=new Date();
+  const yil=bugun.getFullYear();
+  const ay=String(bugun.getMonth()+1).padStart(2,'0');
+  const gun=String(bugun.getDate()).padStart(2,'0');
+  const bugunStr=yil+'-'+ay+'-'+gun;
   const{error}=await sb.from('kayitlar')
     .update({date:bugunStr})
     .eq('type','genel')
