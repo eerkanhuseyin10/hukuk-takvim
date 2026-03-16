@@ -1417,7 +1417,11 @@ document.addEventListener('keydown', function(e){
 // Geri butonu ile modal kapat
 window.addEventListener('popstate', function(){
   if(document.getElementById('durusma-sonuc-overlay').style.display==='flex'){closeDurusmaSonuc();return;}
-  if(document.getElementById('muvekkil-modal').style.display==='flex'){closeMuvekkilModal();return;}
+  if(document.getElementById('muvekkil-modal').style.display==='flex'){
+    document.getElementById('muvekkil-modal').style.display='none';
+    if(_oncekiKayitId){openKayitModal(_oncekiKayitId);_oncekiKayitId=null;}
+    return;
+  }
   if(document.getElementById('kayit-modal').style.display==='flex'){closeKayitModal();return;}
   if(document.getElementById('modal').style.display==='flex'){closeModal();return;}
   if(document.getElementById('cal-detail-panel').classList.contains('open')){closeCalDetail();return;}
@@ -1912,8 +1916,9 @@ function toggleCalItem(id){
   renderCalDetail();
 }
 
-function openMuvekkilModal(isim){
+function openMuvekkilModal(isim, kayitId){
   if(!isim||isim==='—') return;
+  _oncekiKayitId = kayitId || null;
   history.pushState({modal:'muvekkil'},'');
   const tumIsler = records.filter(r=>r.muvekkil===isim);
   const aktif = tumIsler.filter(r=>!r.tamamlandi).sort((a,b)=>new Date(a.date)-new Date(b.date));
@@ -1959,6 +1964,7 @@ function openMuvekkilModal(isim){
 function closeMuvekkilModal(){
   document.getElementById('muvekkil-modal').style.display='none';
 }
+let _oncekiKayitId = null;
 function openKayitModal(id){
   history.pushState({modal:'kayit-detay'},'');
   const r=records.find(x=>x.id===id);
@@ -1972,7 +1978,7 @@ function openKayitModal(id){
     body+=`<div style="border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:14px;">${buildHesapHTML(d)}</div>`;
   }
   const rows=[
-    r.muvekkil?{l:'Müvekkil',v:`<span onclick="closeKayitModal();openMuvekkilModal('${r.muvekkil}')" style="color:var(--navy);font-weight:600;text-decoration:underline;cursor:pointer;">${r.muvekkil} ›</span>`}:null,
+    r.muvekkil?{l:'Müvekkil',v:`<span onclick="openMuvekkilModal('${r.muvekkil}',${r.id});history.pushState({modal:'muvekkil'},'');" style="color:var(--navy);font-weight:600;text-decoration:underline;cursor:pointer;">${r.muvekkil} ›</span>`}:null,
     r.mahkeme?{l:'Mahkeme',v:r.mahkeme}:null,
     r.dava?{l:'Dava No',v:r.dava}:null,
     r.dal?{l:'Dal',v:dalLabel(r.dal)}:null,
