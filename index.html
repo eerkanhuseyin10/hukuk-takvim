@@ -63,8 +63,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;flex-shrink:0;}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px 10px;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;align-items:center;text-align:center;}
 .stat-card:hover{background:var(--surface2);border-color:var(--navy);}
-.stat-label{font-size:10px;color:var(--text2);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;}
-.stat-val{font-size:22px;font-weight:700;line-height:1.2;}
 .stat-label{font-size:11px;color:var(--text2);margin-bottom:4px;}
 .stat-val{font-size:24px;font-weight:600;}
 .stat-val.danger{color:#dc2626;}
@@ -95,7 +93,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .badge-tekrar{background:#e0e7ff;color:#3730a3;font-size:10px;padding:1px 6px;}
 .ev-tekrar{background:#fbbf24;color:#78350f;}
 .ev-tamamlandi{background:#d1d5db;color:#6b7280;text-decoration:line-through;}
-.ev-tekrar{background:#fbbf24;color:#78350f;}
 .tamamlandi-row td{opacity:0.5;}
 .action-btns{display:flex;gap:5px;white-space:nowrap;}
 .icon-btn{padding:4px 9px;font-size:12px;border:1px solid var(--border);border-radius:7px;cursor:pointer;background:transparent;color:var(--text2);font-family:inherit;transition:all .15s;}
@@ -185,16 +182,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .mv-link{color:var(--navy);font-weight:500;text-decoration:underline;cursor:pointer;display:inline-block;padding:2px 4px;margin:-2px -4px;}
 .mv-link:hover{color:var(--navy-dark);}
 .kayit-modal{background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-width:580px;max-height:90vh;overflow-y:auto;overflow-x:hidden;margin:0 auto;}
-@media(min-width:640px){.durusma-sonuc-overlay{position:fixed;inset:0;background:rgba(15,22,40,0.5);display:flex;align-items:flex-end;justify-content:center;z-index:270;padding:0;}
-.durusma-sonuc-modal{background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:80vh;overflow-y:auto;margin:0 auto;padding-bottom:20px;}
-@media(min-width:640px){.durusma-sonuc-overlay{align-items:center;padding:16px;}.durusma-sonuc-modal{border-radius:var(--radius-lg);}}
-.sonuc-btn{width:100%;padding:14px 16px;font-size:14px;font-weight:500;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;background:var(--surface);color:var(--text);font-family:inherit;text-align:left;margin-bottom:8px;display:flex;align-items:center;gap:10px;transition:all .15s;}
-.sonuc-btn:hover{background:var(--surface2);}
-.sonuc-btn.ertelendi{border-color:#f59e0b;color:#92400e;}
-.sonuc-btn.karar{border-color:#22c55e;color:#166534;}
-.sonuc-btn.mazeret{border-color:#3b82f6;color:#1e40af;}
-.ertelendi-form{display:none;background:var(--navy-light);border-radius:var(--radius);padding:12px;margin-bottom:8px;}
-.kayit-modal-overlay{align-items:center;padding:16px;}.kayit-modal{border-radius:var(--radius-lg);}}
+@media(min-width:640px){.kayit-modal-overlay{align-items:center;padding:16px;}.kayit-modal{border-radius:var(--radius-lg);}}
 .kayit-modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 13px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:1;}
 .kayit-modal-body{padding:16px 20px 24px;}
 .kayit-row{display:flex;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;}
@@ -243,14 +231,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 #tab-genel.sel{background:#22c55e;color:#fff;border-color:#22c55e;}
 #tab-tekrar{color:#92400e;background:#fef3c7;}
 #tab-tekrar.sel{background:#f59e0b;color:#fff;border-color:#f59e0b;}
-#tab-tekrar{color:#92400e;background:#fef3c7;}
-#tab-tekrar.sel{background:#f59e0b;color:#fff;border-color:#f59e0b;}
-#tab-sure{color:#991b1b;background:#fee2e2;}
-#tab-sure.sel{background:#ef4444;color:#fff;border-color:#ef4444;}
-#tab-durusma{color:#1e40af;background:#dbeafe;}
-#tab-durusma.sel{background:#3b82f6;color:#fff;border-color:#3b82f6;}
-#tab-genel{color:#166534;background:#dcfce7;}
-#tab-genel.sel{background:#22c55e;color:#fff;border-color:#22c55e;}
+
 .collapsible-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:10px 13px;font-size:13px;color:var(--text2);font-weight:500;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;}
 .collapsible-arrow{font-size:10px;transition:transform .2s;}
 .collapsible-arrow.open{transform:rotate(90deg);}
@@ -261,8 +242,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .istipi-list{max-height:160px;overflow-y:auto;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface);}
 .istipi-item{padding:9px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--border);}
 .istipi-item:last-child{border-bottom:none;}
-.istipi-item:hover,.istipi-item.sel{background:var(--navy-light);}
-.istipi-item.sel{font-weight:500;color:var(--navy);}
+.istipi-item:hover{background:var(--navy-light);}
+.istipi-item.sel{background:var(--navy-light);font-weight:500;color:var(--navy);}
 .yil-picker{display:flex;align-items:center;gap:6px;}
 .yil-select{padding:9px 10px;font-size:14px;font-weight:600;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface);color:var(--text);font-family:inherit;cursor:pointer;width:90px;}
 .yil-select:focus{outline:none;border-color:var(--navy);}
@@ -465,7 +446,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
 <!-- TAKVİM DETAY PANEL -->
 <div class="cal-detail-overlay" id="cal-detail-overlay" onclick="closeCalDetail()"></div>
-<div class="cal-detail-panel" id="cal-detail-panel">
+<div class="cal-detail-panel" id="cal-detail-panel" ontouchstart="swipeStart(event)" ontouchend="swipeEnd(event,closeCalDetail)">
   <div class="cal-detail-handle"></div>
   <div class="cal-detail-header">
     <span class="cal-detail-date" id="cal-detail-date"></span>
@@ -476,10 +457,13 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
 <!-- MODAL -->
 <div class="modal-overlay" id="modal" style="display:none;">
-  <div class="modal">
+  <div class="modal" ontouchstart="swipeStart(event)" ontouchend="swipeEnd(event,closeModal)">
     <div class="modal-handle"></div>
     <div class="modal-header">
-      <h2 id="modal-title">Yeni Kayıt</h2>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button onclick="history.back()" style="background:none;border:none;cursor:pointer;padding:4px 6px 4px 0;color:var(--navy);font-size:20px;line-height:1;display:flex;align-items:center;">&#8592;</button>
+        <h2 id="modal-title">Yeni Kayıt</h2>
+      </div>
       <button class="btn" onclick="closeModal()">Vazgeç</button>
     </div>
     <div class="modal-body">
@@ -1197,15 +1181,7 @@ function setTekrarD(val,el){
   document.getElementById('tekrar-bitis-box-d').style.display=val?'block':'none';
 }
 
-// ── TEKRAR MOTORU ────────────────────────────────────────────────
-function tekrarTipiLabel(t){return{haftalik:'Haftalık',aylik:'Aylık',yillik:'Yıllık'}[t]||'';}
-function nextTekrarDate(dateStr,tipi){
-  const d=new Date(dateStr+'T12:00:00');
-  if(tipi==='haftalik')d.setDate(d.getDate()+7);
-  else if(tipi==='aylik')d.setMonth(d.getMonth()+1);
-  else if(tipi==='yillik')d.setFullYear(d.getFullYear()+1);
-  return d.toISOString().split('T')[0];
-}
+
 async function olusturTekrarKayitlari(anaRec){
   if(!anaRec.tekrarTipi)return;
   const bitis=anaRec.tekrarBitis||new Date(new Date().setFullYear(new Date().getFullYear()+2)).toISOString().split('T')[0];
@@ -1223,6 +1199,20 @@ async function olusturTekrarKayitlari(anaRec){
   }
   if(yeniKayitlar.length>0)await sb.from('kayitlar').insert(yeniKayitlar);
 }
+// ── GEÇMİŞ GENEL İŞLERİ BUGÜNE TAŞI ────────────────────────────
+async function genelIsleriTasi(){
+  const bugun=new Date();bugun.setHours(0,0,0,0);
+  const bugunStr=bugun.toISOString().split('T')[0];
+  // Doğrudan Supabase'e sorgu at - records'a bağımlı değil
+  const{error}=await sb.from('kayitlar')
+    .update({date:bugunStr})
+    .eq('type','genel')
+    .eq('tamamlandi',false)
+    .is('tekrar_ana_id',null)
+    .lt('date',bugunStr);
+  return !error;
+}
+
 async function loadRecords(){
   setSyncStatus('loading','Yükleniyor...');
   const{data,error}=await sb.from('kayitlar').select('*').order('date',{ascending:true});
@@ -1235,6 +1225,11 @@ async function loadRecords(){
     const{data:data2}=await sb.from('kayitlar').select('*').order('date',{ascending:true});
     records=(data2||[]).map(dbToLocal);
   }
+  // Geçmiş genel işleri bugüne taşı
+  await genelIsleriTasi();
+  // Güncel veriyi tekrar çek
+  const{data:dataFinal}=await sb.from('kayitlar').select('*').order('date',{ascending:true});
+  if(dataFinal) records=dataFinal.map(dbToLocal);
   setSyncStatus('ok','Bağlı');
   renderAll();
   bildirimDurumGuncelle();
@@ -1244,8 +1239,8 @@ function setSyncStatus(s,t){
   document.getElementById('sync-dot').className='sync-dot'+(s==='error'?' error':s==='loading'?' loading':'');
   document.getElementById('sync-text').textContent=t;
 }
-function dbToLocal(r){return{id:r.id,type:r.type,date:r.date,baslik:r.baslik||'',muvekkil:r.muvekkil||'',mahkeme:r.mahkeme||'',dava:r.dava||'',dal:r.dal||'',istipi:r.istipi||'',istipiVal:r.istipi_val||'',tebligTarihi:r.teblig_tarihi||'',tebligSekli:r.teblig_sekli||'',sureMiktar:r.sure_miktar,sureBirim:r.sure_birim||'',hesapDetay:r.hesap_detay||null,not:r.not_alani||'',saat:r.saat||'',tekrarTipi:r.tekrar_tipi||null,tekrarBitis:r.tekrar_bitis||null,tekrarAnaId:r.tekrar_ana_id||null,tamamlandi:r.tamamlandi===true,tekrarTipi:r.tekrar_tipi||null,tekrarBitis:r.tekrar_bitis||null,tekrarAnaId:r.tekrar_ana_id||null};}
-function localToDB(r){return{type:r.type,date:r.date,baslik:r.baslik||null,muvekkil:r.muvekkil||null,mahkeme:r.mahkeme||null,dava:r.dava||null,dal:r.dal||null,istipi:r.istipi||null,istipi_val:r.istipiVal||null,teblig_tarihi:r.tebligTarihi||null,teblig_sekli:r.tebligSekli||null,sure_miktar:r.sureMiktar||null,sure_birim:r.sureBirim||null,hesap_detay:r.hesapDetay||null,not_alani:r.not||null,saat:r.saat||null,tekrar_tipi:r.tekrarTipi||null,tekrar_bitis:r.tekrarBitis||null,tekrar_ana_id:r.tekrarAnaId||null,tamamlandi:r.tamamlandi||false,tekrar_tipi:r.tekrarTipi||null,tekrar_bitis:r.tekrarBitis||null,tekrar_ana_id:r.tekrarAnaId||null};}
+function dbToLocal(r){return{id:r.id,type:r.type,date:r.date,baslik:r.baslik||'',muvekkil:r.muvekkil||'',mahkeme:r.mahkeme||'',dava:r.dava||'',dal:r.dal||'',istipi:r.istipi||'',istipiVal:r.istipi_val||'',tebligTarihi:r.teblig_tarihi||'',tebligSekli:r.teblig_sekli||'',sureMiktar:r.sure_miktar,sureBirim:r.sure_birim||'',hesapDetay:r.hesap_detay||null,not:r.not_alani||'',saat:r.saat||'',tekrarTipi:r.tekrar_tipi||null,tekrarBitis:r.tekrar_bitis||null,tekrarAnaId:r.tekrar_ana_id||null,tamamlandi:r.tamamlandi===true};}
+function localToDB(r){return{type:r.type,date:r.date,baslik:r.baslik||null,muvekkil:r.muvekkil||null,mahkeme:r.mahkeme||null,dava:r.dava||null,dal:r.dal||null,istipi:r.istipi||null,istipi_val:r.istipiVal||null,teblig_tarihi:r.tebligTarihi||null,teblig_sekli:r.tebligSekli||null,sure_miktar:r.sureMiktar||null,sure_birim:r.sureBirim||null,hesap_detay:r.hesapDetay||null,not_alani:r.not||null,saat:r.saat||null,tekrar_tipi:r.tekrarTipi||null,tekrar_bitis:r.tekrarBitis||null,tekrar_ana_id:r.tekrarAnaId||null,tamamlandi:r.tamamlandi||false};}
 
 // ── SÜRE MOTORU ───────────────────────────────────────────────────
 function isAdliTatil(d){const m=d.getMonth(),g=d.getDate();return(m===6&&g>=20)||m===7;}
@@ -1324,6 +1319,7 @@ function hesapla(){
 
 // ── MODAL ─────────────────────────────────────────────────────────
 function openModal(editRecord,prefillDate){
+  history.pushState({modal:'kayit-ekle'},'');
   ST={type:'sure',teblig:'',dal:'',dal2:'',birim:'',hesaplananTarih:null,hesapDetay:null,editId:null,prefillDate:prefillDate||''};
   selectedIstipi='';
   document.querySelectorAll('.chip,.type-tab,.sure-birim-btn').forEach(c=>c.classList.remove('sel'));
@@ -1405,6 +1401,31 @@ function openModal(editRecord,prefillDate){
 }
 function closeModal(){document.getElementById('modal').style.display='none';}
 
+// Escape tuşu ile modal kapat
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    // Açık olan modalı kapat - en üsttekinden başla
+    if(document.getElementById('durusma-sonuc-overlay').style.display==='flex'){closeDurusmaSonuc();return;}
+    if(document.getElementById('muvekkil-modal').style.display==='flex'){closeMuvekkilModal();return;}
+    if(document.getElementById('kayit-modal').style.display==='flex'){closeKayitModal();return;}
+    if(document.getElementById('modal').style.display==='flex'){closeModal();return;}
+    if(document.getElementById('cal-detail-panel').classList.contains('open')){closeCalDetail();return;}
+  }
+});
+
+// Geri butonu ile modal kapat
+window.addEventListener('popstate', function(){
+  if(document.getElementById('durusma-sonuc-overlay').style.display==='flex'){closeDurusmaSonuc();return;}
+  if(document.getElementById('muvekkil-modal').style.display==='flex'){
+    document.getElementById('muvekkil-modal').style.display='none';
+    if(_oncekiKayitId){openKayitModal(_oncekiKayitId);_oncekiKayitId=null;}
+    return;
+  }
+  if(document.getElementById('kayit-modal').style.display==='flex'){closeKayitModal();return;}
+  if(document.getElementById('modal').style.display==='flex'){closeModal();return;}
+  if(document.getElementById('cal-detail-panel').classList.contains('open')){closeCalDetail();return;}
+});
+
 // Enter tuşu ile kaydet
 document.addEventListener('keydown', function(e){
   if(e.key==='Enter' && document.getElementById('modal').style.display==='flex'){
@@ -1434,11 +1455,6 @@ async function saveRecord(){
       const ozel={tahkim:'Tahkim',arabuluculuk:'Arabuluculuk',randevu:'Randevu',kesif:'Keşif',tevkil:'Tevkil',cmk:'CMK'};
       return ozel[ST.dal2]||'Duruşma';
     })(),saat:document.getElementById('f-durusma-saat').value,dal:ST.dal2,mahkeme:titleCase(document.getElementById('f-durusma-mahkeme-adi').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-durusma-muvekkil').value.trim()),not:sentenceCase(document.getElementById('f-durusma-not').value.trim()),tekrarTipi:ST_TEKRAR_D||null,tekrarBitis:ST_TEKRAR_D&&document.getElementById('f-tekrar-bitis-d').value?document.getElementById('f-tekrar-bitis-d').value:null};
-  }else if(ST.type==='tekrar'){
-    const date=document.getElementById('f-tekrar-tarih').value;
-    if(!date){alert('Başlangıç tarihi zorunludur.');return;}
-    if(!ST_TEKRAR_SIKLIK){alert('Tekrar sıklığı seçiniz.');return;}
-    rec={type:'tekrar',date,baslik:titleCase(document.getElementById('f-tekrar-baslik').value.trim())||'Tekrarlayan İş',not:sentenceCase(document.getElementById('f-tekrar-aciklama').value.trim()),tekrarTipi:ST_TEKRAR_SIKLIK,tekrarBitis:document.getElementById('f-tekrar-bitis2').value||null};
   }else if(ST.type==='tekrar'){
     const date=document.getElementById('f-tekrar-tarih').value;
     if(!date){alert('Başlangıç tarihi zorunludur.');return;}
@@ -1547,16 +1563,7 @@ function filterDashboard(f){
   }
   renderDashboard();
 }
-function gunKaldiLabel(dateStr, type){
-  if(type==='genel') return '';
-  const today=new Date();today.setHours(0,0,0,0);
-  const d=new Date(dateStr+'T12:00:00');d.setHours(0,0,0,0);
-  const diff=Math.round((d-today)/86400000);
-  if(diff<0)return '';
-  if(diff===0)return '<span style="background:#dc2626;color:#fff;border-radius:4px;padding:1px 7px;font-size:11px;font-weight:600;">Bugün</span>';
-  if(diff<=3)return '<span style="background:#dc2626;color:#fff;border-radius:4px;padding:1px 7px;font-size:11px;font-weight:600;">'+diff+' gün kaldı</span>';
-  return '<span style="background:#22c55e;color:#fff;border-radius:4px;padding:1px 7px;font-size:11px;font-weight:600;">'+diff+' gün kaldı</span>';
-}
+
 function renderDashboard(){
   const today=new Date();today.setHours(0,0,0,0);
   const in7=new Date(today);in7.setDate(today.getDate()+7);
@@ -1835,6 +1842,7 @@ function renderCal(){
 let _calDetailDate=null,_calDetailExpanded=null;
 
 function showCalDetail(dateStr, expandId){
+  history.pushState({modal:'cal-detail'},'');
   _calDetailDate=dateStr;
   _calDetailExpanded=expandId||null;
   const tatilBilgi=getTatil(dateStr);
@@ -1907,8 +1915,10 @@ function toggleCalItem(id){
   renderCalDetail();
 }
 
-function openMuvekkilModal(isim){
+function openMuvekkilModal(isim, kayitId){
   if(!isim||isim==='—') return;
+  _oncekiKayitId = kayitId || null;
+  history.pushState({modal:'muvekkil'},'');
   const tumIsler = records.filter(r=>r.muvekkil===isim);
   const aktif = tumIsler.filter(r=>!r.tamamlandi).sort((a,b)=>new Date(a.date)-new Date(b.date));
   const tamamlanan = tumIsler.filter(r=>r.tamamlandi).sort((a,b)=>new Date(b.date)-new Date(a.date));
@@ -1953,7 +1963,9 @@ function openMuvekkilModal(isim){
 function closeMuvekkilModal(){
   document.getElementById('muvekkil-modal').style.display='none';
 }
+let _oncekiKayitId = null;
 function openKayitModal(id){
+  history.pushState({modal:'kayit-detay'},'');
   const r=records.find(x=>x.id===id);
   if(!r)return;
   const typeDot={sure:'#ef4444',durusma:'#3b82f6',genel:'#22c55e',tekrar:'#f59e0b'};
@@ -1965,7 +1977,7 @@ function openKayitModal(id){
     body+=`<div style="border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:14px;">${buildHesapHTML(d)}</div>`;
   }
   const rows=[
-    r.muvekkil?{l:'Müvekkil',v:`<span onclick="closeKayitModal();openMuvekkilModal('${r.muvekkil}')" style="color:var(--navy);font-weight:600;text-decoration:underline;cursor:pointer;">${r.muvekkil} ›</span>`}:null,
+    r.muvekkil?{l:'Müvekkil',v:`<span onclick="acMuvekkilden('${r.muvekkil}',${r.id})" style="color:var(--navy);font-weight:600;text-decoration:underline;cursor:pointer;">${r.muvekkil} ›</span>`}:null,
     r.mahkeme?{l:'Mahkeme',v:r.mahkeme}:null,
     r.dava?{l:'Dava No',v:r.dava}:null,
     r.dal?{l:'Dal',v:dalLabel(r.dal)}:null,
@@ -2014,6 +2026,7 @@ function showMahkemeDropdown(inputId, ddId){
 let _durusmaSonucId = null;
 
 function openDurusmaSonuc(id){
+  history.pushState({modal:'durusma-sonuc'},'');
   const r = records.find(x=>x.id===id);
   if(!r) return;
   _durusmaSonucId = id;
@@ -2039,13 +2052,7 @@ function toggleKararForm(){
 }
 function toggleErtelendiForm(){
   const f=document.getElementById('ertelendi-form');
-  const isOpening = f.style.display==='none';
-  f.style.display=isOpening?'block':'none';
-  if(isOpening){
-    // Her açılışta tarihi temizle
-    const t=document.getElementById('ertelendi-tarih');
-    if(t){t.value='';t.defaultValue='';}
-  }
+  f.style.display=f.style.display==='none'?'block':'none';
   // Karar formu kapat
   document.getElementById('karar-form').style.display='none';
 }
@@ -2098,6 +2105,14 @@ async function durusmaSonucMazeret(){
 function closeCalDetail(){
   document.getElementById('cal-detail-panel').classList.remove('open');
   document.getElementById('cal-detail-overlay').classList.remove('open');
+}
+
+// Swipe ile modal kapatma
+let _swipeStartY=0;
+function swipeStart(e){_swipeStartY=e.touches[0].clientY;}
+function swipeEnd(e,closeFn){
+  const dy=e.changedTouches[0].clientY-_swipeStartY;
+  if(dy>80)closeFn();
 }
 
 // ── LİSTE ─────────────────────────────────────────────────────────
@@ -2169,12 +2184,15 @@ function showView(v,el){
 loadRecords();
 </script>
 <div class="muvekkil-modal-overlay" id="muvekkil-modal" style="display:none;" onclick="closeMuvekkilModal()">
-  <div class="muvekkil-modal" onclick="event.stopPropagation()">
+  <div class="muvekkil-modal" onclick="event.stopPropagation()" ontouchstart="swipeStart(event)" ontouchend="swipeEnd(event,closeMuvekkilModal)">
     <div style="width:40px;height:4px;background:var(--border2);border-radius:2px;margin:10px auto 0;"></div>
     <div class="muvekkil-modal-header">
-      <div>
-        <h2 id="mv-isim" style="font-size:16px;font-weight:700;"></h2>
-        <div id="mv-ozet" style="font-size:12px;color:var(--text2);margin-top:2px;"></div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button onclick="muvekkildenGeri()" style="background:none;border:none;cursor:pointer;padding:4px 6px 4px 0;color:var(--navy);font-size:20px;line-height:1;display:flex;align-items:center;">&#8592;</button>
+        <div>
+          <h2 id="mv-isim" style="font-size:16px;font-weight:700;"></h2>
+          <div id="mv-ozet" style="font-size:12px;color:var(--text2);margin-top:2px;"></div>
+        </div>
       </div>
       <button class="btn" onclick="closeMuvekkilModal()">✕</button>
     </div>
@@ -2182,7 +2200,7 @@ loadRecords();
   </div>
 </div>
 <div class="durusma-sonuc-overlay" id="durusma-sonuc-overlay" style="display:none;" onclick="closeDurusmaSonuc()">
-  <div class="durusma-sonuc-modal" onclick="event.stopPropagation()">
+  <div class="durusma-sonuc-modal" onclick="event.stopPropagation()" ontouchstart="swipeStart(event)" ontouchend="swipeEnd(event,closeDurusmaSonuc)">
     <div style="width:40px;height:4px;background:var(--border2);border-radius:2px;margin:10px auto 8px;"></div>
     <div style="padding:12px 20px 16px;border-bottom:1px solid var(--border);">
       <div style="font-size:15px;font-weight:700;" id="ds-baslik"></div>
@@ -2219,10 +2237,11 @@ loadRecords();
   </div>
 </div>
 <div class="kayit-modal-overlay" id="kayit-modal" style="display:none;" onclick="closeKayitModal()">
-  <div class="kayit-modal" onclick="event.stopPropagation()">
+  <div class="kayit-modal" onclick="event.stopPropagation()" ontouchstart="swipeStart(event)" ontouchend="swipeEnd(event,closeKayitModal)">
     <div class="modal-handle" style="width:40px;height:4px;background:var(--border2);border-radius:2px;margin:10px auto 0;"></div>
     <div class="kayit-modal-header">
       <div style="display:flex;align-items:center;gap:8px;">
+        <button onclick="history.back()" style="background:none;border:none;cursor:pointer;padding:4px 6px 4px 0;color:var(--navy);font-size:20px;line-height:1;display:flex;align-items:center;">&#8592;</button>
         <div id="km-type-dot" style="width:12px;height:12px;border-radius:50%;flex-shrink:0;"></div>
         <h2 id="km-title" style="font-size:15px;font-weight:600;"></h2>
       </div>
