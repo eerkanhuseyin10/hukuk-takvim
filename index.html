@@ -463,7 +463,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   <div class="modal" ontouchstart="swipeStart(event)" ontouchend="swipeEnd(event,closeModal)">
     <div class="modal-handle"></div>
     <div class="modal-header">
-      <h2 id="modal-title">Yeni Kayıt</h2>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;padding:4px 6px 4px 0;color:var(--navy);font-size:20px;line-height:1;display:flex;align-items:center;">&#8592;</button>
+        <h2 id="modal-title">Yeni Kayıt</h2>
+      </div>
       <button class="btn" onclick="closeModal()">Vazgeç</button>
     </div>
     <div class="modal-body">
@@ -2179,9 +2182,12 @@ loadRecords();
   <div class="muvekkil-modal" onclick="event.stopPropagation()" ontouchstart="swipeStart(event)" ontouchend="swipeEnd(event,closeMuvekkilModal)">
     <div style="width:40px;height:4px;background:var(--border2);border-radius:2px;margin:10px auto 0;"></div>
     <div class="muvekkil-modal-header">
-      <div>
-        <h2 id="mv-isim" style="font-size:16px;font-weight:700;"></h2>
-        <div id="mv-ozet" style="font-size:12px;color:var(--text2);margin-top:2px;"></div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button onclick="closeMuvekkilModal()" style="background:none;border:none;cursor:pointer;padding:4px 6px 4px 0;color:var(--navy);font-size:20px;line-height:1;display:flex;align-items:center;">&#8592;</button>
+        <div>
+          <h2 id="mv-isim" style="font-size:16px;font-weight:700;"></h2>
+          <div id="mv-ozet" style="font-size:12px;color:var(--text2);margin-top:2px;"></div>
+        </div>
       </div>
       <button class="btn" onclick="closeMuvekkilModal()">✕</button>
     </div>
@@ -2230,6 +2236,7 @@ loadRecords();
     <div class="modal-handle" style="width:40px;height:4px;background:var(--border2);border-radius:2px;margin:10px auto 0;"></div>
     <div class="kayit-modal-header">
       <div style="display:flex;align-items:center;gap:8px;">
+        <button onclick="closeKayitModal()" style="background:none;border:none;cursor:pointer;padding:4px 6px 4px 0;color:var(--navy);font-size:20px;line-height:1;display:flex;align-items:center;">&#8592;</button>
         <div id="km-type-dot" style="width:12px;height:12px;border-radius:50%;flex-shrink:0;"></div>
         <h2 id="km-title" style="font-size:15px;font-weight:600;"></h2>
       </div>
