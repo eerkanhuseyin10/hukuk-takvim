@@ -1000,6 +1000,7 @@ const IS_TIPLERI=['89/1 İtirazı','Adli Kontrol Kararına İtiraz','Adres Bildi
 
 let selectedIstipi='';
 let records=[],ST={type:'sure',teblig:'',dal:'',dal2:'',birim:'',hesaplananTarih:null,hesapDetay:null,editId:null,prefillDate:''};
+let _bildirimGonderildi=false;
 let currentMonth=new Date().getMonth(),currentYear=new Date().getFullYear(),openDetailId=null;
 
 // ── İŞ TİPİ ──────────────────────────────────────────────────────
@@ -1235,7 +1236,7 @@ async function loadRecords(){
   setSyncStatus('ok','Bağlı');
   renderAll();
   bildirimDurumGuncelle();
-  hatirlaticiKontrol();
+  if(!_bildirimGonderildi){_bildirimGonderildi=true;hatirlaticiKontrol();}
 }
 function setSyncStatus(s,t){
   document.getElementById('sync-dot').className='sync-dot'+(s==='error'?' error':s==='loading'?' loading':'');
