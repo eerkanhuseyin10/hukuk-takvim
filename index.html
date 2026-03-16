@@ -1203,17 +1203,14 @@ async function olusturTekrarKayitlari(anaRec){
 async function genelIsleriTasi(){
   const bugun=new Date();bugun.setHours(0,0,0,0);
   const bugunStr=bugun.toISOString().split('T')[0];
-  // Tarihi geçmiş, tamamlanmamış, genel işleri bul (tekrar hariç)
-  const tasınacaklar=records.filter(r=>{
-    const d=new Date(r.date+'T12:00:00');d.setHours(0,0,0,0);
-    return r.type==='genel'&&!r.tamamlandi&&!r.tekrarAnaId&&d<bugun;
-  });
-  if(!tasınacaklar.length) return false;
-  for(const r of tasınacaklar){
-    await sb.from('kayitlar').update({date:bugunStr}).eq('id',r.id);
-    r.date=bugunStr;
-  }
-  return true;
+  // Doğrudan Supabase'e sorgu at - records'a bağımlı değil
+  const{error}=await sb.from('kayitlar')
+    .update({date:bugunStr})
+    .eq('type','genel')
+    .eq('tamamlandi',false)
+    .is('tekrar_ana_id',null)
+    .lt('date',bugunStr);
+  return !error;
 }
 
 async function loadRecords(){
