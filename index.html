@@ -1678,7 +1678,7 @@ function renderDashboard(){
     return dateHeader+`<tr onclick="openKayitModal(${r.id})" style="cursor:pointer;${r.tamamlandi?'opacity:0.5;':''}">
       <td>${r.saat?'<span style="font-weight:600;color:var(--navy);">⏰ '+r.saat+'</span><br>':''}<span style="font-size:11px;">${lbl}</span></td>
       <td style="${r.tamamlandi?'text-decoration:line-through;color:var(--text3);':''}">${r.tamamlandi?'✓ ':''}${getBaslik(r)}</td>
-      <td onclick="event.stopPropagation();if('${r.muvekkil}')openMuvekkilModal('${r.muvekkil}')" style="cursor:pointer;">${r.muvekkil?`<span class='mv-link'>${r.muvekkil}</span>`:'—'}</td>
+      <td onclick="event.stopPropagation();if('${r.muvekkil}')openMuvekkilModal('${r.muvekkil}')" style="cursor:pointer;padding:12px 13px;">${r.muvekkil?`<span class='mv-link'>${r.muvekkil}</span>`:'—'}</td>
       <td><span class="badge badge-${r.type==='tekrar'?'tekrar-type':r.type}">${typeLabel(r.type,r.dal)}</span></td>
       <td>${dalLabel(r.dal)}</td>
       <td><div class="action-btns">
@@ -2327,7 +2327,7 @@ function renderTamamlanan(){
   tb.innerHTML=f.map(r=>`<tr onclick="openKayitModal(${r.id})" style="opacity:0.7;">
     <td>${formatDate(r.date)}</td>
     <td style="text-decoration:line-through;">${getBaslik(r)}</td>
-    <td>${r.muvekkil||'—'}</td>
+    <td onclick="event.stopPropagation();if('${r.muvekkil}')openMuvekkilModal('${r.muvekkil}')" style="cursor:pointer;padding:12px 13px;">${r.muvekkil?`<span class='mv-link'>${r.muvekkil}</span>`:'—'}</td>
     <td><span class="badge badge-${r.type==='tekrar'?'tekrar-type':r.type}">${typeLabel(r.type,r.dal)}</span></td>
     <td>${dalLabel(r.dal)}</td>
     <td><div class="action-btns">
