@@ -449,7 +449,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
 <!-- TAKVİM DETAY PANEL -->
 <div class="cal-detail-overlay" id="cal-detail-overlay" onclick="closeCalDetail()"></div>
-<div class="cal-detail-panel" id="cal-detail-panel">
+<div class="cal-detail-panel" id="cal-detail-panel" ontouchstart="swipeStart(event)" ontouchend="swipeEnd(event,closeCalDetail)">
   <div class="cal-detail-handle"></div>
   <div class="cal-detail-header">
     <span class="cal-detail-date" id="cal-detail-date"></span>
@@ -460,7 +460,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
 <!-- MODAL -->
 <div class="modal-overlay" id="modal" style="display:none;">
-  <div class="modal">
+  <div class="modal" ontouchstart="swipeStart(event)" ontouchend="swipeEnd(event,closeModal)">
     <div class="modal-handle"></div>
     <div class="modal-header">
       <h2 id="modal-title">Yeni Kayıt</h2>
@@ -1317,6 +1317,7 @@ function hesapla(){
 
 // ── MODAL ─────────────────────────────────────────────────────────
 function openModal(editRecord,prefillDate){
+  history.pushState({modal:'kayit-ekle'},'');
   ST={type:'sure',teblig:'',dal:'',dal2:'',birim:'',hesaplananTarih:null,hesapDetay:null,editId:null,prefillDate:prefillDate||''};
   selectedIstipi='';
   document.querySelectorAll('.chip,.type-tab,.sure-birim-btn').forEach(c=>c.classList.remove('sel'));
@@ -1397,6 +1398,27 @@ function openModal(editRecord,prefillDate){
   document.getElementById('modal').style.display='flex';
 }
 function closeModal(){document.getElementById('modal').style.display='none';}
+
+// Escape tuşu ile modal kapat
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    // Açık olan modalı kapat - en üsttekinden başla
+    if(document.getElementById('durusma-sonuc-overlay').style.display==='flex'){closeDurusmaSonuc();return;}
+    if(document.getElementById('muvekkil-modal').style.display==='flex'){closeMuvekkilModal();return;}
+    if(document.getElementById('kayit-modal').style.display==='flex'){closeKayitModal();return;}
+    if(document.getElementById('modal').style.display==='flex'){closeModal();return;}
+    if(document.getElementById('cal-detail-panel').classList.contains('open')){closeCalDetail();return;}
+  }
+});
+
+// Geri butonu ile modal kapat
+window.addEventListener('popstate', function(){
+  if(document.getElementById('durusma-sonuc-overlay').style.display==='flex'){closeDurusmaSonuc();return;}
+  if(document.getElementById('muvekkil-modal').style.display==='flex'){closeMuvekkilModal();return;}
+  if(document.getElementById('kayit-modal').style.display==='flex'){closeKayitModal();return;}
+  if(document.getElementById('modal').style.display==='flex'){closeModal();return;}
+  if(document.getElementById('cal-detail-panel').classList.contains('open')){closeCalDetail();return;}
+});
 
 // Enter tuşu ile kaydet
 document.addEventListener('keydown', function(e){
@@ -1814,6 +1836,7 @@ function renderCal(){
 let _calDetailDate=null,_calDetailExpanded=null;
 
 function showCalDetail(dateStr, expandId){
+  history.pushState({modal:'cal-detail'},'');
   _calDetailDate=dateStr;
   _calDetailExpanded=expandId||null;
   const tatilBilgi=getTatil(dateStr);
@@ -1888,6 +1911,7 @@ function toggleCalItem(id){
 
 function openMuvekkilModal(isim){
   if(!isim||isim==='—') return;
+  history.pushState({modal:'muvekkil'},'');
   const tumIsler = records.filter(r=>r.muvekkil===isim);
   const aktif = tumIsler.filter(r=>!r.tamamlandi).sort((a,b)=>new Date(a.date)-new Date(b.date));
   const tamamlanan = tumIsler.filter(r=>r.tamamlandi).sort((a,b)=>new Date(b.date)-new Date(a.date));
@@ -1933,6 +1957,7 @@ function closeMuvekkilModal(){
   document.getElementById('muvekkil-modal').style.display='none';
 }
 function openKayitModal(id){
+  history.pushState({modal:'kayit-detay'},'');
   const r=records.find(x=>x.id===id);
   if(!r)return;
   const typeDot={sure:'#ef4444',durusma:'#3b82f6',genel:'#22c55e',tekrar:'#f59e0b'};
@@ -1993,6 +2018,7 @@ function showMahkemeDropdown(inputId, ddId){
 let _durusmaSonucId = null;
 
 function openDurusmaSonuc(id){
+  history.pushState({modal:'durusma-sonuc'},'');
   const r = records.find(x=>x.id===id);
   if(!r) return;
   _durusmaSonucId = id;
@@ -2073,6 +2099,14 @@ function closeCalDetail(){
   document.getElementById('cal-detail-overlay').classList.remove('open');
 }
 
+// Swipe ile modal kapatma
+let _swipeStartY=0;
+function swipeStart(e){_swipeStartY=e.touches[0].clientY;}
+function swipeEnd(e,closeFn){
+  const dy=e.changedTouches[0].clientY-_swipeStartY;
+  if(dy>80)closeFn();
+}
+
 // ── LİSTE ─────────────────────────────────────────────────────────
 function toggleDetail(id){openDetailId=openDetailId===id?null:id;renderListe();}
 function renderListe(){
@@ -2142,7 +2176,7 @@ function showView(v,el){
 loadRecords();
 </script>
 <div class="muvekkil-modal-overlay" id="muvekkil-modal" style="display:none;" onclick="closeMuvekkilModal()">
-  <div class="muvekkil-modal" onclick="event.stopPropagation()">
+  <div class="muvekkil-modal" onclick="event.stopPropagation()" ontouchstart="swipeStart(event)" ontouchend="swipeEnd(event,closeMuvekkilModal)">
     <div style="width:40px;height:4px;background:var(--border2);border-radius:2px;margin:10px auto 0;"></div>
     <div class="muvekkil-modal-header">
       <div>
@@ -2155,7 +2189,7 @@ loadRecords();
   </div>
 </div>
 <div class="durusma-sonuc-overlay" id="durusma-sonuc-overlay" style="display:none;" onclick="closeDurusmaSonuc()">
-  <div class="durusma-sonuc-modal" onclick="event.stopPropagation()">
+  <div class="durusma-sonuc-modal" onclick="event.stopPropagation()" ontouchstart="swipeStart(event)" ontouchend="swipeEnd(event,closeDurusmaSonuc)">
     <div style="width:40px;height:4px;background:var(--border2);border-radius:2px;margin:10px auto 8px;"></div>
     <div style="padding:12px 20px 16px;border-bottom:1px solid var(--border);">
       <div style="font-size:15px;font-weight:700;" id="ds-baslik"></div>
@@ -2192,7 +2226,7 @@ loadRecords();
   </div>
 </div>
 <div class="kayit-modal-overlay" id="kayit-modal" style="display:none;" onclick="closeKayitModal()">
-  <div class="kayit-modal" onclick="event.stopPropagation()">
+  <div class="kayit-modal" onclick="event.stopPropagation()" ontouchstart="swipeStart(event)" ontouchend="swipeEnd(event,closeKayitModal)">
     <div class="modal-handle" style="width:40px;height:4px;background:var(--border2);border-radius:2px;margin:10px auto 0;"></div>
     <div class="kayit-modal-header">
       <div style="display:flex;align-items:center;gap:8px;">
