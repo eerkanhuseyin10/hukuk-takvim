@@ -1495,7 +1495,8 @@ async function toggleTamamlandi(id){
   const not_metni=prompt('⚠️ Açıklama zorunludur.\n\nBu iş hakkında kısa bir not girin:');
   if(not_metni===null) return;
   if(!not_metni.trim()){alert('Açıklama girilmeden tamamlandı işaretlenemez.');return;}
-  const{error}=await sb.from('kayitlar').update({tamamlandi:true,not_alani:sentenceCase(not_metni.trim())}).eq('id',id);
+  const eskiNot=rec.not?rec.not+'\n':'';
+  const{error}=await sb.from('kayitlar').update({tamamlandi:true,not_alani:eskiNot+sentenceCase(not_metni.trim())}).eq('id',id);
   if(error){alert('Hata: '+error.message);return;}
   await loadRecords();
   if(document.getElementById('cal-detail-panel').classList.contains('open')){
@@ -2082,7 +2083,8 @@ async function durusmayiErtelendi(){
   const {error} = await sb.from('kayitlar').insert(yeniRec);
   if(error){ alert('Hata: '+error.message); return; }
   // Eski kaydı tamamlandı yap, açıklama ekle
-  await sb.from('kayitlar').update({tamamlandi:true, not_alani:'Ertelendi → '+formatDate(yeniTarih)}).eq('id',r.id);
+  const _ertelEskiNot=r.not?r.not+'\n':'';
+  await sb.from('kayitlar').update({tamamlandi:true, not_alani:_ertelEskiNot+'Ertelendi → '+formatDate(yeniTarih)}).eq('id',r.id);
   closeDurusmaSonuc();
   await loadRecords();
   alert('✓ Duruşma '+formatDate(yeniTarih)+' tarihine ertelendi.');
@@ -2091,7 +2093,9 @@ async function durusmaSonucKarar(){
   if(!_durusmaSonucId) return;
   const not_metni = document.getElementById('karar-not').value.trim();
   if(!not_metni){ alert('Karar notu zorunludur.'); return; }
-  await sb.from('kayitlar').update({tamamlandi:true, not_alani:'Karar verildi: '+sentenceCase(not_metni)}).eq('id',_durusmaSonucId);
+  const _kararRec=records.find(x=>x.id===_durusmaSonucId);
+  const _kararEskiNot=_kararRec&&_kararRec.not?_kararRec.not+'\n':'';
+  await sb.from('kayitlar').update({tamamlandi:true, not_alani:_kararEskiNot+'Karar verildi: '+sentenceCase(not_metni)}).eq('id',_durusmaSonucId);
   closeDurusmaSonuc();
   await loadRecords();
 }
@@ -2112,7 +2116,9 @@ async function durusmaSonucMazeret(){
   const {error} = await sb.from('kayitlar').insert(yeniRec);
   if(error){ alert('Hata: '+error.message); return; }
   // Orijinal duruşmayı tamamlandı yap
-  await sb.from('kayitlar').update({tamamlandi:true, not_alani:'Mazeret gönderildi → '+formatDate(tarihStr)+' tarihinde takip edilecek'}).eq('id',_durusmaSonucId);
+  const _mazeretRec=records.find(x=>x.id===_durusmaSonucId);
+  const _mazeretEskiNot=_mazeretRec&&_mazeretRec.not?_mazeretRec.not+'\n':'';
+  await sb.from('kayitlar').update({tamamlandi:true, not_alani:_mazeretEskiNot+'Mazeret gönderildi → '+formatDate(tarihStr)+' tarihinde takip edilecek'}).eq('id',_durusmaSonucId);
   closeDurusmaSonuc();
   await loadRecords();
   alert('✓ Mazeret kaydedildi. '+formatDate(tarihStr)+' tarihine hatırlatıcı eklendi.');
