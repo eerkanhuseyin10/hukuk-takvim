@@ -781,21 +781,38 @@ async function googleGiris(){
 async function buroyuKontrolEt(){
   if(!_currentUser) return;
   console.log('buroyuKontrolEt başladı, user:', _currentUser.id);
-  
-  const {data, error} = await sb.from('buro_uyeleri')
-    .select('buro_id, burolar(id, ad)')
-    .eq('user_id', _currentUser.id)
-    .single();
 
-  console.log('buro_uyeleri sonuç:', data, 'hata:', error);
+  try {
+    // Önce üyeliği bul
+    const {data:uye, error:uyeErr} = await sb.from('buro_uyeleri')
+      .select('buro_id')
+      .eq('user_id', _currentUser.id)
+      .maybeSingle();
+    
+    console.log('üyelik:', uye, 'hata:', uyeErr);
 
-  if(data?.burolar){
-    _currentBuro = data.burolar;
-    console.log('büro bulundu:', _currentBuro);
-    hideAuthOverlay();
-    await loadRecords();
-  } else {
-    console.log('büro bulunamadı, overlay gösteriliyor');
+    if(!uye?.buro_id){
+      showBuroOverlay();
+      return;
+    }
+
+    // Sonra büroyu bul
+    const {data:buro, error:buroErr} = await sb.from('burolar')
+      .select('id, ad')
+      .eq('id', uye.buro_id)
+      .maybeSingle();
+
+    console.log('büro:', buro, 'hata:', buroErr);
+
+    if(buro){
+      _currentBuro = buro;
+      hideAuthOverlay();
+      await loadRecords();
+    } else {
+      showBuroOverlay();
+    }
+  } catch(e) {
+    console.error('buroyuKontrolEt hata:', e);
     showBuroOverlay();
   }
 }
