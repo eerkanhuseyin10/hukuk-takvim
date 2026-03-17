@@ -482,10 +482,7 @@ self.addEventListener('fetch', e=>{
   <div class="modal" ontouchstart="swipeStart(event)" ontouchend="swipeEnd(event,closeModal)">
     <div class="modal-handle"></div>
     <div class="modal-header">
-      <div style="display:flex;align-items:center;gap:8px;">
-        <button onclick="history.back()" style="background:none;border:none;cursor:pointer;padding:4px 6px 4px 0;color:var(--navy);font-size:20px;line-height:1;display:flex;align-items:center;">&#8592;</button>
-        <h2 id="modal-title">Yeni Kayıt</h2>
-      </div>
+      <h2 id="modal-title">Yeni Kayıt</h2>
       <button class="btn" onclick="closeModal()">Vazgeç</button>
     </div>
     <div class="modal-body">
