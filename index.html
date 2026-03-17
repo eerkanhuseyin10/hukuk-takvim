@@ -369,7 +369,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 <div id="davet-modal-overlay" class="davet-overlay" onclick="closeDavetModal()">
   <div class="davet-card" onclick="event.stopPropagation()">
     <div style="font-size:15px;font-weight:700;margin-bottom:6px;">Davet Kodu Oluştur</div>
-    <p style="font-size:13px;color:var(--text2);margin-bottom:4px;">Bu kodu paylaştığınız kişi <strong>sizin büronuza</strong> katılabilir.</p>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:4px;">Meslektaşlarınızı büronuza davet etmek için kod oluşturun. Kodu paylaştığınız kişi <strong>sizin büronuza</strong> katılabilir.</p>
     <div class="davet-kod" id="davet-kod-goster">— — — —</div>
     <button onclick="davetKoduOlustur()" class="btn btn-primary" style="width:100%;margin-bottom:8px;" id="davet-olustur-btn">Kod Oluştur</button>
     <p style="font-size:12px;color:var(--text2);margin:0 0 8px;line-height:1.5;">Kodu paylaştığınız kişi Google ile giriş yapıp <strong>büronuza katılabilir</strong>. Her kod tek kullanımlıktır.</p>
@@ -835,7 +835,7 @@ async function davetKoduOlustur(){
 }
 function davetMesajiKopyala(){
   if(!_aktifDavetKod) return;
-  const m=`Merhaba! Sizi Sekreter'e davet ediyorum.\n\nSekreter, avukatlar için geliştirilmiş akıllı bir büro takvimi uygulamasıdır.\n\n🔗 https://hukuk-takvim.vercel.app\n🔑 Davet kodu: ${_aktifDavetKod}\n\nGoogle hesabınızla giriş yapıp "Davet koduyla katıl" seçeneğini kullanın.`;
+  const m=`Merhaba! Sizi Sekreter'e davet ediyorum.\n\nSekreter, avukatlar için geliştirilmiş akıllı bir büro takvimi uygulamasıdır.\n\n🔗 https://sekreterapp.com.tr\n🔑 Davet kodu: ${_aktifDavetKod}\n\nGoogle hesabınızla giriş yapıp "Davet koduyla katıl" seçeneğini kullanın.`;
   navigator.clipboard.writeText(m).then(()=>{
     const btn=document.getElementById('davet-kopyala-btn');
     btn.textContent='✓ Kopyalandı!';
