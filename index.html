@@ -782,7 +782,64 @@ async function burouKur(){
 }
 
 async function davetKodunaKatil(){
-  alert('Davet sistemi yakında aktif olacak.');
+  const kod = (document.getElementById('davet-kodu').value||'').trim().toUpperCase();
+  if(!kod){alert('Davet kodu zorunludur.');return;}
+  
+  document.getElementById('davet-form').style.display='none';
+  document.getElementById('buro-yukleniyor').style.display='block';
+
+  const {data:{session}} = await sb.auth.getSession();
+  if(!session){showAuth();return;}
+
+  // Daveti bul
+  const r1 = await fetch(
+    `https://uocdxifomlrbzorizrud.supabase.co/rest/v1/davetler?select=id,buro_id&kod=eq.${kod}&kullanildi=eq.false&limit=1`,
+    {headers:{
+      'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvY2R4aWZvbWxyYnpvcml6cnVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzI1MTEsImV4cCI6MjA4OTAwODUxMX0.Vf0hXl-s96DEvGDF3gHNgGyd8EQvvuF8p-XzWmJcv9M',
+      'Authorization':'Bearer '+session.access_token
+    }}
+  );
+  const davetler = await r1.json();
+  
+  if(!davetler?.length){
+    alert('Geçersiz veya kullanılmış davet kodu.');
+    document.getElementById('buro-yukleniyor').style.display='none';
+    document.getElementById('davet-form').style.display='block';
+    return;
+  }
+  
+  const davet = davetler[0];
+  
+  // Üyelik ekle
+  const {error:uyeErr} = await sb.from('buro_uyeleri').insert({
+    buro_id: davet.buro_id,
+    user_id: _user.id,
+    rol: 'uye'
+  });
+  
+  if(uyeErr && !uyeErr.message.includes('duplicate')){
+    alert('Hata: '+uyeErr.message);
+    return;
+  }
+  
+  // Daveti kullanıldı işaretle
+  await sb.from('davetler').update({kullanildi:true}).eq('id',davet.id);
+  
+  // Büroya yönlendir
+  const r2 = await fetch(
+    `https://uocdxifomlrbzorizrud.supabase.co/rest/v1/burolar?select=id,ad&id=eq.${davet.buro_id}&limit=1`,
+    {headers:{
+      'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvY2R4aWZvbWxyYnpvcml6cnVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzI1MTEsImV4cCI6MjA4OTAwODUxMX0.Vf0hXl-s96DEvGDF3gHNgGyd8EQvvuF8p-XzWmJcv9M',
+      'Authorization':'Bearer '+session.access_token
+    }}
+  );
+  const burolar = await r2.json();
+  
+  if(burolar?.length){
+    _buro = burolar[0];
+    showApp();
+    await loadRecords();
+  }
 }
 
 async function cikisYap(){
