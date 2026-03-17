@@ -1,4 +1,39 @@
-<!DOCTYPE html>
+<!DOCTYP
+  <div class="view" id="view-profil" style="display:none;">
+    <div style="padding:20px;max-width:500px;margin:0 auto;">
+      <!-- Kullanıcı -->
+      <div style="background:var(--surface);border-radius:var(--radius);padding:20px;margin-bottom:16px;border:1px solid var(--border);">
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
+          <div id="profil-avatar" style="width:56px;height:56px;border-radius:50%;background:#d4af70;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#1a1a1a;flex-shrink:0;">?</div>
+          <div>
+            <div id="profil-isim" style="font-size:16px;font-weight:700;color:var(--text);">—</div>
+            <div id="profil-email" style="font-size:13px;color:var(--text2);margin-top:2px;">—</div>
+          </div>
+        </div>
+        <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;">Hesap Bilgileri</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:var(--text2);">Kayıt tarihi</span><span id="profil-tarih" style="font-weight:500;">—</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:var(--text2);">Giriş yöntemi</span><span style="font-weight:500;">Google</span></div>
+        </div>
+      </div>
+      <!-- Büro -->
+      <div style="background:var(--surface);border-radius:var(--radius);padding:20px;margin-bottom:16px;border:1px solid var(--border);">
+        <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;">Büro Bilgileri</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:var(--text2);">Büro adı</span><span id="profil-buro-ad" style="font-weight:500;">—</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:var(--text2);">Toplam kayıt</span><span id="profil-kayit-sayisi" style="font-weight:500;">—</span></div>
+        </div>
+      </div>
+      <!-- Davet -->
+      <div style="background:var(--surface);border-radius:var(--radius);padding:20px;margin-bottom:16px;border:1px solid var(--border);">
+        <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">Büro Daveti</div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:12px;">Meslektaşlarınızı büronuza davet edin.</p>
+        <button onclick="openDavetModal()" class="btn btn-primary" style="width:100%;">✉ Davet Kodu Oluştur</button>
+      </div>
+      <!-- Çıkış -->
+      <button onclick="cikisYap()" class="btn" style="width:100%;color:#ef4444;border-color:rgba(239,68,68,0.3);">↪ Çıkış Yap</button>
+    </div>
+  </div>E html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
@@ -66,6 +101,34 @@ function davetKoduKopyala(){
     setTimeout(()=>btn.textContent='📋 Mesajı Kopyala', 2000);
   });
   document.getElementById('davet-kopyala-btn').textContent = '📋 Mesajı Kopyala';
+}
+
+
+function renderProfil(){
+  if(!_user) return;
+  const isim = _user.user_metadata?.full_name || _user.email?.split('@')[0] || '?';
+  const harf = isim.charAt(0).toUpperCase();
+  
+  const av = document.getElementById('profil-avatar');
+  if(av) av.textContent = harf;
+  
+  const nm = document.getElementById('profil-isim');
+  if(nm) nm.textContent = isim;
+  
+  const em = document.getElementById('profil-email');
+  if(em) em.textContent = _user.email || '—';
+  
+  const tr = document.getElementById('profil-tarih');
+  if(tr && _user.created_at){
+    const d = new Date(_user.created_at);
+    tr.textContent = d.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});
+  }
+  
+  const ba = document.getElementById('profil-buro-ad');
+  if(ba && _buro) ba.textContent = _buro.ad;
+  
+  const ks = document.getElementById('profil-kayit-sayisi');
+  if(ks) ks.textContent = records.length + ' kayıt';
 }
 
 </script>
@@ -416,6 +479,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <button class="nav-item" onclick="showView('tamamlanan',this)">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8l4 4 8-8"/></svg>Tamamlanan İşler
     </button>
+    <button class="nav-btn" onclick="showView('profil')">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>Profil
+    </button>
   </nav>
   <div class="sidebar-footer">
     <div id="sb-buro" style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:8px;display:none;padding:0 0 8px;border-bottom:1px solid rgba(255,255,255,0.08);">
@@ -425,8 +491,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
       <div class="sync-dot" id="sync-dot"></div>
       <span id="sync-text">Bağlı</span>
     </div>
-    <button onclick="openDavetModal()" style="margin-bottom:6px;background:none;border:none;cursor:pointer;font-size:11px;color:rgba(212,175,112,0.7);font-family:inherit;padding:0;text-align:left;display:block;">✉ Davet Kodu Oluştur</button>
-    <button onclick="cikisYap()" style="margin-bottom:6px;background:none;border:none;cursor:pointer;font-size:11px;color:rgba(255,255,255,0.35);font-family:inherit;padding:0;text-align:left;display:block;">↪ Çıkış Yap</button>
     <button id="bildirim-btn" onclick="bildirimToggle()" style="margin-top:10px;background:none;border:none;cursor:pointer;font-size:11px;color:rgba(255,255,255,0.6);font-family:inherit;padding:0;text-align:left;">🔔 Bildirimleri Aç</button>
 
 
@@ -2558,6 +2622,12 @@ function showView(v,el){
   if(v==='liste')renderListe();
   if(v==='dashboard')renderDashboard();
   if(v==='tamamlanan')renderTamamlanan();
+  document.getElementById('topbar-title').textContent={dashboard:'Özet',takvim:'Takvim',liste:'Tüm Kayıtlar',tamamlanan:'Tamamlanan İşler',profil:'Profil'}[v]||'Takvim';
+  if(v==='takvim')renderCal();
+  if(v==='liste')renderListe();
+  if(v==='dashboard')renderDashboard();
+  if(v==='tamamlanan')renderTamamlanan();
+  if(v==='profil')renderProfil();
 }
 
 authBaslat();
