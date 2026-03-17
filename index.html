@@ -780,17 +780,22 @@ async function googleGiris(){
 
 async function buroyuKontrolEt(){
   if(!_currentUser) return;
+  console.log('buroyuKontrolEt başladı, user:', _currentUser.id);
   
-  const {data} = await sb.from('buro_uyeleri')
+  const {data, error} = await sb.from('buro_uyeleri')
     .select('buro_id, burolar(id, ad)')
     .eq('user_id', _currentUser.id)
     .single();
 
+  console.log('buro_uyeleri sonuç:', data, 'hata:', error);
+
   if(data?.burolar){
     _currentBuro = data.burolar;
+    console.log('büro bulundu:', _currentBuro);
     hideAuthOverlay();
     await loadRecords();
   } else {
+    console.log('büro bulunamadı, overlay gösteriliyor');
     showBuroOverlay();
   }
 }
