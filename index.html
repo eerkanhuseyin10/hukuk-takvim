@@ -788,29 +788,35 @@ async function buroyuKontrolEt(){
   console.log('buroyuKontrolEt başladı, user:', _currentUser.id);
 
   try {
-    // Önce üyeliği bul
-    const {data:uye, error:uyeErr} = await sb.from('buro_uyeleri')
-      .select('buro_id')
-      .eq('user_id', _currentUser.id)
-      .maybeSingle();
-    
-    console.log('üyelik:', uye, 'hata:', uyeErr);
+    console.log('sorgu atılıyor...');
+    const res = await fetch(
+      'https://uocdxifomlrbzorizrud.supabase.co/rest/v1/buro_uyeleri?select=buro_id&user_id=eq.' + _currentUser.id,
+      {headers: {
+        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvY2R4aWZvbWxyYnpvcml6cnVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzI1MTEsImV4cCI6MjA4OTAwODUxMX0.Vf0hXl-s96DEvGDF3gHNgGyd8EQvvuF8p-XzWmJcv9M',
+        'Authorization': 'Bearer ' + (await sb.auth.getSession()).data.session?.access_token
+      }}
+    );
+    const uyeler = await res.json();
+    console.log('üyelik fetch sonuç:', uyeler);
 
-    if(!uye?.buro_id){
+    if(!uyeler?.length || !uyeler[0]?.buro_id){
       showBuroOverlay();
       return;
     }
 
-    // Sonra büroyu bul
-    const {data:buro, error:buroErr} = await sb.from('burolar')
-      .select('id, ad')
-      .eq('id', uye.buro_id)
-      .maybeSingle();
+    const buro_id = uyeler[0].buro_id;
+    const res2 = await fetch(
+      'https://uocdxifomlrbzorizrud.supabase.co/rest/v1/burolar?select=id,ad&id=eq.' + buro_id,
+      {headers: {
+        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvY2R4aWZvbWxyYnpvcml6cnVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzI1MTEsImV4cCI6MjA4OTAwODUxMX0.Vf0hXl-s96DEvGDF3gHNgGyd8EQvvuF8p-XzWmJcv9M',
+        'Authorization': 'Bearer ' + (await sb.auth.getSession()).data.session?.access_token
+      }}
+    );
+    const burolar = await res2.json();
+    console.log('büro fetch sonuç:', burolar);
 
-    console.log('büro:', buro, 'hata:', buroErr);
-
-    if(buro){
-      _currentBuro = buro;
+    if(burolar?.length){
+      _currentBuro = burolar[0];
       hideAuthOverlay();
       await loadRecords();
     } else {
@@ -889,8 +895,16 @@ function updateUserAvatar(){
 
 async function cikisYap(){
   if(!confirm('Çıkış yapmak istediğinizden emin misiniz?')) return;
-  await sb.auth.signOut();
-  showAuthOverlay();
+  // Supabase session'ı temizle
+  try {
+    await Promise.race([
+      sb.auth.signOut(),
+      new Promise(resolve => setTimeout(resolve, 2000))
+    ]);
+  } catch(e) {}
+  // Local storage'ı temizle ve yenile
+  Object.keys(localStorage).forEach(k => { if(k.includes('supabase')) localStorage.removeItem(k); });
+  location.reload();
 }
 
 
