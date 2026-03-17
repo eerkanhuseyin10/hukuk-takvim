@@ -716,6 +716,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 </div>
 
 <script>
+
+const SUPABASE_URL='https://uocdxifomlrbzorizrud.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvY2R4aWZvbWxyYnpvcml6cnVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzI1MTEsImV4cCI6MjA4OTAwODUxMX0.Vf0hXl-s96DEvGDF3gHNgGyd8EQvvuF8p-XzWmJcv9M';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
 // ── AUTH & BÜRO SİSTEMİ ──────────────────────────────────────────
 let _currentUser = null;
 let _currentBuro = null;
@@ -888,9 +893,6 @@ async function cikisYap(){
   showAuthOverlay();
 }
 
-const SUPABASE_URL='https://uocdxifomlrbzorizrud.supabase.co';
-const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvY2R4aWZvbWxyYnpvcml6cnVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzI1MTEsImV4cCI6MjA4OTAwODUxMX0.Vf0hXl-s96DEvGDF3gHNgGyd8EQvvuF8p-XzWmJcv9M';
-const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 const MAHKEMELER = [
   // ── BALIKESİR CEZA MAHKEMELERİ ──
