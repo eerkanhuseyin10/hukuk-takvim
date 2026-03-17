@@ -1,39 +1,4 @@
-<!DOCTYP
-  <div class="view" id="view-profil" style="display:none;">
-    <div style="padding:20px;max-width:500px;margin:0 auto;">
-      <!-- Kullanıcı -->
-      <div style="background:var(--surface);border-radius:var(--radius);padding:20px;margin-bottom:16px;border:1px solid var(--border);">
-        <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;">
-          <div id="profil-avatar" style="width:56px;height:56px;border-radius:50%;background:#d4af70;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#1a1a1a;flex-shrink:0;">?</div>
-          <div>
-            <div id="profil-isim" style="font-size:16px;font-weight:700;color:var(--text);">—</div>
-            <div id="profil-email" style="font-size:13px;color:var(--text2);margin-top:2px;">—</div>
-          </div>
-        </div>
-        <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;">Hesap Bilgileri</div>
-        <div style="display:flex;flex-direction:column;gap:10px;">
-          <div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:var(--text2);">Kayıt tarihi</span><span id="profil-tarih" style="font-weight:500;">—</span></div>
-          <div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:var(--text2);">Giriş yöntemi</span><span style="font-weight:500;">Google</span></div>
-        </div>
-      </div>
-      <!-- Büro -->
-      <div style="background:var(--surface);border-radius:var(--radius);padding:20px;margin-bottom:16px;border:1px solid var(--border);">
-        <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;">Büro Bilgileri</div>
-        <div style="display:flex;flex-direction:column;gap:10px;">
-          <div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:var(--text2);">Büro adı</span><span id="profil-buro-ad" style="font-weight:500;">—</span></div>
-          <div style="display:flex;justify-content:space-between;font-size:13px;"><span style="color:var(--text2);">Toplam kayıt</span><span id="profil-kayit-sayisi" style="font-weight:500;">—</span></div>
-        </div>
-      </div>
-      <!-- Davet -->
-      <div style="background:var(--surface);border-radius:var(--radius);padding:20px;margin-bottom:16px;border:1px solid var(--border);">
-        <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">Büro Daveti</div>
-        <p style="font-size:13px;color:var(--text2);margin-bottom:12px;">Meslektaşlarınızı büronuza davet edin.</p>
-        <button onclick="openDavetModal()" class="btn btn-primary" style="width:100%;">✉ Davet Kodu Oluştur</button>
-      </div>
-      <!-- Çıkış -->
-      <button onclick="cikisYap()" class="btn" style="width:100%;color:#ef4444;border-color:rgba(239,68,68,0.3);">↪ Çıkış Yap</button>
-    </div>
-  </div>E html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
@@ -45,93 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Sekreter">
 <meta name="theme-color" content="#1a1a1a">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-// ── DAVET KODU ───────────────────────────────────────────────────
-let _aktifDavetKod = null;
-
-function openDavetModal(){
-  document.getElementById('davet-modal-overlay').style.display='flex';
-  document.getElementById('davet-kod-goster').textContent='—';
-  document.getElementById('davet-kopyala-btn').style.display='none';
-  _aktifDavetKod = null;
-}
-
-function closeDavetModal(){
-  document.getElementById('davet-modal-overlay').style.display='none';
-}
-
-function rastgeleKod(){
-  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let kod='';
-  for(let i=0;i<8;i++) kod+=chars[Math.floor(Math.random()*chars.length)];
-  return kod;
-}
-
-async function davetKoduOlustur(){
-  if(!_buro || !_user) return;
-  const btn = document.querySelector('#davet-modal-overlay button');
-  btn.textContent = 'Oluşturuluyor...';
-  
-  const kod = rastgeleKod();
-  const {error} = await sb.from('davetler').insert({
-    buro_id: _buro.id,
-    kod: kod,
-    olusturan_id: _user.id,
-    kullanildi: false
-  });
-
-  btn.textContent = 'Yeni Kod Oluştur';
-
-  if(error){
-    alert('Hata: '+error.message);
-    return;
-  }
-
-  _aktifDavetKod = kod;
-  document.getElementById('davet-kod-goster').textContent = kod;
-  document.getElementById('davet-kopyala-btn').style.display='block';
-}
-
-function davetKoduKopyala(){
-  if(!_aktifDavetKod || !_buro) return;
-  const mesaj = `Merhaba! Sizi Sekreter'e davet ediyorum.\n\nSekreter, avukatlar için geliştirilmiş akıllı bir büro takvimi uygulamasıdır.\n\n🔗 https://hukuk-takvim.vercel.app\n🔑 Davet kodu: ${_aktifDavetKod}\n\nGoogle hesabınızla giriş yapıp "Davet kodu ile katıl" seçeneğini kullanın.`;
-  navigator.clipboard.writeText(mesaj).then(()=>{
-    const btn = document.getElementById('davet-kopyala-btn');
-    btn.textContent = '✓ Kopyalandı!';
-    setTimeout(()=>btn.textContent='📋 Mesajı Kopyala', 2000);
-  });
-  document.getElementById('davet-kopyala-btn').textContent = '📋 Mesajı Kopyala';
-}
-
-
-function renderProfil(){
-  if(!_user) return;
-  const isim = _user.user_metadata?.full_name || _user.email?.split('@')[0] || '?';
-  const harf = isim.charAt(0).toUpperCase();
-  
-  const av = document.getElementById('profil-avatar');
-  if(av) av.textContent = harf;
-  
-  const nm = document.getElementById('profil-isim');
-  if(nm) nm.textContent = isim;
-  
-  const em = document.getElementById('profil-email');
-  if(em) em.textContent = _user.email || '—';
-  
-  const tr = document.getElementById('profil-tarih');
-  if(tr && _user.created_at){
-    const d = new Date(_user.created_at);
-    tr.textContent = d.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});
-  }
-  
-  const ba = document.getElementById('profil-buro-ad');
-  if(ba && _buro) ba.textContent = _buro.ad;
-  
-  const ks = document.getElementById('profil-kayit-sayisi');
-  if(ks) ks.textContent = records.length + ' kayıt';
-}
-
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -403,56 +282,98 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
 .auth-overlay{position:fixed;inset:0;background:#111;z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
 .auth-card{background:#1a1a1a;border:1px solid rgba(212,175,112,0.2);border-radius:20px;padding:40px 36px;width:100%;max-width:380px;text-align:center;}
-.auth-logo{width:72px;height:72px;border-radius:16px;margin:0 auto 20px;}
-.auth-title{font-size:22px;font-weight:700;color:#fff;margin-bottom:6px;}
-.auth-sub{font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:32px;line-height:1.6;}
-.google-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;background:#fff;border:none;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;color:#1a1a1a;font-family:inherit;transition:all .15s;}
-.google-btn:hover{background:#f0f0f0;}
-.buro-overlay{position:fixed;inset:0;background:#111;z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;}
-.buro-card{background:#1a1a1a;border:1px solid rgba(212,175,112,0.2);border-radius:20px;padding:40px 36px;width:100%;max-width:420px;}
-.buro-title{font-size:18px;font-weight:700;color:#fff;margin-bottom:6px;}
-.buro-sub{font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:24px;line-height:1.6;}
+.google-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;background:#fff;border:none;border-radius:12px;cursor:pointer;font-size:14px;font-weight:600;color:#1a1a1a;font-family:inherit;transition:opacity .15s;}
+.google-btn:hover{opacity:.9;}
+.buro-overlay{position:fixed;inset:0;background:#111;z-index:999;display:none;align-items:center;justify-content:center;padding:20px;}
+.buro-card{background:#1a1a1a;border:1px solid rgba(212,175,112,0.2);border-radius:20px;padding:36px;width:100%;max-width:420px;}
 .buro-input{width:100%;padding:12px 14px;background:#2a2a2a;border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#fff;font-size:14px;font-family:inherit;margin-bottom:12px;box-sizing:border-box;}
 .buro-input:focus{outline:none;border-color:#d4af70;}
-.buro-btn{width:100%;padding:14px;background:#d4af70;border:none;border-radius:12px;cursor:pointer;font-size:14px;font-weight:700;color:#1a1a1a;font-family:inherit;}
-.buro-btn:hover{background:#c9a060;}
-.buro-or{text-align:center;color:rgba(255,255,255,0.3);font-size:12px;margin:16px 0;}
-.buro-davet-btn{width:100%;padding:14px;background:transparent;border:1px solid rgba(212,175,112,0.4);border-radius:12px;cursor:pointer;font-size:14px;font-weight:500;color:#d4af70;font-family:inherit;}
-.buro-davet-btn:hover{background:rgba(212,175,112,0.1);}
+.buro-btn{width:100%;padding:14px;background:#d4af70;border:none;border-radius:12px;cursor:pointer;font-size:14px;font-weight:700;color:#1a1a1a;font-family:inherit;transition:opacity .15s;}
+.buro-btn:hover{opacity:.9;}
+.buro-or{text-align:center;color:rgba(255,255,255,0.3);font-size:12px;margin:14px 0;}
+.buro-link{background:none;border:none;cursor:pointer;font-size:13px;color:#d4af70;font-family:inherit;padding:0;text-decoration:underline;}
+
+/* PROFİL MODAL */
+.profil-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:400;display:none;align-items:flex-start;justify-content:flex-end;padding:56px 12px 0 0;}
+.profil-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:300px;padding:0;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.18);}
+.profil-header{background:var(--navy);padding:20px;display:flex;align-items:center;gap:14px;}
+.profil-avatar{width:48px;height:48px;border-radius:50%;background:#d4af70;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#1a1a1a;flex-shrink:0;}
+.profil-row{display:flex;justify-content:space-between;align-items:center;padding:11px 18px;font-size:13px;border-bottom:1px solid var(--border);}
+.profil-row:last-child{border-bottom:none;}
+.profil-row-label{color:var(--text2);}
+.profil-row-val{font-weight:500;color:var(--text);text-align:right;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.profil-btn-row{padding:14px 18px;border-top:1px solid var(--border);}
+
+/* DAVET MODAL */
+.davet-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
+.davet-card{background:var(--surface);border-radius:16px;padding:28px;width:100%;max-width:360px;text-align:center;border:1px solid var(--border);}
+.davet-kod{font-size:30px;font-weight:700;letter-spacing:8px;color:var(--navy);background:var(--bg);border-radius:10px;padding:18px;margin:16px 0;}
 </style>
 </head>
 <body>
 
 <div id="auth-overlay" style="position:fixed;inset:0;background:#111;z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;">
   <div class="auth-card">
-    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNDAgMjQwIj48cmVjdCB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgcng9IjQ0IiBmaWxsPSIjMWExYTFhIi8+PHJlY3QgeD0iNTIiIHk9IjcwIiB3aWR0aD0iMTM2IiBoZWlnaHQ9IjExOCIgcng9IjEwIiBmaWxsPSJub25lIiBzdHJva2U9IiNkNGFmNzAiIHN0cm9rZS13aWR0aD0iMyIgb3BhY2l0eT0iMC41Ii8+PHJlY3QgeD0iNTIiIHk9IjcwIiB3aWR0aD0iMTM2IiBoZWlnaHQ9IjM2IiByeD0iMTAiIGZpbGw9IiNkNGFmNzAiIG9wYWNpdHk9IjAuNyIvPjxyZWN0IHg9Ijg0IiB5PSI1NCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjI4IiByeD0iNSIgZmlsbD0iI2Q0YWY3MCIvPjxyZWN0IHg9IjE0NiIgeT0iNTQiIHdpZHRoPSIxMCIgaGVpZ2h0PSIyOCIgcng9IjUiIGZpbGw9IiNkNGFmNzAiLz48Y2lyY2xlIGN4PSI4NCIgY3k9IjEzNiIgcj0iNiIgZmlsbD0iI2Q0YWY3MCIvPjxjaXJjbGUgY3g9IjExMCIgY3k9IjEzNiIgcj0iNiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC4zIi8+PGNpcmNsZSBjeD0iMTM2IiBjeT0iMTM2IiByPSI2IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjMiLz48Y2lyY2xlIGN4PSI4NCIgY3k9IjE2MiIgcj0iNiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC4zIi8+PGNpcmNsZSBjeD0iMTEwIiBjeT0iMTYyIiByPSI2IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjMiLz48Y2lyY2xlIGN4PSIxMzYiIGN5PSIxNjIiIHI9IjYiIGZpbGw9IiNkNGFmNzAiIG9wYWNpdHk9IjAuNyIvPjwvc3ZnPg==" class="auth-logo" alt="Sekreter">
-    <div class="auth-title">Sekreter</div>
-    <div class="auth-sub">Hukuk büronuzun akıllı takvimi</div>
+    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNDAgMjQwIj48cmVjdCB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgcng9IjQ0IiBmaWxsPSIjMWExYTFhIi8+PHJlY3QgeD0iNTIiIHk9IjcwIiB3aWR0aD0iMTM2IiBoZWlnaHQ9IjExOCIgcng9IjEwIiBmaWxsPSJub25lIiBzdHJva2U9IiNkNGFmNzAiIHN0cm9rZS13aWR0aD0iMyIgb3BhY2l0eT0iMC41Ii8+PHJlY3QgeD0iNTIiIHk9IjcwIiB3aWR0aD0iMTM2IiBoZWlnaHQ9IjM2IiByeD0iMTAiIGZpbGw9IiNkNGFmNzAiIG9wYWNpdHk9IjAuNyIvPjxyZWN0IHg9Ijg0IiB5PSI1NCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjI4IiByeD0iNSIgZmlsbD0iI2Q0YWY3MCIvPjxyZWN0IHg9IjE0NiIgeT0iNTQiIHdpZHRoPSIxMCIgaGVpZ2h0PSIyOCIgcng9IjUiIGZpbGw9IiNkNGFmNzAiLz48Y2lyY2xlIGN4PSI4NCIgY3k9IjEzNiIgcj0iNiIgZmlsbD0iI2Q0YWY3MCIvPjxjaXJjbGUgY3g9IjExMCIgY3k9IjEzNiIgcj0iNiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC4zIi8+PGNpcmNsZSBjeD0iMTM2IiBjeT0iMTM2IiByPSI2IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjMiLz48Y2lyY2xlIGN4PSI4NCIgY3k9IjE2MiIgcj0iNiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC4zIi8+PGNpcmNsZSBjeD0iMTEwIiBjeT0iMTYyIiByPSI2IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjMiLz48Y2lyY2xlIGN4PSIxMzYiIGN5PSIxNjIiIHI9IjYiIGZpbGw9IiNkNGFmNzAiIG9wYWNpdHk9IjAuNyIvPjwvc3ZnPg==" style="width:72px;height:72px;border-radius:16px;margin:0 auto 18px;display:block;" alt="Sekreter">
+    <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:6px;">Sekreter</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:28px;line-height:1.6;">Avukatlar için akıllı büro takvimi</div>
     <button class="google-btn" id="google-btn" onclick="googleGiris()">
       <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/><path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.548 0 9s.348 2.825.957 4.039l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
       Google ile Giriş Yap
     </button>
-    <div id="auth-msg" style="margin-top:12px;font-size:12px;color:rgba(255,255,255,0.4);display:none;"></div>
+    <div id="auth-msg" style="margin-top:12px;font-size:12px;color:rgba(255,255,255,0.4);min-height:16px;"></div>
   </div>
 </div>
 
 <div id="buro-overlay" style="position:fixed;inset:0;background:#111;z-index:999;display:none;align-items:center;justify-content:center;padding:20px;">
   <div class="buro-card">
-    <div class="buro-title">Hoş geldiniz! 👋</div>
-    <div class="buro-sub">Büronuzu kurun veya mevcut bir büroya katılın.</div>
+    <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:6px;">Hoş geldiniz! 👋</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:22px;line-height:1.6;">Büronuzu kurun veya davet koduyla katılın.</div>
     <div id="buro-kur-form">
-      <input type="text" class="buro-input" id="buro-ad" placeholder="Büro adı (örn: Erkan Hukuk)">
+      <input class="buro-input" id="buro-ad" placeholder="Büro adı (örn: Erkan Hukuk)" type="text">
       <button class="buro-btn" onclick="burouKur()">Büromu Kur →</button>
       <div class="buro-or">veya</div>
-      <button class="buro-davet-btn" onclick="document.getElementById('buro-kur-form').style.display='none';document.getElementById('davet-form').style.display='block'">Davet kodu ile katıl</button>
+      <button class="buro-link" onclick="switchBuroForm('davet')">Davet koduyla katıl</button>
     </div>
-    <div id="davet-form" style="display:none;">
-      <input type="text" class="buro-input" id="davet-kodu" placeholder="Davet kodu" style="letter-spacing:3px;text-transform:uppercase;">
+    <div id="davet-katil-form" style="display:none;">
+      <input class="buro-input" id="davet-kodu-giris" placeholder="Davet kodu" type="text" style="letter-spacing:4px;text-transform:uppercase;">
       <button class="buro-btn" onclick="davetKodunaKatil()">Katıl →</button>
       <div class="buro-or">veya</div>
-      <button class="buro-davet-btn" onclick="document.getElementById('davet-form').style.display='none';document.getElementById('buro-kur-form').style.display='block'">Yeni büro kur</button>
+      <button class="buro-link" onclick="switchBuroForm('kur')">Yeni büro kur</button>
     </div>
-    <div id="buro-yukleniyor" style="display:none;text-align:center;color:rgba(255,255,255,0.4);padding:20px;font-size:13px;">Yükleniyor...</div>
+    <div id="buro-loading" style="display:none;text-align:center;color:rgba(255,255,255,0.4);padding:20px;font-size:13px;">Yükleniyor...</div>
+  </div>
+</div>
+
+<!-- PROFİL DROPDOWN -->
+<div id="profil-overlay" class="profil-overlay" onclick="closeProfil()">
+  <div class="profil-card" onclick="event.stopPropagation()">
+    <div class="profil-header">
+      <div class="profil-avatar" id="profil-av">?</div>
+      <div>
+        <div id="profil-isim" style="font-size:14px;font-weight:700;color:#fff;">—</div>
+        <div id="profil-email" style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;">—</div>
+      </div>
+    </div>
+    <div class="profil-row"><span class="profil-row-label">Büro</span><span class="profil-row-val" id="profil-buro">—</span></div>
+    <div class="profil-row"><span class="profil-row-label">Kayıt tarihi</span><span class="profil-row-val" id="profil-tarih">—</span></div>
+    <div class="profil-row"><span class="profil-row-label">Toplam kayıt</span><span class="profil-row-val" id="profil-kayit">—</span></div>
+    <div class="profil-btn-row">
+      <button onclick="closeProfil();openDavetModal();" class="btn btn-primary" style="width:100%;margin-bottom:8px;">✉ Davet Kodu Oluştur</button>
+      <button onclick="cikisYap()" class="btn" style="width:100%;color:#ef4444;border-color:rgba(239,68,68,0.3);">↪ Çıkış Yap</button>
+    </div>
+  </div>
+</div>
+
+<!-- DAVET KODU MODALI -->
+<div id="davet-modal-overlay" class="davet-overlay" onclick="closeDavetModal()">
+  <div class="davet-card" onclick="event.stopPropagation()">
+    <div style="font-size:15px;font-weight:700;margin-bottom:6px;">Davet Kodu Oluştur</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:4px;">Bu kodu paylaştığınız kişi <strong>sizin büronuza</strong> katılabilir.</p>
+    <div class="davet-kod" id="davet-kod-goster">— — — —</div>
+    <button onclick="davetKoduOlustur()" class="btn btn-primary" style="width:100%;margin-bottom:8px;" id="davet-olustur-btn">Kod Oluştur</button>
+    <button onclick="davetMesajiKopyala()" class="btn" style="width:100%;margin-bottom:8px;display:none;" id="davet-kopyala-btn">📋 Mesajı Kopyala</button>
+    <button onclick="closeDavetModal()" class="btn" style="width:100%;">Kapat</button>
   </div>
 </div>
 
@@ -463,7 +384,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNDAgMjQwIj48cmVjdCB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgcng9IjQ0IiBmaWxsPSIjMWExYTFhIi8+PHJlY3QgeD0iNTIiIHk9IjcwIiB3aWR0aD0iMTM2IiBoZWlnaHQ9IjExOCIgcng9IjEwIiBmaWxsPSJub25lIiBzdHJva2U9IiNkNGFmNzAiIHN0cm9rZS13aWR0aD0iMyIgb3BhY2l0eT0iMC41Ii8+PHJlY3QgeD0iNTIiIHk9IjcwIiB3aWR0aD0iMTM2IiBoZWlnaHQ9IjM2IiByeD0iMTAiIGZpbGw9IiNkNGFmNzAiIG9wYWNpdHk9IjAuNyIvPjxyZWN0IHg9Ijg0IiB5PSI1NCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjI4IiByeD0iNSIgZmlsbD0iI2Q0YWY3MCIvPjxyZWN0IHg9IjE0NiIgeT0iNTQiIHdpZHRoPSIxMCIgaGVpZ2h0PSIyOCIgcng9IjUiIGZpbGw9IiNkNGFmNzAiLz48Y2lyY2xlIGN4PSI4NCIgY3k9IjEzNiIgcj0iNiIgZmlsbD0iI2Q0YWY3MCIvPjxjaXJjbGUgY3g9IjExMCIgY3k9IjEzNiIgcj0iNiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC4zIi8+PGNpcmNsZSBjeD0iMTM2IiBjeT0iMTM2IiByPSI2IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjMiLz48Y2lyY2xlIGN4PSI4NCIgY3k9IjE2MiIgcj0iNiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC4zIi8+PGNpcmNsZSBjeD0iMTEwIiBjeT0iMTYyIiByPSI2IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjMiLz48Y2lyY2xlIGN4PSIxMzYiIGN5PSIxNjIiIHI9IjYiIGZpbGw9IiNkNGFmNzAiIG9wYWNpdHk9IjAuNyIvPjwvc3ZnPg==" style="width:44px;height:44px;border-radius:10px;flex-shrink:0;" alt="logo">
     <div>
       <div style="font-size:15px;font-weight:700;color:#fff;letter-spacing:.04em;">Sekreter</div>
-      <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:2px;" id="sidebar-buro-ad">Hukuk Takvimi</div>
+      <div id="sidebar-buro-ad" style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:2px;">Hukuk Takvimi</div>
     </div>
   </div>
   <nav class="nav">
@@ -479,14 +400,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <button class="nav-item" onclick="showView('tamamlanan',this)">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8l4 4 8-8"/></svg>Tamamlanan İşler
     </button>
-    <button class="nav-btn" onclick="showView('profil')">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>Profil
-    </button>
   </nav>
   <div class="sidebar-footer">
-    <div id="sb-buro" style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:8px;display:none;padding:0 0 8px;border-bottom:1px solid rgba(255,255,255,0.08);">
-      <div style="color:rgba(255,255,255,0.7);font-weight:500;" id="sb-buro-ad"></div>
-    </div>
     <div class="sync-status">
       <div class="sync-dot" id="sync-dot"></div>
       <span id="sync-text">Bağlı</span>
@@ -504,7 +419,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
       <span class="topbar-title" id="topbar-title">Takvim</span>
     </div>
     <div style="display:flex;align-items:center;gap:10px;">
-      <div id="user-av" style="width:32px;height:32px;border-radius:50%;background:#d4af70;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#1a1a1a;cursor:pointer;flex-shrink:0;" onclick="cikisYap()" title="Çıkış yap">?</div>
+      <div id="topbar-av" onclick="openProfil()" style="width:34px;height:34px;border-radius:50%;background:#d4af70;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#1a1a1a;cursor:pointer;flex-shrink:0;user-select:none;">?</div>
       <button class="btn btn-primary" onclick="openModal(null)">+ Yeni Kayıt</button>
     </div>
   </div>
@@ -830,197 +745,176 @@ const SUPABASE_URL='https://uocdxifomlrbzorizrud.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvY2R4aWZvbWxyYnpvcml6cnVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzI1MTEsImV4cCI6MjA4OTAwODUxMX0.Vf0hXl-s96DEvGDF3gHNgGyd8EQvvuF8p-XzWmJcv9M';
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
-
-// ── AUTH SİSTEMİ ─────────────────────────────────────────────────
+// ── AUTH & PROFİL SİSTEMİ ────────────────────────────────────────
 let _user = null;
 let _buro = null;
-const BURO_ID = '0d961c7f-fb7f-4679-95da-06704dcea589'; // Erkan Hukuk büro ID
+let _aktifDavetKod = null;
+const SB_URL = 'https://uocdxifomlrbzorizrud.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvY2R4aWZvbWxyYnpvcml6cnVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzI1MTEsImV4cCI6MjA4OTAwODUxMX0.Vf0hXl-s96DEvGDF3gHNgGyd8EQvvuF8p-XzWmJcv9M';
 
 function showApp(){
   document.getElementById('auth-overlay').style.display='none';
   document.getElementById('buro-overlay').style.display='none';
   document.querySelector('.app').style.display='flex';
-  // Büro adını göster
-  const ad = document.getElementById('sb-buro-ad');
-  const div = document.getElementById('sb-buro');
-  if(ad && _buro) ad.textContent = _buro.ad;
-  if(div) div.style.display='block';
-  // Avatar
-  const av = document.getElementById('user-av');
-  if(av && _user){
-    const isim = _user.user_metadata?.full_name || _user.email || '?';
-    av.textContent = isim.charAt(0).toUpperCase();
-    av.title = isim + ' · Çıkış yap';
-  }
+  const sad = document.getElementById('sidebar-buro-ad');
+  if(sad && _buro) sad.textContent = _buro.ad;
+  updateAvatar();
 }
-
 function showAuth(){
   document.getElementById('auth-overlay').style.display='flex';
   document.getElementById('buro-overlay').style.display='none';
   document.querySelector('.app').style.display='none';
 }
-
 function showBuro(){
   document.getElementById('auth-overlay').style.display='none';
   document.getElementById('buro-overlay').style.display='flex';
   document.querySelector('.app').style.display='none';
 }
+function switchBuroForm(f){
+  document.getElementById('buro-kur-form').style.display=f==='kur'?'block':'none';
+  document.getElementById('davet-katil-form').style.display=f==='davet'?'block':'none';
+  document.getElementById('buro-loading').style.display='none';
+}
+function updateAvatar(){
+  if(!_user) return;
+  const harf = (_user.user_metadata?.full_name||_user.email||'?').charAt(0).toUpperCase();
+  const av1 = document.getElementById('topbar-av');
+  const av2 = document.getElementById('profil-av');
+  if(av1) av1.textContent = harf;
+  if(av2) av2.textContent = harf;
+}
 
-async function googleGiris(){
-  const btn = document.getElementById('google-btn');
-  const msg = document.getElementById('auth-msg');
-  btn.disabled = true;
-  btn.textContent = 'Yönlendiriliyor...';
-  msg.textContent = 'Google hesabınıza yönlendiriliyorsunuz...';
-  msg.style.display = 'block';
-  
-  const {error} = await sb.auth.signInWithOAuth({
-    provider: 'google',
-    options: {redirectTo: window.location.origin + window.location.pathname}
-  });
-  
-  if(error){
-    btn.disabled = false;
-    btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/><path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.548 0 9s.348 2.825.957 4.039l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.163 6.656 3.58 9 3.58z"/></svg>Google ile Giriş Yap';
-    msg.textContent = 'Hata: ' + error.message;
-    msg.style.color = '#ef4444';
+// Profil dropdown
+function openProfil(){
+  const ol = document.getElementById('profil-overlay');
+  ol.style.display = ol.style.display==='flex' ? 'none' : 'flex';
+  if(!_user || ol.style.display==='none') return;
+  const isim = _user.user_metadata?.full_name || _user.email?.split('@')[0] || '?';
+  document.getElementById('profil-isim').textContent = isim;
+  document.getElementById('profil-email').textContent = _user.email || '—';
+  document.getElementById('profil-buro').textContent = _buro?.ad || '—';
+  document.getElementById('profil-kayit').textContent = records.length + ' kayıt';
+  if(_user.created_at){
+    const d = new Date(_user.created_at);
+    document.getElementById('profil-tarih').textContent = d.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});
   }
+  updateAvatar();
+}
+function closeProfil(){
+  document.getElementById('profil-overlay').style.display='none';
+}
+
+// Davet kodu
+function openDavetModal(){
+  document.getElementById('davet-modal-overlay').style.display='flex';
+  document.getElementById('davet-kod-goster').textContent='— — — —';
+  document.getElementById('davet-kopyala-btn').style.display='none';
+  document.getElementById('davet-olustur-btn').textContent='Kod Oluştur';
+  _aktifDavetKod = null;
+}
+function closeDavetModal(){
+  document.getElementById('davet-modal-overlay').style.display='none';
+}
+function rastgeleKod(){
+  const ch='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let k='';for(let i=0;i<8;i++)k+=ch[Math.floor(Math.random()*ch.length)];
+  return k;
+}
+async function davetKoduOlustur(){
+  if(!_buro||!_user) return;
+  const btn=document.getElementById('davet-olustur-btn');
+  btn.textContent='Oluşturuluyor...';btn.disabled=true;
+  const kod=rastgeleKod();
+  const {error}=await sb.from('davetler').insert({buro_id:_buro.id,kod,olusturan_id:_user.id,kullanildi:false});
+  btn.disabled=false;btn.textContent='Yeni Kod Oluştur';
+  if(error){alert('Hata: '+error.message);return;}
+  _aktifDavetKod=kod;
+  document.getElementById('davet-kod-goster').textContent=kod;
+  document.getElementById('davet-kopyala-btn').style.display='block';
+}
+function davetMesajiKopyala(){
+  if(!_aktifDavetKod) return;
+  const m=`Merhaba! Sizi Sekreter'e davet ediyorum.\n\nSekreter, avukatlar için geliştirilmiş akıllı bir büro takvimi uygulamasıdır.\n\n🔗 https://hukuk-takvim.vercel.app\n🔑 Davet kodu: ${_aktifDavetKod}\n\nGoogle hesabınızla giriş yapıp "Davet koduyla katıl" seçeneğini kullanın.`;
+  navigator.clipboard.writeText(m).then(()=>{
+    const btn=document.getElementById('davet-kopyala-btn');
+    btn.textContent='✓ Kopyalandı!';
+    setTimeout(()=>btn.textContent='📋 Mesajı Kopyala',2000);
+  });
+}
+
+// Auth
+async function googleGiris(){
+  const btn=document.getElementById('google-btn');
+  const msg=document.getElementById('auth-msg');
+  btn.disabled=true;btn.style.opacity='.7';
+  msg.textContent='Google hesabınıza yönlendiriliyorsunuz...';
+  const {error}=await sb.auth.signInWithOAuth({
+    provider:'google',
+    options:{redirectTo:window.location.origin+window.location.pathname}
+  });
+  if(error){btn.disabled=false;btn.style.opacity='1';msg.textContent='Hata: '+error.message;}
 }
 
 async function burouKur(){
-  const ad = document.getElementById('buro-ad').value.trim();
+  const ad=(document.getElementById('buro-ad').value||'').trim();
   if(!ad){alert('Büro adı zorunludur.');return;}
   document.getElementById('buro-kur-form').style.display='none';
-  document.getElementById('buro-yukleniyor').style.display='block';
-  
-  const {data:buro,error:e1} = await sb.from('burolar').insert({ad}).select().single();
+  document.getElementById('buro-loading').style.display='block';
+  const {data:buro,error:e1}=await sb.from('burolar').insert({ad}).select().single();
   if(e1){alert('Hata: '+e1.message);return;}
-  
-  const {error:e2} = await sb.from('buro_uyeleri').insert({buro_id:buro.id,user_id:_user.id,rol:'admin'});
-  if(e2){alert('Hata: '+e2.message);return;}
-  
-  _buro = buro;
-  showApp();
-  await loadRecords();
+  await sb.from('buro_uyeleri').insert({buro_id:buro.id,user_id:_user.id,rol:'admin'});
+  _buro=buro;showApp();await loadRecords();
 }
 
 async function davetKodunaKatil(){
-  const kod = (document.getElementById('davet-kodu').value||'').trim().toUpperCase();
+  const kod=(document.getElementById('davet-kodu-giris').value||'').trim().toUpperCase();
   if(!kod){alert('Davet kodu zorunludur.');return;}
-  
-  document.getElementById('davet-form').style.display='none';
-  document.getElementById('buro-yukleniyor').style.display='block';
-
-  const {data:{session}} = await sb.auth.getSession();
-  if(!session){showAuth();return;}
-
-  // Daveti bul
-  const r1 = await fetch(
-    `https://uocdxifomlrbzorizrud.supabase.co/rest/v1/davetler?select=id,buro_id&kod=eq.${kod}&kullanildi=eq.false&limit=1`,
-    {headers:{
-      'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvY2R4aWZvbWxyYnpvcml6cnVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzI1MTEsImV4cCI6MjA4OTAwODUxMX0.Vf0hXl-s96DEvGDF3gHNgGyd8EQvvuF8p-XzWmJcv9M',
-      'Authorization':'Bearer '+session.access_token
-    }}
-  );
-  const davetler = await r1.json();
-  
+  document.getElementById('davet-katil-form').style.display='none';
+  document.getElementById('buro-loading').style.display='block';
+  const {data:{session}}=await sb.auth.getSession();
+  const r1=await fetch(`${SB_URL}/rest/v1/davetler?select=id,buro_id&kod=eq.${kod}&kullanildi=eq.false&limit=1`,
+    {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+session.access_token}});
+  const davetler=await r1.json();
   if(!davetler?.length){
     alert('Geçersiz veya kullanılmış davet kodu.');
-    document.getElementById('buro-yukleniyor').style.display='none';
-    document.getElementById('davet-form').style.display='block';
+    document.getElementById('buro-loading').style.display='none';
+    document.getElementById('davet-katil-form').style.display='block';
     return;
   }
-  
-  const davet = davetler[0];
-  
-  // Üyelik ekle
-  const {error:uyeErr} = await sb.from('buro_uyeleri').insert({
-    buro_id: davet.buro_id,
-    user_id: _user.id,
-    rol: 'uye'
-  });
-  
-  if(uyeErr && !uyeErr.message.includes('duplicate')){
-    alert('Hata: '+uyeErr.message);
-    return;
-  }
-  
-  // Daveti kullanıldı işaretle
+  const davet=davetler[0];
+  await sb.from('buro_uyeleri').insert({buro_id:davet.buro_id,user_id:_user.id,rol:'uye'});
   await sb.from('davetler').update({kullanildi:true}).eq('id',davet.id);
-  
-  // Büroya yönlendir
-  const r2 = await fetch(
-    `https://uocdxifomlrbzorizrud.supabase.co/rest/v1/burolar?select=id,ad&id=eq.${davet.buro_id}&limit=1`,
-    {headers:{
-      'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvY2R4aWZvbWxyYnpvcml6cnVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzI1MTEsImV4cCI6MjA4OTAwODUxMX0.Vf0hXl-s96DEvGDF3gHNgGyd8EQvvuF8p-XzWmJcv9M',
-      'Authorization':'Bearer '+session.access_token
-    }}
-  );
-  const burolar = await r2.json();
-  
-  if(burolar?.length){
-    _buro = burolar[0];
-    showApp();
-    await loadRecords();
-  }
+  const r2=await fetch(`${SB_URL}/rest/v1/burolar?select=id,ad&id=eq.${davet.buro_id}&limit=1`,
+    {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+session.access_token}});
+  const burolar=await r2.json();
+  if(burolar?.length){_buro=burolar[0];showApp();await loadRecords();}
 }
 
 async function cikisYap(){
   if(!confirm('Çıkış yapmak istediğinizden emin misiniz?')) return;
-  // LocalStorage temizle
+  closeProfil();
   for(const k of Object.keys(localStorage)){
-    if(k.startsWith('sb-') || k.includes('supabase')) localStorage.removeItem(k);
+    if(k.startsWith('sb-')||k.includes('supabase'))localStorage.removeItem(k);
   }
-  // Signout dene (timeout ile)
-  try{ await Promise.race([sb.auth.signOut(), new Promise(r=>setTimeout(r,1500))]); }catch(e){}
-  _user = null; _buro = null;
-  showAuth();
+  try{await Promise.race([sb.auth.signOut(),new Promise(r=>setTimeout(r,1500))]);}catch(e){}
+  _user=null;_buro=null;showAuth();
 }
 
 async function authBaslat(){
-  // Session kontrol
-  const {data:{session}} = await sb.auth.getSession();
-  
-  if(!session?.user){
-    showAuth();
-    return;
-  }
-  
-  _user = session.user;
-  
-  // Büroyu kontrol et - direkt fetch ile
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session?.user){showAuth();return;}
+  _user=session.user;
   try{
-    const r = await fetch(
-      `https://uocdxifomlrbzorizrud.supabase.co/rest/v1/buro_uyeleri?select=buro_id&user_id=eq.${_user.id}&limit=1`,
-      {headers:{
-        'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvY2R4aWZvbWxyYnpvcml6cnVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzI1MTEsImV4cCI6MjA4OTAwODUxMX0.Vf0hXl-s96DEvGDF3gHNgGyd8EQvvuF8p-XzWmJcv9M',
-        'Authorization':'Bearer '+session.access_token
-      }}
-    );
-    const uyeler = await r.json();
-    
+    const r1=await fetch(`${SB_URL}/rest/v1/buro_uyeleri?select=buro_id&user_id=eq.${_user.id}&limit=1`,
+      {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+session.access_token}});
+    const uyeler=await r1.json();
     if(!uyeler?.length){showBuro();return;}
-    
-    const r2 = await fetch(
-      `https://uocdxifomlrbzorizrud.supabase.co/rest/v1/burolar?select=id,ad&id=eq.${uyeler[0].buro_id}&limit=1`,
-      {headers:{
-        'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvY2R4aWZvbWxyYnpvcml6cnVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzI1MTEsImV4cCI6MjA4OTAwODUxMX0.Vf0hXl-s96DEvGDF3gHNgGyd8EQvvuF8p-XzWmJcv9M',
-        'Authorization':'Bearer '+session.access_token
-      }}
-    );
-    const burolar = await r2.json();
-    
-    if(burolar?.length){
-      _buro = burolar[0];
-      showApp();
-      await loadRecords();
-    } else {
-      showBuro();
-    }
-  }catch(e){
-    console.error('Auth hata:', e);
-    showBuro();
-  }
+    const r2=await fetch(`${SB_URL}/rest/v1/burolar?select=id,ad&id=eq.${uyeler[0].buro_id}&limit=1`,
+      {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+session.access_token}});
+    const burolar=await r2.json();
+    if(burolar?.length){_buro=burolar[0];showApp();await loadRecords();}
+    else showBuro();
+  }catch(e){console.error(e);showBuro();}
 }
 
 const MAHKEMELER = [
@@ -2622,12 +2516,6 @@ function showView(v,el){
   if(v==='liste')renderListe();
   if(v==='dashboard')renderDashboard();
   if(v==='tamamlanan')renderTamamlanan();
-  document.getElementById('topbar-title').textContent={dashboard:'Özet',takvim:'Takvim',liste:'Tüm Kayıtlar',tamamlanan:'Tamamlanan İşler',profil:'Profil'}[v]||'Takvim';
-  if(v==='takvim')renderCal();
-  if(v==='liste')renderListe();
-  if(v==='dashboard')renderDashboard();
-  if(v==='tamamlanan')renderTamamlanan();
-  if(v==='profil')renderProfil();
 }
 
 authBaslat();
@@ -2674,18 +2562,5 @@ authBaslat();
     <div class="kayit-modal-body" id="km-body"></div>
   </div>
 </div>
-
-<!-- DAVET KODU MODALI -->
-<div id="davet-modal-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:var(--surface);border-radius:16px;padding:28px;width:100%;max-width:380px;text-align:center;">
-    <h2 style="font-size:16px;font-weight:700;margin-bottom:6px;">Davet Kodu Oluştur</h2>
-    <p style="font-size:13px;color:var(--text2);margin-bottom:20px;">Bu kodu paylaştığınız kişi <strong>sizin büronuza</strong> katılabilir.</p>
-    <div id="davet-kod-goster" style="font-size:28px;font-weight:700;letter-spacing:6px;color:var(--navy);background:var(--bg);border-radius:10px;padding:16px;margin-bottom:16px;">—</div>
-    <button onclick="davetKoduOlustur()" style="width:100%;padding:12px;background:var(--navy);color:#fff;border:none;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;margin-bottom:8px;">Yeni Kod Oluştur</button>
-    <button onclick="davetKoduKopyala()" id="davet-kopyala-btn" style="width:100%;padding:12px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:10px;cursor:pointer;font-size:14px;font-family:inherit;margin-bottom:8px;display:none;">📋 Kodu Kopyala</button>
-    <button onclick="closeDavetModal()" style="width:100%;padding:12px;background:none;color:var(--text2);border:none;cursor:pointer;font-size:13px;font-family:inherit;">Kapat</button>
-  </div>
-</div>
-
 </body>
 </html>
