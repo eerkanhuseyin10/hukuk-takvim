@@ -879,7 +879,7 @@ async function davetKodunaKatil(){
   document.getElementById('buro-loading').style.display='block';
   const {data:{session}}=await sb.auth.getSession();
   const r1=await fetch(`${SB_URL}/rest/v1/davetler?select=id,buro_id&kod=eq.${kod}&kullanildi=eq.false&limit=1`,
-    {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+session.access_token}});
+    {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+accessToken}});
   const davetler=await r1.json();
   if(!davetler?.length){
     alert('Geçersiz veya kullanılmış davet kodu.');
@@ -891,7 +891,7 @@ async function davetKodunaKatil(){
   await sb.from('buro_uyeleri').insert({buro_id:davet.buro_id,user_id:_user.id,rol:'uye'});
   await sb.from('davetler').update({kullanildi:true}).eq('id',davet.id);
   const r2=await fetch(`${SB_URL}/rest/v1/burolar?select=id,ad&id=eq.${davet.buro_id}&limit=1`,
-    {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+session.access_token}});
+    {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+accessToken}});
   const burolar=await r2.json();
   if(burolar?.length){_buro=burolar[0];showApp();await loadRecords();}
 }
@@ -906,17 +906,17 @@ async function cikisYap(){
   _user=null;_buro=null;showAuth();
 }
 
-async function authBaslat(){
-  const {data:{session}}=await sb.auth.getSession();
-  if(!session?.user){showAuth();return;}
-  _user=session.user;
-  try{
+async function buroyuKontrolEt(session){
+  if(!session?.user) return;
+  _user = session.user;
+  const accessToken = session.access_token;
+    try{
     const r1=await fetch(`${SB_URL}/rest/v1/buro_uyeleri?select=buro_id&user_id=eq.${_user.id}&limit=1`,
-      {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+session.access_token}});
+      {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+accessToken}});
     const uyeler=await r1.json();
     if(!uyeler?.length){showBuro();return;}
     const r2=await fetch(`${SB_URL}/rest/v1/burolar?select=id,ad&id=eq.${uyeler[0].buro_id}&limit=1`,
-      {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+session.access_token}});
+      {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+accessToken}});
     const burolar=await r2.json();
     if(burolar?.length){_buro=burolar[0];showApp();await loadRecords();}
     else showBuro();
@@ -1335,6 +1335,19 @@ function drumWheel(e,id){
 // ── VERİ ──────────────────────────────────────────────────────────
 
 // ── BİLDİRİMLER ──────────────────────────────────────────────────
+async function authBaslat(){
+  // Auth state dinle - OAuth callback için
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user && !_buro){
+      await buroyuKontrolEt(session);
+    }
+  });
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session?.user){showAuth();return;}
+  await buroyuKontrolEt(session);
+}
+
+
 async function bildirimIzniAl(){
   if(!('Notification' in window)) return;
   if(Notification.permission === 'default'){
