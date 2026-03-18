@@ -853,34 +853,57 @@ async function googleGiris(){
   const isNativeApp = window.location.protocol === 'capacitor:' || window.location.hostname === 'localhost';
   
   if(isNativeApp){
-    // Native uygulama: Capacitor Browser ile aç
     const redirectTo = 'com.sekreter.app://login-callback';
     const {data, error} = await sb.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo, skipBrowserRedirect: true }
     });
     if(error){ btn.disabled=false; btn.style.opacity='1'; msg.textContent='Hata: '+error.message; return; }
-    // URL'yi Capacitor Browser'da aç
     if(data?.url){
       try {
         const { Browser } = await import('https://esm.sh/@capacitor/browser@8.0.2');
-        await Browser.open({ url: data.url });
-        // Deep link dinle
-        Browser.addListener('browserFinished', async () => {
+        const { App } = await import('https://esm.sh/@capacitor/app@6');
+        
+        // Deep link'i dinle - tarayıcı kapanmadan önce URL gelir
+        const urlListener = await App.addListener('appUrlOpen', async (event) => {
+          urlListener.remove();
+          await Browser.close();
+          
+          // URL'den fragment al (hash)
+          const url = event.url;
+          const hashPart = url.includes('#') ? url.split('#')[1] : url.split('?')[1] || '';
+          const params = new URLSearchParams(hashPart);
+          const access_token = params.get('access_token');
+          const refresh_token = params.get('refresh_token');
+          
+          if(access_token && refresh_token){
+            const {data:sd} = await sb.auth.setSession({access_token, refresh_token});
+            if(sd?.user){
+              _user = sd.user;
+              btn.disabled=false; btn.style.opacity='1';
+              await buroyuKontrolEt(sd.session || sd);
+              return;
+            }
+          }
+          // Token yoksa session'ı dene
+          await new Promise(r=>setTimeout(r,500));
           const {data:{session}} = await sb.auth.getSession();
           if(session?.user){
             _user = session.user;
-            await buroyuKontrolEt();
+            btn.disabled=false; btn.style.opacity='1';
+            await buroyuKontrolEt(session);
+          } else {
+            btn.disabled=false; btn.style.opacity='1';
+            msg.textContent='Giriş başarısız, tekrar deneyin.';
           }
-          btn.disabled=false; btn.style.opacity='1';
         });
+        
+        await Browser.open({ url: data.url });
       } catch(e) {
-        // Fallback: normal redirect
         window.open(data.url, '_blank');
       }
     }
   } else {
-    // Web: normal OAuth redirect
     const {error} = await sb.auth.signInWithOAuth({
       provider:'google',
       options:{ redirectTo: window.location.origin + window.location.pathname }
