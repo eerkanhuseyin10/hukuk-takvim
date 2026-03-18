@@ -849,16 +849,44 @@ async function googleGiris(){
   const msg=document.getElementById('auth-msg');
   btn.disabled=true;btn.style.opacity='.7';
   msg.textContent='Google hesabınıza yönlendiriliyorsunuz...';
-  // Android uygulaması için deep link, web için normal redirect
+  
   const isNativeApp = window.location.protocol === 'capacitor:' || window.location.hostname === 'localhost';
-  const redirectTo = isNativeApp 
-    ? 'com.sekreter.app://login-callback'
-    : window.location.origin + window.location.pathname;
-  const {error}=await sb.auth.signInWithOAuth({
-    provider:'google',
-    options:{redirectTo, skipBrowserRedirect: false}
-  });
-  if(error){btn.disabled=false;btn.style.opacity='1';msg.textContent='Hata: '+error.message;}
+  
+  if(isNativeApp){
+    // Native uygulama: Capacitor Browser ile aç
+    const redirectTo = 'com.sekreter.app://login-callback';
+    const {data, error} = await sb.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo, skipBrowserRedirect: true }
+    });
+    if(error){ btn.disabled=false; btn.style.opacity='1'; msg.textContent='Hata: '+error.message; return; }
+    // URL'yi Capacitor Browser'da aç
+    if(data?.url){
+      try {
+        const { Browser } = await import('https://esm.sh/@capacitor/browser@8.0.2');
+        await Browser.open({ url: data.url });
+        // Deep link dinle
+        Browser.addListener('browserFinished', async () => {
+          const {data:{session}} = await sb.auth.getSession();
+          if(session?.user){
+            _user = session.user;
+            await buroyuKontrolEt();
+          }
+          btn.disabled=false; btn.style.opacity='1';
+        });
+      } catch(e) {
+        // Fallback: normal redirect
+        window.open(data.url, '_blank');
+      }
+    }
+  } else {
+    // Web: normal OAuth redirect
+    const {error} = await sb.auth.signInWithOAuth({
+      provider:'google',
+      options:{ redirectTo: window.location.origin + window.location.pathname }
+    });
+    if(error){ btn.disabled=false; btn.style.opacity='1'; msg.textContent='Hata: '+error.message; }
+  }
 }
 
 async function burouKur(){
