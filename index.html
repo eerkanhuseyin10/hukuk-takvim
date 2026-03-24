@@ -434,6 +434,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
       <!-- Şifre Değiştir -->
       <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;padding-top:12px;border-top:1px solid var(--border);">Şifre Değiştir</div>
       <div class="fg">
+        <label>Mevcut Şifre</label>
+        <input type="password" id="profil-mevcut-sifre" placeholder="Mevcut şifreniz" style="width:100%;padding:10px 12px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface);color:var(--text);font-family:inherit;">
+      </div>
+      <div class="fg">
         <label>Yeni Şifre</label>
         <input type="password" id="profil-yeni-sifre" placeholder="Yeni şifre (min. 6 karakter)" style="width:100%;padding:10px 12px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface);color:var(--text);font-family:inherit;">
       </div>
@@ -886,6 +890,7 @@ function openProfil(){
 function openProfilimModal(){
   document.getElementById('profilim-overlay').style.display='flex';
   document.getElementById('profilim-msg').textContent='';
+  document.getElementById('profil-mevcut-sifre').value='';
   document.getElementById('profil-yeni-sifre').value='';
   document.getElementById('profil-yeni-sifre2').value='';
   if(_user){
@@ -912,13 +917,21 @@ async function profilGuncelle(){
   setProfilMsg('✓ Bilgiler güncellendi.','#22c55e');
 }
 async function sifreDegistir(){
+  const mevcut=document.getElementById('profil-mevcut-sifre').value||'';
   const yeni=document.getElementById('profil-yeni-sifre').value||'';
   const yeni2=document.getElementById('profil-yeni-sifre2').value||'';
-  if(yeni.length<6){setProfilMsg('Şifre en az 6 karakter olmalıdır.','#dc2626');return;}
-  if(yeni!==yeni2){setProfilMsg('Şifreler eşleşmiyor.','#dc2626');return;}
+  if(!mevcut){setProfilMsg('Mevcut şifrenizi girin.','#dc2626');return;}
+  if(yeni.length<6){setProfilMsg('Yeni şifre en az 6 karakter olmalıdır.','#dc2626');return;}
+  if(yeni!==yeni2){setProfilMsg('Yeni şifreler eşleşmiyor.','#dc2626');return;}
+  setProfilMsg('Doğrulanıyor...','var(--text2)');
+  // Önce mevcut şifreyi doğrula
+  const {error:girisHata}=await sb.auth.signInWithPassword({email:_user.email,password:mevcut});
+  if(girisHata){setProfilMsg('Mevcut şifre hatalı.','#dc2626');return;}
+  // Şifreyi güncelle
   setProfilMsg('Şifre değiştiriliyor...','var(--text2)');
   const {error}=await sb.auth.updateUser({password:yeni});
   if(error){setProfilMsg('Hata: '+error.message,'#dc2626');return;}
+  document.getElementById('profil-mevcut-sifre').value='';
   document.getElementById('profil-yeni-sifre').value='';
   document.getElementById('profil-yeni-sifre2').value='';
   setProfilMsg('✓ Şifreniz başarıyla değiştirildi.','#22c55e');
