@@ -404,7 +404,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <div class="profil-row"><span class="profil-row-label">Kayıt tarihi</span><span class="profil-row-val" id="profil-tarih">—</span></div>
     <div class="profil-row"><span class="profil-row-label">Toplam kayıt</span><span class="profil-row-val" id="profil-kayit">—</span></div>
     <div class="profil-btn-row">
-      <button onclick="closeProfil();openDavetModal();" class="btn btn-primary" style="width:100%;margin-bottom:8px;">✉ Davet Kodu Oluştur</button>
       <button onclick="cikisYap()" class="btn" style="width:100%;color:#ef4444;border-color:rgba(239,68,68,0.3);">↪ Çıkış Yap</button>
     </div>
   </div>
@@ -1071,11 +1070,10 @@ async function davetKodunaKatil(){
 async function cikisYap(){
   if(!confirm('Çıkış yapmak istediğinizden emin misiniz?')) return;
   closeProfil();
-  for(const k of Object.keys(localStorage)){
-    if(k.startsWith('sb-')||k.includes('supabase'))localStorage.removeItem(k);
-  }
   try{await Promise.race([sb.auth.signOut(),new Promise(r=>setTimeout(r,1500))]);}catch(e){}
-  _user=null;_buro=null;showAuth();
+  _user=null;_buro=null;
+  authEkrani('giris');
+  showAuth();
 }
 
 async function authBaslat(){
