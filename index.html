@@ -1667,12 +1667,12 @@ async function loadRecords(){
   const anaKayitlar = records.filter(r=>r.tekrarTipi && !r.tekrarAnaId && r.type==='tekrar');
   for(const r of anaKayitlar){ await olusturTekrarKayitlari(r); }
   if(anaKayitlar.length>0){
-    const{data:data2}=await sb.from('kayitlar').select('*').order('date',{ascending:true});
+    const{data:data2}=await sb.from('kayitlar').select('*').eq('buro_id',_buro.id).order('date',{ascending:true});
     records=(data2||[]).map(dbToLocal);
   }
   // Geçmiş genel işleri bugüne taşı
   await genelIsleriTasi();
-  const{data:_dataFinal}=await sb.from('kayitlar').select('*').order('date',{ascending:true});
+  const{data:_dataFinal}=await sb.from('kayitlar').select('*').eq('buro_id',_buro.id).order('date',{ascending:true});
   if(_dataFinal) records=_dataFinal.map(dbToLocal);
   setSyncStatus('ok','Bağlı');
   renderAll();
