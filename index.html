@@ -335,6 +335,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
     <!-- KAYIT FORMU -->
     <div id="auth-kayit-form" style="display:none;">
+      <input class="buro-input" id="auth-kayit-adsoyad" type="text" placeholder="Ad Soyad" autocomplete="name" style="margin-bottom:10px;">
       <input class="buro-input" id="auth-kayit-email" type="email" placeholder="E-posta adresiniz" autocomplete="email" style="margin-bottom:10px;">
       <input class="buro-input" id="auth-kayit-sifre" type="password" placeholder="Şifre belirleyin (min. 6 karakter)" autocomplete="new-password" style="margin-bottom:10px;" onkeydown="if(event.key==='Enter')emailKayit()">
       <input class="buro-input" id="auth-kayit-sifre2" type="password" placeholder="Şifreyi tekrar girin" autocomplete="new-password" style="margin-bottom:16px;" onkeydown="if(event.key==='Enter')emailKayit()">
@@ -932,17 +933,20 @@ async function emailGiris(){
 
 // Email ile kayıt
 async function emailKayit(){
+  const adSoyad=(document.getElementById('auth-kayit-adsoyad').value||'').trim();
   const email=(document.getElementById('auth-kayit-email').value||'').trim();
   const sifre=document.getElementById('auth-kayit-sifre').value||'';
   const sifre2=document.getElementById('auth-kayit-sifre2').value||'';
+  if(!adSoyad){setAuthMsg('Ad soyad zorunludur.','#f87171');return;}
   if(!email||!sifre){setAuthMsg('E-posta ve şifre zorunludur.','#f87171');return;}
   if(sifre.length<6){setAuthMsg('Şifre en az 6 karakter olmalıdır.','#f87171');return;}
   if(sifre!==sifre2){setAuthMsg('Şifreler eşleşmiyor.','#f87171');return;}
   setAuthMsg('Hesap oluşturuluyor...','rgba(255,255,255,0.5)');
-  const {data, error}=await sb.auth.signUp({email, password:sifre});
+  const {data, error}=await sb.auth.signUp({email, password:sifre, options:{data:{full_name:adSoyad}}});
   if(error){setAuthMsg('Hata: '+error.message,'#f87171');return;}
   if(data.user && !data.session){
-    setAuthMsg('✓ Doğrulama e-postası gönderildi. Lütfen e-postanızı kontrol edin.','#4ade80');
+    setAuthMsg('✓ Hesabınız oluşturuldu. Giriş yapabilirsiniz.','#4ade80');
+    setTimeout(()=>{authEkrani('giris');},1500);
     return;
   }
   _user=data.user;
