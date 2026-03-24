@@ -400,6 +400,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
       </div>
     </div>
     <div class="profil-row"><span class="profil-row-label">Büro</span><span class="profil-row-val" id="profil-buro">—</span></div>
+    <div class="profil-row"><span class="profil-row-label">Davet Kodu</span><span class="profil-row-val" id="profil-davet-kodu" onclick="navigator.clipboard.writeText(this.textContent).then(()=>{this.textContent='✓ Kopyalandı!';setTimeout(()=>openProfil(),1500)})" style="cursor:pointer;color:var(--navy);font-weight:700;letter-spacing:2px;" title="Kopyalamak için tıklayın">—</span></div>
     <div class="profil-row"><span class="profil-row-label">Kayıt tarihi</span><span class="profil-row-val" id="profil-tarih">—</span></div>
     <div class="profil-row"><span class="profil-row-label">Toplam kayıt</span><span class="profil-row-val" id="profil-kayit">—</span></div>
     <div class="profil-btn-row">
@@ -818,6 +819,10 @@ function showBuro(){
   document.getElementById('auth-overlay').style.display='none';
   document.getElementById('buro-overlay').style.display='flex';
   document.querySelector('.app').style.display='none';
+  // Her zaman "Büromu Kur" formunu göster
+  document.getElementById('buro-kur-form').style.display='block';
+  document.getElementById('davet-katil-form').style.display='none';
+  document.getElementById('buro-loading').style.display='none';
 }
 function switchBuroForm(f){
   document.getElementById('buro-kur-form').style.display=f==='kur'?'block':'none';
@@ -843,6 +848,9 @@ function openProfil(){
   document.getElementById('profil-email').textContent = _user.email || '—';
   document.getElementById('profil-buro').textContent = _buro?.ad || '—';
   document.getElementById('profil-kayit').textContent = records.length + ' kayıt';
+  // Sabit davet kodunu göster
+  const davetKoduEl = document.getElementById('profil-davet-kodu');
+  if(davetKoduEl) davetKoduEl.textContent = _buro?.davet_kodu || '—';
   if(_user.created_at){
     const d = new Date(_user.created_at);
     document.getElementById('profil-tarih').textContent = d.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});
@@ -997,7 +1005,7 @@ async function authSonrasiIslem(){
       {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+session.access_token}});
     const uyeler=await r1.json();
     if(!uyeler?.length){showBuro();return;}
-    const r2=await fetch(`${SB_URL}/rest/v1/burolar?select=id,ad&id=eq.${uyeler[0].buro_id}&limit=1`,
+    const r2=await fetch(`${SB_URL}/rest/v1/burolar?select=id,ad,davet_kodu&id=eq.${uyeler[0].buro_id}&limit=1`,
       {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+session.access_token}});
     const burolar=await r2.json();
     if(burolar?.length){_buro=burolar[0];showApp();await loadRecords();}
@@ -1010,7 +1018,10 @@ async function burouKur(){
   if(!ad){alert('Büro adı zorunludur.');return;}
   document.getElementById('buro-kur-form').style.display='none';
   document.getElementById('buro-loading').style.display='block';
-  const {data:buro,error:e1}=await sb.from('burolar').insert({ad}).select().single();
+  // Sabit davet kodu oluştur
+  const ch='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let davetKodu='';for(let i=0;i<8;i++)davetKodu+=ch[Math.floor(Math.random()*ch.length)];
+  const {data:buro,error:e1}=await sb.from('burolar').insert({ad,davet_kodu:davetKodu}).select().single();
   if(e1){alert('Hata: '+e1.message);return;}
   await sb.from('buro_uyeleri').insert({buro_id:buro.id,user_id:_user.id,rol:'admin'});
   _buro=buro;showApp();await loadRecords();
@@ -1022,11 +1033,28 @@ async function davetKodunaKatil(){
   document.getElementById('davet-katil-form').style.display='none';
   document.getElementById('buro-loading').style.display='block';
   const {data:{session}}=await sb.auth.getSession();
+  // Önce burolar tablosunda sabit davet koduna bak
+  const r0=await fetch(`${SB_URL}/rest/v1/burolar?select=id,ad,davet_kodu&davet_kodu=eq.${kod}&limit=1`,
+    {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+session.access_token}});
+  const burolар=await r0.json();
+  if(burolар?.length){
+    const buro=burolар[0];
+    // Zaten üye mi?
+    const rCheck=await fetch(`${SB_URL}/rest/v1/buro_uyeleri?select=id&buro_id=eq.${buro.id}&user_id=eq.${_user.id}&limit=1`,
+      {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+session.access_token}});
+    const mevcutUye=await rCheck.json();
+    if(!mevcutUye?.length){
+      await sb.from('buro_uyeleri').insert({buro_id:buro.id,user_id:_user.id,rol:'uye'});
+    }
+    _buro=buro;showApp();await loadRecords();
+    return;
+  }
+  // Eski tek kullanımlık davetler tablosuna da bak
   const r1=await fetch(`${SB_URL}/rest/v1/davetler?select=id,buro_id&kod=eq.${kod}&kullanildi=eq.false&limit=1`,
     {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+session.access_token}});
   const davetler=await r1.json();
   if(!davetler?.length){
-    alert('Geçersiz veya kullanılmış davet kodu.');
+    alert('Geçersiz davet kodu.');
     document.getElementById('buro-loading').style.display='none';
     document.getElementById('davet-katil-form').style.display='block';
     return;
@@ -1034,10 +1062,10 @@ async function davetKodunaKatil(){
   const davet=davetler[0];
   await sb.from('buro_uyeleri').insert({buro_id:davet.buro_id,user_id:_user.id,rol:'uye'});
   await sb.from('davetler').update({kullanildi:true}).eq('id',davet.id);
-  const r2=await fetch(`${SB_URL}/rest/v1/burolar?select=id,ad&id=eq.${davet.buro_id}&limit=1`,
+  const r2=await fetch(`${SB_URL}/rest/v1/burolar?select=id,ad,davet_kodu&id=eq.${davet.buro_id}&limit=1`,
     {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+session.access_token}});
-  const burolar=await r2.json();
-  if(burolar?.length){_buro=burolar[0];showApp();await loadRecords();}
+  const burolar2=await r2.json();
+  if(burolar2?.length){_buro=burolar2[0];showApp();await loadRecords();}
 }
 
 async function cikisYap(){
