@@ -377,10 +377,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
       <input class="buro-input" id="buro-ad" placeholder="Büro adı (örn: Erkan Hukuk)" type="text">
       <button class="buro-btn" onclick="burouKur()">Büromu Kur →</button>
       <div class="buro-or">veya</div>
-      <button class="buro-link" onclick="switchBuroForm('davet')">Davet koduyla katıl</button>
+      <button class="buro-link" onclick="switchBuroForm('davet')">Takvim paylaşım koduyla katıl</button>
     </div>
     <div id="davet-katil-form" style="display:none;">
-      <input class="buro-input" id="davet-kodu-giris" placeholder="Davet kodu" type="text" style="letter-spacing:4px;text-transform:uppercase;">
+      <input class="buro-input" id="davet-kodu-giris" placeholder="Takvim Paylaşım Kodu" type="text" style="letter-spacing:4px;text-transform:uppercase;">
       <button class="buro-btn" onclick="davetKodunaKatil()">Katıl →</button>
       <div class="buro-or">veya</div>
       <button class="buro-link" onclick="switchBuroForm('kur')">Yeni büro kur</button>
@@ -400,27 +400,54 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
       </div>
     </div>
     <div class="profil-row"><span class="profil-row-label">Büro</span><span class="profil-row-val" id="profil-buro">—</span></div>
-    <div class="profil-row"><span class="profil-row-label">Davet Kodu</span><span class="profil-row-val" id="profil-davet-kodu" onclick="navigator.clipboard.writeText(this.textContent).then(()=>{this.textContent='✓ Kopyalandı!';setTimeout(()=>openProfil(),1500)})" style="cursor:pointer;color:var(--navy);font-weight:700;letter-spacing:2px;" title="Kopyalamak için tıklayın">—</span></div>
+    <div class="profil-row"><span class="profil-row-label">Takvim Paylaşım Kodu</span><span class="profil-row-val" id="profil-davet-kodu" onclick="navigator.clipboard.writeText(this.textContent).then(()=>{this.textContent='✓ Kopyalandı!';setTimeout(()=>openProfil(),1500)})" style="cursor:pointer;color:var(--navy);font-weight:700;letter-spacing:2px;" title="Kopyalamak için tıklayın">—</span></div>
     <div class="profil-row"><span class="profil-row-label">Kayıt tarihi</span><span class="profil-row-val" id="profil-tarih">—</span></div>
     <div class="profil-row"><span class="profil-row-label">Toplam kayıt</span><span class="profil-row-val" id="profil-kayit">—</span></div>
     <div class="profil-btn-row">
+      <button onclick="closeProfil();openProfilimModal()" class="btn btn-primary" style="width:100%;margin-bottom:8px;">👤 Profilim</button>
       <button onclick="cikisYap()" class="btn" style="width:100%;color:#ef4444;border-color:rgba(239,68,68,0.3);">↪ Çıkış Yap</button>
     </div>
   </div>
 </div>
 
-<!-- DAVET KODU MODALI -->
-<div id="davet-modal-overlay" class="davet-overlay" onclick="closeDavetModal()">
-  <div class="davet-card" onclick="event.stopPropagation()">
-    <div style="font-size:15px;font-weight:700;margin-bottom:6px;">Davet Kodu Oluştur</div>
-    <p style="font-size:13px;color:var(--text2);margin-bottom:4px;">Meslektaşlarınızı büronuza davet etmek için kod oluşturun. Kodu paylaştığınız kişi <strong>sizin büronuza</strong> katılabilir.</p>
-    <div class="davet-kod" id="davet-kod-goster">— — — —</div>
-    <button onclick="davetKoduOlustur()" class="btn btn-primary" style="width:100%;margin-bottom:8px;" id="davet-olustur-btn">Kod Oluştur</button>
-    <p style="font-size:12px;color:var(--text2);margin:0 0 8px;line-height:1.5;">Kodu paylaştığınız kişi Google ile giriş yapıp <strong>büronuza katılabilir</strong>. Her kod tek kullanımlıktır.</p>
-    <button onclick="davetMesajiKopyala()" class="btn" style="width:100%;margin-bottom:8px;display:none;" id="davet-kopyala-btn">📋 Mesajı Kopyala</button>
-    <button onclick="closeDavetModal()" class="btn" style="width:100%;">Kapat</button>
+<!-- PROFİLİM MODAL -->
+<div id="profilim-overlay" style="position:fixed;inset:0;background:rgba(15,22,40,0.5);display:none;align-items:flex-end;justify-content:center;z-index:300;padding:0;" onclick="closeProfilimModal()">
+  <div style="background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;margin:0 auto;" onclick="event.stopPropagation()">
+    <div style="width:40px;height:4px;background:var(--border2);border-radius:2px;margin:12px auto 0;"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px 13px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:1;">
+      <div style="font-size:15px;font-weight:600;">Profilim</div>
+      <button class="btn" onclick="closeProfilimModal()">✕</button>
+    </div>
+    <div style="padding:16px 20px 24px;">
+      <!-- Ad Soyad -->
+      <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;">Kişisel Bilgiler</div>
+      <div class="fg">
+        <label>Ad Soyad</label>
+        <input type="text" id="profil-adsoyad-input" placeholder="Ad Soyad" style="width:100%;padding:10px 12px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface);color:var(--text);font-family:inherit;">
+      </div>
+      <div class="fg">
+        <label>E-posta</label>
+        <input type="text" id="profil-email-input" disabled style="width:100%;padding:10px 12px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface2);color:var(--text2);font-family:inherit;">
+      </div>
+      <button onclick="profilGuncelle()" class="btn btn-primary" style="width:100%;padding:11px;font-size:14px;margin-bottom:20px;">Bilgileri Güncelle</button>
+
+      <!-- Şifre Değiştir -->
+      <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;padding-top:12px;border-top:1px solid var(--border);">Şifre Değiştir</div>
+      <div class="fg">
+        <label>Yeni Şifre</label>
+        <input type="password" id="profil-yeni-sifre" placeholder="Yeni şifre (min. 6 karakter)" style="width:100%;padding:10px 12px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface);color:var(--text);font-family:inherit;">
+      </div>
+      <div class="fg">
+        <label>Yeni Şifre (Tekrar)</label>
+        <input type="password" id="profil-yeni-sifre2" placeholder="Şifreyi tekrar girin" style="width:100%;padding:10px 12px;font-size:14px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface);color:var(--text);font-family:inherit;">
+      </div>
+      <button onclick="sifreDegistir()" class="btn" style="width:100%;padding:11px;font-size:14px;border-color:var(--border2);">Şifreyi Değiştir</button>
+      <div id="profilim-msg" style="margin-top:10px;font-size:12px;text-align:center;min-height:16px;"></div>
+    </div>
   </div>
 </div>
+
+
 
 <div class="app" style="display:none;">
 <!-- SIDEBAR (masaüstü) -->
@@ -856,47 +883,52 @@ function openProfil(){
   }
   updateAvatar();
 }
+function openProfilimModal(){
+  document.getElementById('profilim-overlay').style.display='flex';
+  document.getElementById('profilim-msg').textContent='';
+  document.getElementById('profil-yeni-sifre').value='';
+  document.getElementById('profil-yeni-sifre2').value='';
+  if(_user){
+    document.getElementById('profil-adsoyad-input').value=_user.user_metadata?.full_name||'';
+    document.getElementById('profil-email-input').value=_user.email||'';
+  }
+}
+function closeProfilimModal(){
+  document.getElementById('profilim-overlay').style.display='none';
+}
+function setProfilMsg(msg,color){
+  const el=document.getElementById('profilim-msg');
+  el.textContent=msg;
+  el.style.color=color||'var(--text2)';
+}
+async function profilGuncelle(){
+  const adSoyad=(document.getElementById('profil-adsoyad-input').value||'').trim();
+  if(!adSoyad){setProfilMsg('Ad soyad zorunludur.','#dc2626');return;}
+  setProfilMsg('Güncelleniyor...','var(--text2)');
+  const {error}=await sb.auth.updateUser({data:{full_name:adSoyad}});
+  if(error){setProfilMsg('Hata: '+error.message,'#dc2626');return;}
+  _user.user_metadata={..._user.user_metadata,full_name:adSoyad};
+  updateAvatar();
+  setProfilMsg('✓ Bilgiler güncellendi.','#22c55e');
+}
+async function sifreDegistir(){
+  const yeni=document.getElementById('profil-yeni-sifre').value||'';
+  const yeni2=document.getElementById('profil-yeni-sifre2').value||'';
+  if(yeni.length<6){setProfilMsg('Şifre en az 6 karakter olmalıdır.','#dc2626');return;}
+  if(yeni!==yeni2){setProfilMsg('Şifreler eşleşmiyor.','#dc2626');return;}
+  setProfilMsg('Şifre değiştiriliyor...','var(--text2)');
+  const {error}=await sb.auth.updateUser({password:yeni});
+  if(error){setProfilMsg('Hata: '+error.message,'#dc2626');return;}
+  document.getElementById('profil-yeni-sifre').value='';
+  document.getElementById('profil-yeni-sifre2').value='';
+  setProfilMsg('✓ Şifreniz başarıyla değiştirildi.','#22c55e');
+}
 function closeProfil(){
   document.getElementById('profil-overlay').style.display='none';
 }
 
 // Davet kodu
-function openDavetModal(){
-  document.getElementById('davet-modal-overlay').style.display='flex';
-  document.getElementById('davet-kod-goster').textContent='— — — —';
-  document.getElementById('davet-kopyala-btn').style.display='none';
-  document.getElementById('davet-olustur-btn').textContent='Kod Oluştur';
-  _aktifDavetKod = null;
-}
-function closeDavetModal(){
-  document.getElementById('davet-modal-overlay').style.display='none';
-}
-function rastgeleKod(){
-  const ch='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let k='';for(let i=0;i<8;i++)k+=ch[Math.floor(Math.random()*ch.length)];
-  return k;
-}
-async function davetKoduOlustur(){
-  if(!_buro||!_user) return;
-  const btn=document.getElementById('davet-olustur-btn');
-  btn.textContent='Oluşturuluyor...';btn.disabled=true;
-  const kod=rastgeleKod();
-  const {error}=await sb.from('davetler').insert({buro_id:_buro.id,kod,olusturan_id:_user.id,kullanildi:false});
-  btn.disabled=false;btn.textContent='Yeni Kod Oluştur';
-  if(error){alert('Hata: '+error.message);return;}
-  _aktifDavetKod=kod;
-  document.getElementById('davet-kod-goster').textContent=kod;
-  document.getElementById('davet-kopyala-btn').style.display='block';
-}
-function davetMesajiKopyala(){
-  if(!_aktifDavetKod) return;
-  const m=`Merhaba! Sizi Sekreter'e davet ediyorum.\n\nSekreter, avukatlar için geliştirilmiş akıllı bir büro takvimi uygulamasıdır.\n\n🔗 https://sekreterapp.com.tr\n🔑 Davet kodu: ${_aktifDavetKod}\n\nGoogle hesabınızla giriş yapıp "Davet koduyla katıl" seçeneğini kullanın.`;
-  navigator.clipboard.writeText(m).then(()=>{
-    const btn=document.getElementById('davet-kopyala-btn');
-    btn.textContent='✓ Kopyalandı!';
-    setTimeout(()=>btn.textContent='📋 Mesajı Kopyala',2000);
-  });
-}
+
 
 // ── AUTH EKRANİ YÖNETICI ─────────────────────────────────────────
 function authEkrani(ekran){
@@ -1053,7 +1085,7 @@ async function davetKodunaKatil(){
     {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+session.access_token}});
   const davetler=await r1.json();
   if(!davetler?.length){
-    alert('Geçersiz davet kodu.');
+    alert('Geçersiz takvim paylaşım kodu.');
     document.getElementById('buro-loading').style.display='none';
     document.getElementById('davet-katil-form').style.display='block';
     return;
