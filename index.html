@@ -313,15 +313,58 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 <body>
 
 <div id="auth-overlay" style="position:fixed;inset:0;background:#111;z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;">
-  <div class="auth-card">
+  <div class="auth-card" style="max-width:400px;">
     <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNDAgMjQwIj48cmVjdCB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgcng9IjQ0IiBmaWxsPSIjMWExYTFhIi8+PHJlY3QgeD0iNTIiIHk9IjcwIiB3aWR0aD0iMTM2IiBoZWlnaHQ9IjExOCIgcng9IjEwIiBmaWxsPSJub25lIiBzdHJva2U9IiNkNGFmNzAiIHN0cm9rZS13aWR0aD0iMyIgb3BhY2l0eT0iMC41Ii8+PHJlY3QgeD0iNTIiIHk9IjcwIiB3aWR0aD0iMTM2IiBoZWlnaHQ9IjM2IiByeD0iMTAiIGZpbGw9IiNkNGFmNzAiIG9wYWNpdHk9IjAuNyIvPjxyZWN0IHg9Ijg0IiB5PSI1NCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjI4IiByeD0iNSIgZmlsbD0iI2Q0YWY3MCIvPjxyZWN0IHg9IjE0NiIgeT0iNTQiIHdpZHRoPSIxMCIgaGVpZ2h0PSIyOCIgcng9IjUiIGZpbGw9IiNkNGFmNzAiLz48Y2lyY2xlIGN4PSI4NCIgY3k9IjEzNiIgcj0iNiIgZmlsbD0iI2Q0YWY3MCIvPjxjaXJjbGUgY3g9IjExMCIgY3k9IjEzNiIgcj0iNiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC4zIi8+PGNpcmNsZSBjeD0iMTM2IiBjeT0iMTM2IiByPSI2IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjMiLz48Y2lyY2xlIGN4PSI4NCIgY3k9IjE2MiIgcj0iNiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC4zIi8+PGNpcmNsZSBjeD0iMTEwIiBjeT0iMTYyIiByPSI2IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjMiLz48Y2lyY2xlIGN4PSIxMzYiIGN5PSIxNjIiIHI9IjYiIGZpbGw9IiNkNGFmNzAiIG9wYWNpdHk9IjAuNyIvPjwvc3ZnPg==" style="width:72px;height:72px;border-radius:16px;margin:0 auto 18px;display:block;" alt="Sekreter">
     <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:6px;">Sekreter</div>
-    <div style="font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:28px;line-height:1.6;">Avukatlar için akıllı büro takvimi</div>
-    <button class="google-btn" id="google-btn" onclick="googleGiris()">
-      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/><path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.548 0 9s.348 2.825.957 4.039l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
-      Google ile Giriş Yap
-    </button>
-    <div id="auth-msg" style="margin-top:12px;font-size:12px;color:rgba(255,255,255,0.4);min-height:16px;"></div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:24px;line-height:1.6;">Avukatlar için akıllı büro takvimi</div>
+
+    <!-- GİRİŞ FORMU -->
+    <div id="auth-giris-form">
+      <input class="buro-input" id="auth-email" type="email" placeholder="E-posta adresiniz" autocomplete="email" style="margin-bottom:10px;">
+      <input class="buro-input" id="auth-sifre" type="password" placeholder="Şifreniz" autocomplete="current-password" style="margin-bottom:6px;" onkeydown="if(event.key==='Enter')emailGiris()">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:rgba(255,255,255,0.5);">
+          <input type="checkbox" id="auth-hatirla" style="accent-color:#d4af70;"> Beni hatırla
+        </label>
+        <button onclick="authEkrani('unuttum')" style="background:none;border:none;cursor:pointer;font-size:12px;color:#d4af70;font-family:inherit;padding:0;text-decoration:underline;">Şifremi unuttum</button>
+      </div>
+      <button class="buro-btn" onclick="emailGiris()">Giriş Yap</button>
+      <div class="buro-or">veya</div>
+      <button class="buro-link" onclick="authEkrani('kayit')">Hesap oluştur</button>
+    </div>
+
+    <!-- KAYIT FORMU -->
+    <div id="auth-kayit-form" style="display:none;">
+      <input class="buro-input" id="auth-kayit-email" type="email" placeholder="E-posta adresiniz" autocomplete="email" style="margin-bottom:10px;">
+      <input class="buro-input" id="auth-kayit-sifre" type="password" placeholder="Şifre belirleyin (min. 6 karakter)" autocomplete="new-password" style="margin-bottom:10px;" onkeydown="if(event.key==='Enter')emailKayit()">
+      <input class="buro-input" id="auth-kayit-sifre2" type="password" placeholder="Şifreyi tekrar girin" autocomplete="new-password" style="margin-bottom:16px;" onkeydown="if(event.key==='Enter')emailKayit()">
+      <button class="buro-btn" onclick="emailKayit()">Hesap Oluştur</button>
+      <div class="buro-or">veya</div>
+      <button class="buro-link" onclick="authEkrani('giris')">Giriş yap</button>
+    </div>
+
+    <!-- ŞİFREMİ UNUTTUM FORMU -->
+    <div id="auth-unuttum-form" style="display:none;">
+      <div style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:16px;line-height:1.6;">Kayıtlı e-posta adresinizi girin. Şifre sıfırlama kodu gönderilecek.</div>
+      <input class="buro-input" id="auth-unuttum-email" type="email" placeholder="E-posta adresiniz" style="margin-bottom:10px;" onkeydown="if(event.key==='Enter')sifreSifirlaGonder()">
+      <button class="buro-btn" onclick="sifreSifirlaGonder()">Sıfırlama Kodu Gönder</button>
+      <div class="buro-or">veya</div>
+      <button class="buro-link" onclick="authEkrani('giris')">Giriş sayfasına dön</button>
+    </div>
+
+    <!-- ŞİFRE YENİLEME FORMU (kod + yeni şifre) -->
+    <div id="auth-yenile-form" style="display:none;">
+      <div style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:16px;line-height:1.6;">E-postanıza gelen 6 haneli kodu girin ve yeni şifrenizi belirleyin.</div>
+      <input class="buro-input" id="auth-otp-email" type="email" placeholder="E-posta adresiniz" style="margin-bottom:10px;">
+      <input class="buro-input" id="auth-otp-kod" type="text" placeholder="6 haneli kod" maxlength="6" style="margin-bottom:10px;letter-spacing:6px;text-align:center;font-size:18px;font-weight:700;" onkeydown="if(event.key==='Enter')sifreYenile()">
+      <input class="buro-input" id="auth-yeni-sifre" type="password" placeholder="Yeni şifre (min. 6 karakter)" style="margin-bottom:10px;" onkeydown="if(event.key==='Enter')sifreYenile()">
+      <input class="buro-input" id="auth-yeni-sifre2" type="password" placeholder="Yeni şifreyi tekrar girin" style="margin-bottom:16px;" onkeydown="if(event.key==='Enter')sifreYenile()">
+      <button class="buro-btn" onclick="sifreYenile()">Şifremi Güncelle</button>
+      <div class="buro-or">veya</div>
+      <button class="buro-link" onclick="authEkrani('giris')">Giriş sayfasına dön</button>
+    </div>
+
+    <div id="auth-msg" style="margin-top:14px;font-size:12px;color:rgba(255,255,255,0.5);min-height:16px;text-align:center;"></div>
   </div>
 </div>
 
@@ -659,12 +702,16 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
         </div>
         <div class="dosya-box" id="durusma-dosya-box">
           <div class="dosya-box-title">Dosya Bilgileri</div>
+          <div class="fg" id="durusma-randevu-mahkeme-satir">
+            <label>Mahkeme / Yer (opsiyonel)</label>
+            <input type="text" id="f-durusma-randevu-mahkeme" placeholder="Örn: Adliye, Hastane..." autocomplete="new-password">
+          </div>
           <div class="fg">
             <label>Esas No</label>
             <div style="display:flex;gap:6px;align-items:center;">
               <select id="f-durusma-yil" style="padding:9px 10px;font-size:14px;border:1px solid var(--border2);border-radius:10px;background:var(--surface);color:var(--text);font-family:inherit;width:92px;"><option value="2020">2020</option><option value="2021">2021</option><option value="2022">2022</option><option value="2023">2023</option><option value="2024">2024</option><option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option></select>
               <span style="color:var(--text3);font-size:16px;">/</span>
-              <input type="text" id="f-durusma-no" style="flex:1;" placeholder="Esas No" autocomplete="new-password">
+              <input type="text" id="f-durusma-no" style="flex:1;" placeholder="Esas No (opsiyonel)" autocomplete="new-password">
             </div>
           </div>
         </div>
@@ -843,17 +890,115 @@ function davetMesajiKopyala(){
   });
 }
 
-// Auth
-async function googleGiris(){
-  const btn=document.getElementById('google-btn');
-  const msg=document.getElementById('auth-msg');
-  btn.disabled=true;btn.style.opacity='.7';
-  msg.textContent='Google hesabınıza yönlendiriliyorsunuz...';
-  const {error}=await sb.auth.signInWithOAuth({
-    provider:'google',
-    options:{redirectTo:window.location.origin+window.location.pathname}
+// ── AUTH EKRANİ YÖNETICI ─────────────────────────────────────────
+function authEkrani(ekran){
+  document.getElementById('auth-giris-form').style.display='none';
+  document.getElementById('auth-kayit-form').style.display='none';
+  document.getElementById('auth-unuttum-form').style.display='none';
+  document.getElementById('auth-yenile-form').style.display='none';
+  document.getElementById('auth-msg').textContent='';
+  if(ekran==='giris') document.getElementById('auth-giris-form').style.display='block';
+  else if(ekran==='kayit') document.getElementById('auth-kayit-form').style.display='block';
+  else if(ekran==='unuttum') document.getElementById('auth-unuttum-form').style.display='block';
+  else if(ekran==='yenile') document.getElementById('auth-yenile-form').style.display='block';
+}
+
+function setAuthMsg(msg, color){
+  const el=document.getElementById('auth-msg');
+  el.textContent=msg;
+  el.style.color=color||'rgba(255,255,255,0.5)';
+}
+
+// Email ile giriş
+async function emailGiris(){
+  const email=(document.getElementById('auth-email').value||'').trim();
+  const sifre=document.getElementById('auth-sifre').value||'';
+  const hatirla=document.getElementById('auth-hatirla').checked;
+  if(!email||!sifre){setAuthMsg('E-posta ve şifre zorunludur.','#f87171');return;}
+  setAuthMsg('Giriş yapılıyor...','rgba(255,255,255,0.5)');
+  // Supabase oturum kalıcılığı: hatırla seçilmişse local, değilse session
+  const {data, error}=await sb.auth.signInWithPassword({email, password:sifre});
+  if(error){setAuthMsg('Hata: '+(error.message==='Invalid login credentials'?'E-posta veya şifre hatalı.':error.message),'#f87171');return;}
+  if(!hatirla){
+    // Session storage kullan - sekme kapanınca oturum biter
+    try{ localStorage.setItem('sb_no_persist','1'); }catch(e){}
+  } else {
+    try{ localStorage.removeItem('sb_no_persist'); }catch(e){}
+  }
+  setAuthMsg('');
+  _user=data.user;
+  await authSonrasiIslem();
+}
+
+// Email ile kayıt
+async function emailKayit(){
+  const email=(document.getElementById('auth-kayit-email').value||'').trim();
+  const sifre=document.getElementById('auth-kayit-sifre').value||'';
+  const sifre2=document.getElementById('auth-kayit-sifre2').value||'';
+  if(!email||!sifre){setAuthMsg('E-posta ve şifre zorunludur.','#f87171');return;}
+  if(sifre.length<6){setAuthMsg('Şifre en az 6 karakter olmalıdır.','#f87171');return;}
+  if(sifre!==sifre2){setAuthMsg('Şifreler eşleşmiyor.','#f87171');return;}
+  setAuthMsg('Hesap oluşturuluyor...','rgba(255,255,255,0.5)');
+  const {data, error}=await sb.auth.signUp({email, password:sifre});
+  if(error){setAuthMsg('Hata: '+error.message,'#f87171');return;}
+  if(data.user && !data.session){
+    setAuthMsg('✓ Doğrulama e-postası gönderildi. Lütfen e-postanızı kontrol edin.','#4ade80');
+    return;
+  }
+  _user=data.user;
+  setAuthMsg('');
+  await authSonrasiIslem();
+}
+
+// Şifre sıfırlama kodu gönder
+async function sifreSifirlaGonder(){
+  const email=(document.getElementById('auth-unuttum-email').value||'').trim();
+  if(!email){setAuthMsg('E-posta adresi zorunludur.','#f87171');return;}
+  setAuthMsg('Kod gönderiliyor...','rgba(255,255,255,0.5)');
+  const {error}=await sb.auth.resetPasswordForEmail(email,{
+    // OTP modu: token_hash yerine kod kullanılır
   });
-  if(error){btn.disabled=false;btn.style.opacity='1';msg.textContent='Hata: '+error.message;}
+  if(error){setAuthMsg('Hata: '+error.message,'#f87171');return;}
+  // E-posta girişini yenile formuna aktar
+  document.getElementById('auth-otp-email').value=email;
+  setAuthMsg('✓ Şifre sıfırlama kodu e-postanıza gönderildi.','#4ade80');
+  setTimeout(()=>{authEkrani('yenile');},1800);
+}
+
+// OTP kodu ile şifre yenile
+async function sifreYenile(){
+  const email=(document.getElementById('auth-otp-email').value||'').trim();
+  const kod=(document.getElementById('auth-otp-kod').value||'').trim();
+  const yeniSifre=document.getElementById('auth-yeni-sifre').value||'';
+  const yeniSifre2=document.getElementById('auth-yeni-sifre2').value||'';
+  if(!email||!kod){setAuthMsg('E-posta ve kod zorunludur.','#f87171');return;}
+  if(yeniSifre.length<6){setAuthMsg('Şifre en az 6 karakter olmalıdır.','#f87171');return;}
+  if(yeniSifre!==yeniSifre2){setAuthMsg('Şifreler eşleşmiyor.','#f87171');return;}
+  setAuthMsg('Şifre güncelleniyor...','rgba(255,255,255,0.5)');
+  // Önce OTP ile oturumu doğrula
+  const {data:vData, error:vError}=await sb.auth.verifyOtp({email, token:kod, type:'recovery'});
+  if(vError){setAuthMsg('Hata: Kod geçersiz veya süresi dolmuş.','#f87171');return;}
+  // Şifreyi güncelle
+  const {error:uError}=await sb.auth.updateUser({password:yeniSifre});
+  if(uError){setAuthMsg('Hata: '+uError.message,'#f87171');return;}
+  setAuthMsg('✓ Şifreniz başarıyla güncellendi. Giriş yapabilirsiniz.','#4ade80');
+  setTimeout(()=>{authEkrani('giris');},2000);
+}
+
+async function authSonrasiIslem(){
+  try{
+    const {data:{session}}=await sb.auth.getSession();
+    if(!session) return;
+    const r1=await fetch(`${SB_URL}/rest/v1/buro_uyeleri?select=buro_id&user_id=eq.${_user.id}&limit=1`,
+      {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+session.access_token}});
+    const uyeler=await r1.json();
+    if(!uyeler?.length){showBuro();return;}
+    const r2=await fetch(`${SB_URL}/rest/v1/burolar?select=id,ad&id=eq.${uyeler[0].buro_id}&limit=1`,
+      {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+session.access_token}});
+    const burolar=await r2.json();
+    if(burolar?.length){_buro=burolar[0];showApp();await loadRecords();}
+    else showBuro();
+  }catch(e){console.error(e);showBuro();}
 }
 
 async function burouKur(){
@@ -902,20 +1047,19 @@ async function cikisYap(){
 }
 
 async function authBaslat(){
+  // Şifre sıfırlama linki ile gelindi mi? (URL'de #access_token veya type=recovery)
+  const hash=window.location.hash;
+  if(hash&&hash.includes('type=recovery')){
+    // Supabase auth state'i oku
+    await sb.auth.getSession();
+    authEkrani('yenile');
+    showAuth();
+    return;
+  }
   const {data:{session}}=await sb.auth.getSession();
-  if(!session?.user){showAuth();return;}
+  if(!session?.user){showAuth();authEkrani('giris');return;}
   _user=session.user;
-  try{
-    const r1=await fetch(`${SB_URL}/rest/v1/buro_uyeleri?select=buro_id&user_id=eq.${_user.id}&limit=1`,
-      {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+session.access_token}});
-    const uyeler=await r1.json();
-    if(!uyeler?.length){showBuro();return;}
-    const r2=await fetch(`${SB_URL}/rest/v1/burolar?select=id,ad&id=eq.${uyeler[0].buro_id}&limit=1`,
-      {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+session.access_token}});
-    const burolar=await r2.json();
-    if(burolar?.length){_buro=burolar[0];showApp();await loadRecords();}
-    else showBuro();
-  }catch(e){console.error(e);showBuro();}
+  await authSonrasiIslem();
 }
 
 const MAHKEMELER = [
@@ -1266,7 +1410,7 @@ const MAHKEMELER = [
   "Balıkesir Vergi Dairesi Başkanlığı","Balıkesir SGK İl Müdürlüğü",
   "Balıkesir Tapu Müdürlüğü","Balıkesir Belediyesi",
 ];
-const IS_TIPLERI=['89/1 İtirazı','Adli Kontrol Kararına İtiraz','Adres Bildirme Dilekçesi','AİHM Bakanlık Görüşüne İtiraz','AİHM Başvurusu','Ara Karara İtiraz','Ara Kararın Yerine Getirilmesi','Arabuluculuk Başvurusu','Arabuluculuk Tutanağının Sunulması','AYM Bakanlık Görüşüne İtiraz','AYM Bireysel Başvuru','Basit Yargılama Usulüne İtiraz','Beyan Dilekçesi','Bilirkişi Raporuna İtiraz','Bilirkişi Raporuna Karşı Beyan','Cevap Dilekçesi','Cevaba Cevap Dilekçesi','Dahili Dava Dilekçesi','Değişik İş Kararına İtiraz','Delil Listesi Sunumu','Delil Sunumu','Dosyanın Kesinleşmesi','Dosyanın Yenilenmesi İşlemi','Ek Karar Talebi (Hükmün Tamamlanması)','Esas Hakkında Beyan','Hukuk Dava Açılış','İcra Dosyası Ödeme','İcra İşlemini Şikayet','İdari Dava Açılış','İdari Para Cezasına İtiraz','İhtarnameye Cevap','İhtiyati Hacze İtiraz','İhtiyati Tedbire İtiraz Dilekçesi','İkinci Cevap Dilekçesi','İlamsız İcraya İtiraz','İstinaf Başvuru Dilekçesi','İstinaf Başvurusuna Cevap','İşe İade Başvurusuna Cevap','İtirazın İptali Davası Açılışı','İtirazın Kaldırılması Davası Açılışı','Islah Dilekçesi','Islaha Karşı Beyan Dilekçesi','Kambiyo Takibine İtiraz','Kanun Yararına Bozma Başvurusu','Maaş Haczi İtirazı','Mütalaaya İtiraz','Nihai Karara İtiraz Dilekçesi','Ön Ödemenin Yatırılması','Savunma Dilekçesi','Savunmaya Cevap Dilekçesi','Takipsizlik (KYOK) Kararına İtiraz','Talebin Açıklanması','Tanık Beyanlarına Karşı Beyan','Tanık Bildirimi','Tehiri İcra Kararı Sunumu','Temyiz Başvuru Dilekçesi','Temyiz Başvurusuna Cevap','Tensip Kaynaklı İşlemler','Tutukluluğa İtiraz','Yemin İtirazı','Yemin Teklifi','Şikayet Dilekçesi','Diğer'].sort((a,b)=>a.localeCompare(b,'tr'));
+const IS_TIPLERI=['89/1 İtirazı','Adli Kontrol Kararına İtiraz','Adres Bildirme Dilekçesi','AİHM Bakanlık Görüşüne İtiraz','AİHM Başvurusu','Ara Karara İtiraz','Ara Kararın Yerine Getirilmesi','Arabuluculuk Başvurusu','Arabuluculuk Tutanağının Sunulması','AYM Bakanlık Görüşüne İtiraz','AYM Bireysel Başvuru','Basit Yargılama Usulüne İtiraz','Beyan Dilekçesi','Bilirkişi Raporuna İtiraz','Bilirkişi Raporuna Karşı Beyan','Cevap Dilekçesi','Cevaba Cevap Dilekçesi','Dahili Dava Dilekçesi','Değişik İş Kararına İtiraz','Delil Listesi Sunumu','Delil Sunumu','Dosyanın Kesinleşmesi','Dosyanın Yenilenmesi İşlemi','E-Duruşma Talebi','Ek Karar Talebi (Hükmün Tamamlanması)','Esas Hakkında Beyan','Hukuk Dava Açılış','İcra Dosyası Ödeme','İcra İşlemini Şikayet','İcranın Kesinleşmesi','İdari Dava Açılış','İdari Para Cezasına İtiraz','İhtarnameye Cevap','İhtiyati Hacze İtiraz','İhtiyati Tedbire İtiraz Dilekçesi','İkinci Cevap Dilekçesi','İlamsız İcraya İtiraz','İstinaf Başvuru Dilekçesi','İstinaf Başvurusuna Cevap','İşe İade Başvurusuna Cevap','İtirazın İptali Davası Açılışı','İtirazın Kaldırılması Davası Açılışı','Islah Dilekçesi','Islaha Karşı Beyan Dilekçesi','Kambiyo Takibine İtiraz','Kanun Yararına Bozma Başvurusu','Maaş Haczi İtirazı','Mütalaaya İtiraz','Nihai Karara İtiraz Dilekçesi','Ön Ödemenin Yatırılması','Savunma Dilekçesi','Savunmaya Cevap Dilekçesi','Süre Uzatım','Takipsizlik (KYOK) Kararına İtiraz','Talebin Açıklanması','Tanık Beyanlarına Karşı Beyan','Tanık Bildirimi','Tehiri İcra Kararı Sunumu','Temyiz Başvuru Dilekçesi','Temyiz Başvurusuna Cevap','Tensip Kaynaklı İşlemler','Tutukluluğa İtiraz','Yemin İtirazı','Yemin Teklifi','Şikayet Dilekçesi','Diğer'].sort((a,b)=>a.localeCompare(b,'tr'));
 
 let selectedIstipi='';
 let records=[],ST={type:'sure',teblig:'',dal:'',dal2:'',birim:'',hesaplananTarih:null,hesapDetay:null,editId:null,prefillDate:''};
@@ -1549,6 +1693,14 @@ function buildHesapHTML(d){
   h+=`<div class="hesap-row"><div class="hesap-row-label">TEBLİĞ</div><div class="hesap-row-val">${formatDate(d.tebligTarihi)} <span class="hesap-row-desc">${tebligLabel(d.tebligSekli)} olarak alındı</span></div></div>`;
   if(d.isEteb)h+=`<div class="hesap-row"><div class="hesap-row-label">E-TEBLİGAT</div><div class="hesap-row-val">${formatDate(d.fiiliTeblig)} <span class="hesap-row-desc">+5 gün eklendi</span></div></div>`;
   (d.adimlar||[]).forEach(a=>h+=`<div class="hesap-row"><div class="hesap-row-label">${a.label}</div><div class="hesap-row-val">${a.val} <span class="hesap-row-desc">${a.desc}</span></div></div>`);
+  // İcranın Kesinleşmesi için ertesi gün bilgisi
+  if(d.istipi==='İcranın Kesinleşmesi'&&d.sonGun){
+    const kesinlesmeD=new Date(d.sonGun+'T12:00:00');
+    kesinlesmeD.setDate(kesinlesmeD.getDate()+1);
+    const kesinlesmeTR=kesinlesmeD.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'}).split(' ');
+    const gun=kesinlesmeD.getDate(),ay=kesinlesmeD.toLocaleDateString('tr-TR',{month:'long'}),yil=kesinlesmeD.getFullYear();
+    h+=`<div class="hesap-row" style="background:#fef9ec;"><div class="hesap-row-label">KESİNLEŞME</div><div class="hesap-row-val" style="color:#92400e;">Son günün ertesi günü kesinleşir — ${gun} ${ay} ${yil}</div></div>`;
+  }
   h+=`<div class="hesap-son">SON GÜN &nbsp; ${formatDate(d.sonGun)} &nbsp; 23:59</div>`;
   return h;
 }
@@ -1564,9 +1716,18 @@ function setChip(g,val,el){
     const dosyaBox=document.getElementById('durusma-dosya-box');
     const mahkemeBox=document.getElementById('durusma-mahkeme-box');
     const baslikLabel=document.getElementById('durusma-baslik-label');
-    if(dosyaBox) dosyaBox.style.display=val==='randevu'?'none':'block';
-    if(mahkemeBox) mahkemeBox.style.display=val==='randevu'?'none':'block';
-    if(baslikLabel) baslikLabel.textContent=val==='randevu'?'Randevu Konusu':'Mahkeme Adı';
+    const randevuMahkemeSatir=document.getElementById('durusma-randevu-mahkeme-satir');
+    if(val==='randevu'){
+      if(dosyaBox) dosyaBox.style.display='block'; // randevuda da dosya kutusu görünsün
+      if(mahkemeBox) mahkemeBox.style.display='none';
+      if(baslikLabel) baslikLabel.textContent='Randevu Konusu';
+      if(randevuMahkemeSatir) randevuMahkemeSatir.style.display='block';
+    } else {
+      if(dosyaBox) dosyaBox.style.display='block';
+      if(mahkemeBox) mahkemeBox.style.display='block';
+      if(baslikLabel) baslikLabel.textContent='Mahkeme Adı';
+      if(randevuMahkemeSatir) randevuMahkemeSatir.style.display='none';
+    }
   }
 }
 function setBirim(b,el){document.querySelectorAll('.sure-birim-btn').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');ST.birim=b;hesapla();}
@@ -1608,7 +1769,7 @@ function openModal(editRecord,prefillDate){
   document.querySelectorAll('.chip,.type-tab,.sure-birim-btn').forEach(c=>c.classList.remove('sel'));
   document.querySelector('.type-tab').classList.add('sel');
   const cy=new Date().getFullYear();
-  ['f-teblig-tarihi','f-mahkeme','f-dava-no','f-muvekkil','f-not-sure','f-sure-miktar','f-durusma-mahkeme-adi','f-durusma-no','f-durusma-muvekkil','f-durusma-not','f-durusma-saat','f-genel-baslik','f-genel-mahkeme','f-genel-no','f-genel-muvekkil','f-genel-aciklama','f-genel-saat','istipi-search','f-istipi-val','f-istipi-text'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['f-teblig-tarihi','f-mahkeme','f-dava-no','f-muvekkil','f-not-sure','f-sure-miktar','f-durusma-mahkeme-adi','f-durusma-no','f-durusma-muvekkil','f-durusma-not','f-durusma-saat','f-genel-baslik','f-genel-mahkeme','f-genel-no','f-genel-muvekkil','f-genel-aciklama','f-genel-saat','istipi-search','f-istipi-val','f-istipi-text','f-durusma-randevu-mahkeme'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});;
   setYil('f-dava-yil',cy);setYil('f-durusma-yil',cy);setYil('f-genel-yil',cy);
   const today=prefillDate||'';
   document.getElementById('f-durusma-tarih').value=today;
@@ -1645,11 +1806,16 @@ function openModal(editRecord,prefillDate){
   if(editRecord){
     ST.editId=editRecord.id;ST.type=editRecord.type;
     document.querySelectorAll('.type-tab').forEach(x=>x.classList.remove('sel'));
-    document.querySelectorAll('.type-tab')[{sure:0,durusma:1,genel:2}[editRecord.type]||0].classList.add('sel');
-    document.getElementById('modal-title').textContent={sure:'Süreli İş',durusma:'Duruşma / Randevu',genel:'Genel İş'}[editRecord.type]+' — Düzenle';
+    // Tekrarlayan iş için 4. sekme (index 3)
+    const tabIdx={sure:0,durusma:1,genel:2,tekrar:3}[editRecord.type]||0;
+    const tabs=document.querySelectorAll('.type-tab');
+    if(tabs[tabIdx]) tabs[tabIdx].classList.add('sel');
+    const titles={sure:'Süreli İş',durusma:'Duruşma / Randevu',genel:'Genel İş',tekrar:'Tekrarlayan İş'};
+    document.getElementById('modal-title').textContent=(titles[editRecord.type]||editRecord.type)+' — Düzenle';
     document.getElementById('form-sure').style.display=editRecord.type==='sure'?'block':'none';
     document.getElementById('form-durusma').style.display=editRecord.type==='durusma'?'block':'none';
     document.getElementById('form-genel').style.display=editRecord.type==='genel'?'block':'none';
+    document.getElementById('form-tekrar').style.display=editRecord.type==='tekrar'?'block':'none';
     if(editRecord.type==='sure'){
       document.getElementById('f-teblig-tarihi').value=editRecord.tebligTarihi||'';
       document.getElementById('f-sure-miktar').value=editRecord.sureMiktar||'';
@@ -1662,7 +1828,17 @@ function openModal(editRecord,prefillDate){
       if(editRecord.dal){const el=document.querySelector('#dal-chips .chip[onclick*="\''+editRecord.dal+'\'"]');if(el){el.classList.add('sel');ST.dal=editRecord.dal;}}
       if(editRecord.sureBirim){const bEl=document.querySelector('.sure-birim-btn[onclick*="\''+editRecord.sureBirim+'\'"]');if(bEl){bEl.classList.add('sel');ST.birim=editRecord.sureBirim;}}
       hesapla();
-    }else if(editRecord.type==='durusma'){
+    } else if(editRecord.type==='tekrar'){
+      document.getElementById('f-tekrar-baslik').value=editRecord.baslik||'';
+      document.getElementById('f-tekrar-tarih').value=editRecord.date||'';
+      document.getElementById('f-tekrar-bitis2').value=editRecord.tekrarBitis||'';
+      document.getElementById('f-tekrar-aciklama').value=editRecord.not||'';
+      if(editRecord.tekrarTipi){
+        ST_TEKRAR_SIKLIK=editRecord.tekrarTipi;
+        const sc=document.querySelector('#tekrar-siklik-chips .chip[onclick*="\''+editRecord.tekrarTipi+'\'"]');
+        if(sc) sc.classList.add('sel');
+      }
+    } else if(editRecord.type==='durusma'){
       document.getElementById('f-durusma-mahkeme-adi').value=editRecord.mahkeme||'';
       document.getElementById('f-durusma-tarih').value=editRecord.date||'';
       document.getElementById('f-durusma-saat').value=editRecord.saat||'';
@@ -1670,6 +1846,18 @@ function openModal(editRecord,prefillDate){
       document.getElementById('f-durusma-not').value=editRecord.not||'';
       const dp=(editRecord.dava||'').split('/');setYil('f-durusma-yil',dp[0]||cy);document.getElementById('f-durusma-no').value=dp[1]||'';
       if(editRecord.dal){const el=document.querySelector('#dal-chips-d .chip[onclick*="\''+editRecord.dal+'\'"]');if(el){el.classList.add('sel');ST.dal2=editRecord.dal;}}
+      // Randevu tipi için mahkeme/yer alanını göster
+      const rms=document.getElementById('durusma-randevu-mahkeme-satir');
+      const dmb=document.getElementById('durusma-mahkeme-box');
+      if(editRecord.dal==='randevu'){
+        if(rms) rms.style.display='block';
+        if(dmb) dmb.style.display='none';
+        const rmEl=document.getElementById('f-durusma-randevu-mahkeme');
+        if(rmEl) rmEl.value=editRecord.mahkeme||'';
+        document.getElementById('f-durusma-mahkeme-adi').value='';
+      } else {
+        if(rms) rms.style.display='none';
+      }
     }else{
       document.getElementById('f-genel-baslik').value=editRecord.baslik||'';
       document.getElementById('f-genel-tarih').value=editRecord.date||'';
@@ -1712,6 +1900,73 @@ document.addEventListener('keydown', function(e){
   }
 });
 
+// ── E-DURUŞMA TALEBİ OTOMATİK OLUŞTUR ───────────────────────────
+// Mahkemenin hangi şehirde olduğunu tespit et
+function isDurusmaMuaf(mahkeme){
+  if(!mahkeme) return false;
+  const muafSehirler=['İzmir','Karşıyaka','Balıkesir','Savaştepe','Soma'];
+  return muafSehirler.some(s=>mahkeme.toLowerCase().includes(s.toLowerCase()));
+}
+function isCezaDavasi(dal){
+  return dal==='ceza';
+}
+
+async function eDurusmaTalebiOlustur(rec){
+  // Koşul: muaf şehirde değil, ceza değil, duruşma tipi
+  if(!rec.date) return;
+  if(isDurusmaMuaf(rec.mahkeme)) return;
+  if(isCezaDavasi(rec.dal)) return;
+  // Randevu, arabuluculuk, keşif, tevkil, cmk gibi özel tiplerde de oluşturma
+  const ozelTipler=['arabuluculuk','randevu','kesif','tevkil','cmk','tahkim'];
+  if(ozelTipler.includes(rec.dal)) return;
+
+  // Duruşmadan 24 saat önce = son gün
+  const durusmaDt=new Date(rec.date+'T'+(rec.saat||'00:00')+':00');
+  const sonGunDt=new Date(durusmaDt.getTime()-24*60*60*1000);
+  const sonGunStr=sonGunDt.getFullYear()+'-'+String(sonGunDt.getMonth()+1).padStart(2,'0')+'-'+String(sonGunDt.getDate()).padStart(2,'0');
+  const sonGunSaat=String(sonGunDt.getHours()).padStart(2,'0')+':'+String(sonGunDt.getMinutes()).padStart(2,'0');
+
+  const sonGunLong=sonGunDt.toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});
+
+  const muvekkil=rec.muvekkil||'Müvekkil';
+  const mahkeme=rec.mahkeme||'duruşma';
+  const baslik='E-Duruşma Talebi: '+muvekkil+' — '+mahkeme;
+  const not='Son Gün: '+sonGunLong+' '+sonGunSaat+'\nDuruşma tarihi: '+formatDate(rec.date)+(rec.saat?' saat '+rec.saat:'');
+
+  const yeniRec={
+    type:'sure',
+    date:sonGunStr,
+    baslik,
+    muvekkil:rec.muvekkil||null,
+    mahkeme:rec.mahkeme||null,
+    dava:rec.dava||null,
+    dal:rec.dal||null,
+    istipi:'E-Duruşma Talebi',
+    istipi_val:'E-Duruşma Talebi',
+    not_alani:not,
+    saat:sonGunSaat,
+    tamamlandi:false,
+    buro_id:_buro?_buro.id:null,
+    // hesap_detay olmadan — sadece basit gösterim
+    hesap_detay:{
+      tebligTarihi:rec.date,
+      tebligSekli:'',
+      fiiliTeblig:rec.date,
+      isEteb:false,
+      miktar:1,birim:'gun',
+      dal:rec.dal||'hukuk',
+      istipi:'E-Duruşma Talebi',
+      adimlar:[{label:'SON GÜN',val:sonGunLong+' '+sonGunSaat,desc:'Duruşmadan 24 saat önce'}],
+      sonGun:sonGunStr
+    }
+  };
+  // hesap_detay'ı JSON olarak gönder
+  const dbRec=localToDB({...yeniRec,buroId:_buro?_buro.id:null});
+  dbRec.hesap_detay=yeniRec.hesap_detay;
+  dbRec.saat=sonGunSaat;
+  await sb.from('kayitlar').insert(dbRec);
+}
+
 // ── KAYDET ────────────────────────────────────────────────────────
 async function saveRecord(){
   let rec={};
@@ -1727,7 +1982,7 @@ async function saveRecord(){
       if(mAdi) return mAdi;
       const ozel={tahkim:'Tahkim',arabuluculuk:'Arabuluculuk',randevu:'Randevu',kesif:'Keşif',tevkil:'Tevkil',cmk:'CMK'};
       return ozel[ST.dal2]||'Duruşma';
-    })(),saat:document.getElementById('f-durusma-saat').value,dal:ST.dal2,mahkeme:titleCase(document.getElementById('f-durusma-mahkeme-adi').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-durusma-muvekkil').value.trim()),not:sentenceCase(document.getElementById('f-durusma-not').value.trim()),tekrarTipi:ST_TEKRAR_D||null,tekrarBitis:ST_TEKRAR_D&&document.getElementById('f-tekrar-bitis-d').value?document.getElementById('f-tekrar-bitis-d').value:null};
+    })(),saat:document.getElementById('f-durusma-saat').value,dal:ST.dal2,mahkeme:ST.dal2==='randevu'?titleCase((document.getElementById('f-durusma-randevu-mahkeme')||{value:''}).value.trim()||''):titleCase(document.getElementById('f-durusma-mahkeme-adi').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-durusma-muvekkil').value.trim()),not:sentenceCase(document.getElementById('f-durusma-not').value.trim()),tekrarTipi:ST_TEKRAR_D||null,tekrarBitis:ST_TEKRAR_D&&document.getElementById('f-tekrar-bitis-d').value?document.getElementById('f-tekrar-bitis-d').value:null};
   }else if(ST.type==='tekrar'){
     const date=document.getElementById('f-tekrar-tarih').value;
     if(!date){alert('Başlangıç tarihi zorunludur.');return;}
@@ -1747,7 +2002,14 @@ async function saveRecord(){
   if(!_buro){alert('Oturum hatası.');return;}
   rec.buroId=_buro.id;
   if(ST.editId){const{error}=await sb.from('kayitlar').update(localToDB(rec)).eq('id',ST.editId);if(error){alert('Güncelleme hatası: '+error.message);}}
-  else{const{error}=await sb.from('kayitlar').insert(localToDB(rec));if(error){alert('Kayıt hatası: '+error.message);}}
+  else{
+    const{error}=await sb.from('kayitlar').insert(localToDB(rec));
+    if(error){alert('Kayıt hatası: '+error.message);}
+    // Duruşma ise, E-Duruşma Talebi otomatik oluştur
+    else if(rec.type==='durusma'){
+      await eDurusmaTalebiOlustur(rec);
+    }
+  }
   btn.textContent='Kaydet';btn.disabled=false;
   closeModal();await loadRecords();
 tatilleriYukle();
@@ -2103,6 +2365,8 @@ function renderCal(){
   }
   document.getElementById('cal-grid').innerHTML=cells.map(c=>{
     const evs=c.date?records.filter(r=>r.date===c.date).sort((a,b)=>{
+    // Tamamlananlar sona
+    if(a.tamamlandi!==b.tamamlandi) return a.tamamlandi?1:-1;
     const order={sure:0,durusma:1,tekrar:2,genel:3};
     return (order[a.type]??9)-(order[b.type]??9);
   }):[];
@@ -2137,6 +2401,8 @@ function showCalDetail(dateStr, expandId){
 function renderCalDetail(){
   const dateStr=_calDetailDate;
   const evs=records.filter(r=>r.date===dateStr).sort((a,b)=>{
+    // Tamamlananlar sona
+    if(a.tamamlandi!==b.tamamlandi) return a.tamamlandi?1:-1;
     const order={sure:0,durusma:1,tekrar:2,genel:3};
     const oa=order[a.type]??9, ob=order[b.type]??9;
     if(oa!==ob) return oa-ob;
@@ -2445,12 +2711,11 @@ function closeCalDetail(){
   document.getElementById('cal-detail-overlay').classList.remove('open');
 }
 
-// Swipe ile modal kapatma
+// Swipe ile modal kapatma — DEVRE DIŞI (sadece çarpı ile kapanır)
 let _swipeStartY=0;
 function swipeStart(e){_swipeStartY=e.touches[0].clientY;}
 function swipeEnd(e,closeFn){
-  const dy=e.changedTouches[0].clientY-_swipeStartY;
-  if(dy>80)closeFn();
+  // Swipe ile kapatma kaldırıldı — sadece çarpı butonu ile kapanır
 }
 
 // ── LİSTE ─────────────────────────────────────────────────────────
