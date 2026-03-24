@@ -356,7 +356,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <div id="auth-yenile-form" style="display:none;">
       <div style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:16px;line-height:1.6;">E-postanıza gelen 6 haneli kodu girin ve yeni şifrenizi belirleyin.</div>
       <input class="buro-input" id="auth-otp-email" type="email" placeholder="E-posta adresiniz" style="margin-bottom:10px;">
-      <input class="buro-input" id="auth-otp-kod" type="text" placeholder="6 haneli kod" maxlength="6" style="margin-bottom:10px;letter-spacing:6px;text-align:center;font-size:18px;font-weight:700;" onkeydown="if(event.key==='Enter')sifreYenile()">
+      <input class="buro-input" id="auth-otp-kod" type="text" placeholder="Şifre sıfırlama kodu" maxlength="8" style="margin-bottom:10px;letter-spacing:6px;text-align:center;font-size:18px;font-weight:700;" onkeydown="if(event.key==='Enter')sifreYenile()">
       <input class="buro-input" id="auth-yeni-sifre" type="password" placeholder="Yeni şifre (min. 6 karakter)" style="margin-bottom:10px;" onkeydown="if(event.key==='Enter')sifreYenile()">
       <input class="buro-input" id="auth-yeni-sifre2" type="password" placeholder="Yeni şifreyi tekrar girin" style="margin-bottom:16px;" onkeydown="if(event.key==='Enter')sifreYenile()">
       <button class="buro-btn" onclick="sifreYenile()">Şifremi Güncelle</button>
