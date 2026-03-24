@@ -311,8 +311,15 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 </style>
 </head>
 <body>
+<div id="loading-overlay" style="position:fixed;inset:0;background:#111;z-index:2000;display:flex;align-items:center;justify-content:center;">
+  <div style="text-align:center;">
+    <div style="width:40px;height:40px;border:3px solid rgba(212,175,112,0.2);border-top-color:#d4af70;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px;"></div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.4);font-family:'Segoe UI',system-ui,sans-serif;">Yükleniyor...</div>
+  </div>
+</div>
+<style>@keyframes spin{to{transform:rotate(360deg);}}</style>
 
-<div id="auth-overlay" style="position:fixed;inset:0;background:#111;z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;">
+<div id="auth-overlay" style="position:fixed;inset:0;background:#111;z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;">
   <div class="auth-card" style="max-width:400px;">
     <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNDAgMjQwIj48cmVjdCB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgcng9IjQ0IiBmaWxsPSIjMWExYTFhIi8+PHJlY3QgeD0iNTIiIHk9IjcwIiB3aWR0aD0iMTM2IiBoZWlnaHQ9IjExOCIgcng9IjEwIiBmaWxsPSJub25lIiBzdHJva2U9IiNkNGFmNzAiIHN0cm9rZS13aWR0aD0iMyIgb3BhY2l0eT0iMC41Ii8+PHJlY3QgeD0iNTIiIHk9IjcwIiB3aWR0aD0iMTM2IiBoZWlnaHQ9IjM2IiByeD0iMTAiIGZpbGw9IiNkNGFmNzAiIG9wYWNpdHk9IjAuNyIvPjxyZWN0IHg9Ijg0IiB5PSI1NCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjI4IiByeD0iNSIgZmlsbD0iI2Q0YWY3MCIvPjxyZWN0IHg9IjE0NiIgeT0iNTQiIHdpZHRoPSIxMCIgaGVpZ2h0PSIyOCIgcng9IjUiIGZpbGw9IiNkNGFmNzAiLz48Y2lyY2xlIGN4PSI4NCIgY3k9IjEzNiIgcj0iNiIgZmlsbD0iI2Q0YWY3MCIvPjxjaXJjbGUgY3g9IjExMCIgY3k9IjEzNiIgcj0iNiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC4zIi8+PGNpcmNsZSBjeD0iMTM2IiBjeT0iMTM2IiByPSI2IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjMiLz48Y2lyY2xlIGN4PSI4NCIgY3k9IjE2MiIgcj0iNiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC4zIi8+PGNpcmNsZSBjeD0iMTEwIiBjeT0iMTYyIiByPSI2IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjMiLz48Y2lyY2xlIGN4PSIxMzYiIGN5PSIxNjIiIHI9IjYiIGZpbGw9IiNkNGFmNzAiIG9wYWNpdHk9IjAuNyIvPjwvc3ZnPg==" style="width:72px;height:72px;border-radius:16px;margin:0 auto 18px;display:block;" alt="Sekreter">
     <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:6px;">Sekreter</div>
@@ -833,6 +840,7 @@ const SB_URL = 'https://uocdxifomlrbzorizrud.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvY2R4aWZvbWxyYnpvcml6cnVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzI1MTEsImV4cCI6MjA4OTAwODUxMX0.Vf0hXl-s96DEvGDF3gHNgGyd8EQvvuF8p-XzWmJcv9M';
 
 function showApp(){
+  document.getElementById('loading-overlay').style.display='none';
   document.getElementById('auth-overlay').style.display='none';
   document.getElementById('buro-overlay').style.display='none';
   document.querySelector('.app').style.display='flex';
@@ -841,11 +849,13 @@ function showApp(){
   updateAvatar();
 }
 function showAuth(){
+  document.getElementById('loading-overlay').style.display='none';
   document.getElementById('auth-overlay').style.display='flex';
   document.getElementById('buro-overlay').style.display='none';
   document.querySelector('.app').style.display='none';
 }
 function showBuro(){
+  document.getElementById('loading-overlay').style.display='none';
   document.getElementById('auth-overlay').style.display='none';
   document.getElementById('buro-overlay').style.display='flex';
   document.querySelector('.app').style.display='none';
