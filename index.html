@@ -1792,8 +1792,9 @@ function buildHesapHTML(d){
     const gun=kesinlesmeD.getDate(),ay=kesinlesmeD.toLocaleDateString('tr-TR',{month:'long'}),yil=kesinlesmeD.getFullYear();
     h+=`<div class="hesap-son" style="display:flex;flex-direction:column;align-items:center;gap:4px;">
       <div>SON GÜN &nbsp; ${formatDate(d.sonGun)} &nbsp; ${sonGunSaatStr}</div>
-      <div style="font-size:11px;font-weight:500;opacity:0.9;">⚡ Kesinleşme: ${gun} ${ay} ${yil} &nbsp;(Son günün ertesi günü kesinleşir)</div>
+      <div style="font-size:11px;font-weight:500;opacity:0.9;">(Son günün ertesi günü kesinleşir)</div>
     </div>`;
+    h+=`<div style="background:#fef3c7;padding:9px 13px;font-size:13px;font-weight:700;text-align:center;color:#92400e;">⚡ Kesinleşme: ${gun} ${ay} ${yil}</div>`;
   } else {
     h+=`<div class="hesap-son">SON GÜN &nbsp; ${formatDate(d.sonGun)} &nbsp; ${sonGunSaatStr}</div>`;
   }
@@ -2132,7 +2133,24 @@ async function saveRecord(){
   const btn=document.getElementById('save-btn');btn.textContent='Kaydediliyor...';btn.disabled=true;
   if(!_buro){alert('Oturum hatası.');return;}
   rec.buroId=_buro.id;
-  if(ST.editId){const{error}=await sb.from('kayitlar').update(localToDB(rec)).eq('id',ST.editId);if(error){alert('Güncelleme hatası: '+error.message);}}
+  if(ST.editId){
+    const {error}=await sb.from('kayitlar').update(localToDB(rec)).eq('id',ST.editId);
+    if(error){alert('Güncelleme hatası: '+error.message);}
+    // Tekrarlayan iş ise tüm tekrar kayıtlarını da güncelle (tarih hariç)
+    else if(rec.type==='tekrar'){
+      const anaRec=records.find(r=>r.id===ST.editId);
+      const anaId=anaRec?.tekrarAnaId||ST.editId;
+      // Başlık ve not güncelle — tarih her tekrarda farklı olduğu için dokunma
+      const tekrarGuncelle={
+        baslik:localToDB(rec).baslik,
+        not_alani:localToDB(rec).not_alani,
+        tekrar_tipi:localToDB(rec).tekrar_tipi,
+        tekrar_bitis:localToDB(rec).tekrar_bitis,
+      };
+      await sb.from('kayitlar').update(tekrarGuncelle).eq('tekrar_ana_id',anaId);
+      await sb.from('kayitlar').update(tekrarGuncelle).eq('id',anaId);
+    }
+  }
   else{
     const{error}=await sb.from('kayitlar').insert(localToDB(rec));
     if(error){alert('Kayıt hatası: '+error.message);}
