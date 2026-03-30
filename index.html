@@ -1778,7 +1778,14 @@ function buildHesapHTML(d){
   h+=`<div class="hesap-row"><div class="hesap-row-label">TEBLİĞ</div><div class="hesap-row-val">${formatDate(d.tebligTarihi)} <span class="hesap-row-desc">${tebligLabel(d.tebligSekli)} olarak alındı</span></div></div>`;
   if(d.isEteb)h+=`<div class="hesap-row"><div class="hesap-row-label">E-TEBLİGAT</div><div class="hesap-row-val">${formatDate(d.fiiliTeblig)} <span class="hesap-row-desc">+5 gün eklendi</span></div></div>`;
   (d.adimlar||[]).forEach(a=>h+=`<div class="hesap-row"><div class="hesap-row-label">${a.label}</div><div class="hesap-row-val">${a.val} <span class="hesap-row-desc">${a.desc}</span></div></div>`);
-  h+=`<div class="hesap-son">SON GÜN &nbsp; ${formatDate(d.sonGun)} &nbsp; 23:59</div>`;
+  // Son gün saatini belirle
+  let sonGunSaatStr='23:59';
+  if(d.istipi==='E-Duruşma Talebi'&&d.adimlar&&d.adimlar[0]){
+    const parts=d.adimlar[0].val.split(' ');
+    const saatKandidati=parts[parts.length-1];
+    if(/^\d{2}:\d{2}$/.test(saatKandidati)) sonGunSaatStr=saatKandidati;
+  }
+  h+=`<div class="hesap-son">SON GÜN &nbsp; ${formatDate(d.sonGun)} &nbsp; ${sonGunSaatStr}</div>`;
   // İcranın Kesinleşmesi ve Dosyanın Kesinleşmesi için ertesi gün bilgisi
   if((d.istipi==='İcranın Kesinleşmesi'||d.istipi==='Dosyanın Kesinleşmesi')&&d.sonGun){
     const kesinlesmeD=new Date(d.sonGun+'T12:00:00');
