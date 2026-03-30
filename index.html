@@ -336,19 +336,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
         <button onclick="authEkrani('unuttum')" style="background:none;border:none;cursor:pointer;font-size:12px;color:#d4af70;font-family:inherit;padding:0;text-decoration:underline;">Şifremi unuttum</button>
       </div>
       <button class="buro-btn" onclick="emailGiris()">Giriş Yap</button>
-      <div class="buro-or">veya</div>
-      <button class="buro-link" onclick="authEkrani('kayit')">Hesap oluştur</button>
-    </div>
-
-    <!-- KAYIT FORMU -->
-    <div id="auth-kayit-form" style="display:none;">
-      <input class="buro-input" id="auth-kayit-adsoyad" type="text" placeholder="Ad Soyad" autocomplete="name" style="margin-bottom:10px;">
-      <input class="buro-input" id="auth-kayit-email" type="email" placeholder="E-posta adresiniz" autocomplete="email" style="margin-bottom:10px;">
-      <input class="buro-input" id="auth-kayit-sifre" type="password" placeholder="Şifre belirleyin (min. 6 karakter)" autocomplete="new-password" style="margin-bottom:10px;" onkeydown="if(event.key==='Enter')emailKayit()">
-      <input class="buro-input" id="auth-kayit-sifre2" type="password" placeholder="Şifreyi tekrar girin" autocomplete="new-password" style="margin-bottom:16px;" onkeydown="if(event.key==='Enter')emailKayit()">
-      <button class="buro-btn" onclick="emailKayit()">Hesap Oluştur</button>
-      <div class="buro-or">veya</div>
-      <button class="buro-link" onclick="authEkrani('giris')">Giriş yap</button>
     </div>
 
     <!-- ŞİFREMİ UNUTTUM FORMU -->
@@ -914,12 +901,10 @@ function closeProfil(){
 // ── AUTH EKRANİ YÖNETICI ─────────────────────────────────────────
 function authEkrani(ekran){
   document.getElementById('auth-giris-form').style.display='none';
-  document.getElementById('auth-kayit-form').style.display='none';
   document.getElementById('auth-unuttum-form').style.display='none';
   document.getElementById('auth-yenile-form').style.display='none';
   document.getElementById('auth-msg').textContent='';
   if(ekran==='giris') document.getElementById('auth-giris-form').style.display='block';
-  else if(ekran==='kayit') document.getElementById('auth-kayit-form').style.display='block';
   else if(ekran==='unuttum') document.getElementById('auth-unuttum-form').style.display='block';
   else if(ekran==='yenile') document.getElementById('auth-yenile-form').style.display='block';
 }
@@ -948,29 +933,6 @@ async function emailGiris(){
   }
   setAuthMsg('');
   _user=data.user;
-  await authSonrasiIslem();
-}
-
-// Email ile kayıt
-async function emailKayit(){
-  const adSoyad=(document.getElementById('auth-kayit-adsoyad').value||'').trim();
-  const email=(document.getElementById('auth-kayit-email').value||'').trim();
-  const sifre=document.getElementById('auth-kayit-sifre').value||'';
-  const sifre2=document.getElementById('auth-kayit-sifre2').value||'';
-  if(!adSoyad){setAuthMsg('Ad soyad zorunludur.','#f87171');return;}
-  if(!email||!sifre){setAuthMsg('E-posta ve şifre zorunludur.','#f87171');return;}
-  if(sifre.length<6){setAuthMsg('Şifre en az 6 karakter olmalıdır.','#f87171');return;}
-  if(sifre!==sifre2){setAuthMsg('Şifreler eşleşmiyor.','#f87171');return;}
-  setAuthMsg('Hesap oluşturuluyor...','rgba(255,255,255,0.5)');
-  const {data, error}=await sb.auth.signUp({email, password:sifre, options:{data:{full_name:adSoyad}}});
-  if(error){setAuthMsg('Hata: '+error.message,'#f87171');return;}
-  if(data.user && !data.session){
-    setAuthMsg('✓ Hesabınız oluşturuldu. Giriş yapabilirsiniz.','#4ade80');
-    setTimeout(()=>{authEkrani('giris');},1500);
-    return;
-  }
-  _user=data.user;
-  setAuthMsg('');
   await authSonrasiIslem();
 }
 
