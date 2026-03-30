@@ -1987,19 +1987,6 @@ document.addEventListener('keydown', function(e){
   }
 });
 
-// ── KAYIT KOPYALA ─────────────────────────────────────────────────
-async function copyRecord(id){
-  const rec=records.find(r=>r.id===id);
-  if(!rec) return;
-  if(!confirm('Bu kaydı kopyalamak istiyor musunuz?')) return;
-  const yeniRec=localToDB({...rec, buroId:_buro.id, id:undefined, tamamlandi:false});
-  delete yeniRec.id;
-  const {error}=await sb.from('kayitlar').insert(yeniRec);
-  if(error){alert('Kopyalama hatası: '+error.message);return;}
-  await loadRecords();
-  alert('✓ Kayıt kopyalandı.');
-}
-
 // ── E-DURUŞMA TALEBİ OTOMATİK OLUŞTUR ───────────────────────────
 // Mahkemenin hangi şehirde olduğunu tespit et
 function isDurusmaMuaf(mahkeme){
@@ -2352,7 +2339,7 @@ function renderDashboard(){
       <td>${dalLabel(r.dal)}</td>
       <td><div class="action-btns">
         <button class="icon-btn" onclick="event.stopPropagation();openModal(records.find(x=>x.id===${r.id}))">Düzenle</button>
-        <button class="icon-btn" onclick="event.stopPropagation();kopyalaRecord(${r.id})" title="Kopyala">⎘</button>
+        
         <button class="icon-btn del" onclick="event.stopPropagation();deleteRecord(${r.id})">Sil</button>
       </div></td>
     </tr>`;
@@ -2582,7 +2569,7 @@ function renderCalDetail(){
           ${r.type==='durusma'&&!r.tamamlandi?`<button class="icon-btn" style="background:#1e40af;color:#fff;border-color:#1e40af;font-weight:600;" onclick="closeCalDetail();openDurusmaSonuc(${r.id})">📋 Sonuç Gir</button>`:''}
           <button class="icon-btn" style="${r.tamamlandi?'color:#22c55e;border-color:#22c55e;font-weight:600;':''}" onclick="toggleTamamlandi(${r.id})">${r.tamamlandi?'↩ Geri Al':'○ Tamamlandı'}</button>
           <button class="icon-btn" onclick="closeCalDetail();openModal(records.find(x=>x.id===${r.id}))">Düzenle</button>
-          <button class="icon-btn" onclick="kopyalaRecord(${r.id})">⎘ Kopyala</button>
+          
           <button class="icon-btn del" onclick="deleteRecord(${r.id})">Sil</button>
         </div>
       </div>
@@ -2876,7 +2863,7 @@ function renderListe(){
       <td><div class="action-btns">
         <button class="icon-btn" onclick="event.stopPropagation();toggleTamamlandi(${r.id})" title="${r.tamamlandi?'Geri Al':'Tamamlandı işaretle'}">${r.tamamlandi?'↩ Geri Al':'○'}</button>
         <button class="icon-btn" onclick="event.stopPropagation();openModal(records.find(x=>x.id===${r.id}))">Düzenle</button>
-        <button class="icon-btn" onclick="event.stopPropagation();copyRecord(${r.id})">Kopyala</button>
+        
         <button class="icon-btn del" onclick="event.stopPropagation();deleteRecord(${r.id})">Sil</button>
       </div></td>
     </tr>`;
