@@ -830,7 +830,14 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 <script>
 const SUPABASE_URL='https://uocdxifomlrbzorizrud.supabase.co';
 const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvY2R4aWZvbWxyYnpvcml6cnVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzI1MTEsImV4cCI6MjA4OTAwODUxMX0.Vf0hXl-s96DEvGDF3gHNgGyd8EQvvuF8p-XzWmJcv9M';
-const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
+  auth:{
+    persistSession:true,
+    autoRefreshToken:true,
+    detectSessionInUrl:true,
+    storage:window.localStorage
+  }
+});
 
 // ── AUTH & PROFİL SİSTEMİ ────────────────────────────────────────
 let _user = null;
@@ -1132,10 +1139,21 @@ async function cikisYap(){
 }
 
 async function authBaslat(){
-  // Şifre sıfırlama linki ile gelindi mi? (URL'de #access_token veya type=recovery)
+  // Auth state değişikliklerini dinle (mobilde oturum geri yüklenince tetiklenir)
+  sb.auth.onAuthStateChange(async(event, session)=>{
+    if(event==='SIGNED_IN'&&session?.user&&!_user){
+      _user=session.user;
+      await authSonrasiIslem();
+    } else if(event==='SIGNED_OUT'){
+      _user=null;_buro=null;
+      authEkrani('giris');
+      showAuth();
+    }
+  });
+
+  // Şifre sıfırlama linki ile gelindi mi?
   const hash=window.location.hash;
   if(hash&&hash.includes('type=recovery')){
-    // Supabase auth state'i oku
     await sb.auth.getSession();
     authEkrani('yenile');
     showAuth();
