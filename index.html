@@ -1779,12 +1779,12 @@ function buildHesapHTML(d){
   if(d.isEteb)h+=`<div class="hesap-row"><div class="hesap-row-label">E-TEBLİGAT</div><div class="hesap-row-val">${formatDate(d.fiiliTeblig)} <span class="hesap-row-desc">+5 gün eklendi</span></div></div>`;
   (d.adimlar||[]).forEach(a=>h+=`<div class="hesap-row"><div class="hesap-row-label">${a.label}</div><div class="hesap-row-val">${a.val} <span class="hesap-row-desc">${a.desc}</span></div></div>`);
   h+=`<div class="hesap-son">SON GÜN &nbsp; ${formatDate(d.sonGun)} &nbsp; 23:59</div>`;
-  // İcranın Kesinleşmesi için ertesi gün bilgisi - son günün altında göster
-  if(d.istipi==='İcranın Kesinleşmesi'&&d.sonGun){
+  // İcranın Kesinleşmesi ve Dosyanın Kesinleşmesi için ertesi gün bilgisi
+  if((d.istipi==='İcranın Kesinleşmesi'||d.istipi==='Dosyanın Kesinleşmesi')&&d.sonGun){
     const kesinlesmeD=new Date(d.sonGun+'T12:00:00');
     kesinlesmeD.setDate(kesinlesmeD.getDate()+1);
     const gun=kesinlesmeD.getDate(),ay=kesinlesmeD.toLocaleDateString('tr-TR',{month:'long'}),yil=kesinlesmeD.getFullYear();
-    h+=`<div style="background:#fef3c7;padding:9px 13px;font-size:13px;font-weight:700;text-align:center;color:#92400e;">⚡ Kesinleşme: ${gun} ${ay} ${yil}</div>`;
+    h+=`<div style="background:#fef3c7;padding:9px 13px;font-size:13px;font-weight:700;text-align:center;color:#92400e;">⚡ Kesinleşme: ${gun} ${ay} ${yil} <span style="font-weight:400;font-size:12px;">(Son günün ertesi günü kesinleşir)</span></div>`;
   }
   return h;
 }
