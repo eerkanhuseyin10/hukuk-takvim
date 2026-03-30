@@ -1947,7 +1947,9 @@ function openModal(editRecord,prefillDate){
       document.getElementById('f-genel-baslik').value=editRecord.baslik||'';
       document.getElementById('f-genel-tarih').value=editRecord.date||'';
       document.getElementById('f-genel-saat').value=editRecord.saat||'';
-      document.getElementById('f-genel-aciklama').value=editRecord.not||'';
+      // Düzenlemede oluşturuldu satırını açıklama alanından çıkar
+      const _notSatirlari=(editRecord.not||'').split('\n').filter(s=>!(s.includes('tarihinde oluşturuldu')&&s.includes('Planlandığı tarih')));
+      document.getElementById('f-genel-aciklama').value=_notSatirlari.join('\n').trim();
       document.getElementById('f-genel-mahkeme').value=editRecord.mahkeme||'';
       document.getElementById('f-genel-muvekkil').value=editRecord.muvekkil||'';
       const dp=(editRecord.dava||'').split('/');setYil('f-genel-yil',dp[0]||cy);document.getElementById('f-genel-no').value=dp[1]||'';
@@ -1984,6 +1986,19 @@ document.addEventListener('keydown', function(e){
     saveRecord();
   }
 });
+
+// ── KAYIT KOPYALA ─────────────────────────────────────────────────
+async function copyRecord(id){
+  const rec=records.find(r=>r.id===id);
+  if(!rec) return;
+  if(!confirm('Bu kaydı kopyalamak istiyor musunuz?')) return;
+  const yeniRec=localToDB({...rec, buroId:_buro.id, id:undefined, tamamlandi:false});
+  delete yeniRec.id;
+  const {error}=await sb.from('kayitlar').insert(yeniRec);
+  if(error){alert('Kopyalama hatası: '+error.message);return;}
+  await loadRecords();
+  alert('✓ Kayıt kopyalandı.');
+}
 
 // ── E-DURUŞMA TALEBİ OTOMATİK OLUŞTUR ───────────────────────────
 // Mahkemenin hangi şehirde olduğunu tespit et
@@ -2052,6 +2067,27 @@ async function eDurusmaTalebiOlustur(rec){
   await sb.from('kayitlar').insert(dbRec);
 }
 
+async function kopyalaRecord(id){
+  const rec=records.find(r=>r.id===id);
+  if(!rec) return;
+  const yeni={...localToDB(rec)};
+  delete yeni.id;
+  yeni.buro_id=_buro?_buro.id:null;
+  yeni.tamamlandi=false;
+  // Genel iş ise oluşturulma notunu güncelle
+  if(rec.type==='genel'){
+    const bugun=new Date();
+    const bugunStr=bugun.getFullYear()+'-'+String(bugun.getMonth()+1).padStart(2,'0')+'-'+String(bugun.getDate()).padStart(2,'0');
+    const eskiNot=(rec.not||'').split('\n').filter(s=>!(s.includes('tarihinde oluşturuldu')&&s.includes('Planlandığı tarih'))).join('\n').trim();
+    const yeniNotSatiri=formatDate(bugunStr)+' tarihinde oluşturuldu. Planlandığı tarih: '+formatDate(rec.date)+'.';
+    yeni.not_alani=eskiNot?eskiNot+'\n'+yeniNotSatiri:yeniNotSatiri;
+  }
+  const {error}=await sb.from('kayitlar').insert(yeni);
+  if(error){alert('Kopyalama hatası: '+error.message);return;}
+  await loadRecords();
+  alert('✓ Kayıt kopyalandı.');
+}
+
 // ── KAYDET ────────────────────────────────────────────────────────
 async function saveRecord(){
   let rec={};
@@ -2076,11 +2112,24 @@ async function saveRecord(){
   }else{
     const date=document.getElementById('f-genel-tarih').value;if(!date){alert('Tarih zorunludur.');return;}
     const yil=document.getElementById('f-genel-yil').value,no=document.getElementById('f-genel-no').value.trim();
-    const _bugun=new Date();
-    const _bugunStr=_bugun.getFullYear()+'-'+String(_bugun.getMonth()+1).padStart(2,'0')+'-'+String(_bugun.getDate()).padStart(2,'0');
-    const _olusturmaNotSatiri=formatDate(_bugunStr)+' tarihinde oluşturuldu. Planlandığı tarih: '+formatDate(date)+'.';
     const _mevcutNot=sentenceCase(document.getElementById('f-genel-aciklama').value.trim());
-    const _tamNot=_mevcutNot?_mevcutNot+'\n'+_olusturmaNotSatiri:_olusturmaNotSatiri;
+    let _tamNot;
+    if(ST.editId){
+      // Düzenlemede: mevcut notta "tarihinde oluşturuldu" satırı varsa koru, yoksa sadece notu güncelle
+      const _eskiRec=records.find(r=>r.id===ST.editId);
+      const _eskiNotSatiri=(_eskiRec?.not||'').split('\n').find(s=>s.includes('tarihinde oluşturuldu')&&s.includes('Planlandığı tarih'));
+      if(_eskiNotSatiri){
+        _tamNot=_mevcutNot?_mevcutNot+'\n'+_eskiNotSatiri:_eskiNotSatiri;
+      } else {
+        _tamNot=_mevcutNot||'';
+      }
+    } else {
+      // Yeni kayıt: oluşturulma notu ekle
+      const _bugun=new Date();
+      const _bugunStr=_bugun.getFullYear()+'-'+String(_bugun.getMonth()+1).padStart(2,'0')+'-'+String(_bugun.getDate()).padStart(2,'0');
+      const _olusturmaNotSatiri=formatDate(_bugunStr)+' tarihinde oluşturuldu. Planlandığı tarih: '+formatDate(date)+'.';
+      _tamNot=_mevcutNot?_mevcutNot+'\n'+_olusturmaNotSatiri:_olusturmaNotSatiri;
+    }
     rec={type:'genel',date,baslik:titleCase(document.getElementById('f-genel-baslik').value.trim())||'Genel İş',saat:document.getElementById('f-genel-saat').value,mahkeme:titleCase(document.getElementById('f-genel-mahkeme').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-genel-muvekkil').value.trim()),not:_tamNot};
   }
   const btn=document.getElementById('save-btn');btn.textContent='Kaydediliyor...';btn.disabled=true;
@@ -2303,6 +2352,7 @@ function renderDashboard(){
       <td>${dalLabel(r.dal)}</td>
       <td><div class="action-btns">
         <button class="icon-btn" onclick="event.stopPropagation();openModal(records.find(x=>x.id===${r.id}))">Düzenle</button>
+        <button class="icon-btn" onclick="event.stopPropagation();kopyalaRecord(${r.id})" title="Kopyala">⎘</button>
         <button class="icon-btn del" onclick="event.stopPropagation();deleteRecord(${r.id})">Sil</button>
       </div></td>
     </tr>`;
@@ -2532,6 +2582,7 @@ function renderCalDetail(){
           ${r.type==='durusma'&&!r.tamamlandi?`<button class="icon-btn" style="background:#1e40af;color:#fff;border-color:#1e40af;font-weight:600;" onclick="closeCalDetail();openDurusmaSonuc(${r.id})">📋 Sonuç Gir</button>`:''}
           <button class="icon-btn" style="${r.tamamlandi?'color:#22c55e;border-color:#22c55e;font-weight:600;':''}" onclick="toggleTamamlandi(${r.id})">${r.tamamlandi?'↩ Geri Al':'○ Tamamlandı'}</button>
           <button class="icon-btn" onclick="closeCalDetail();openModal(records.find(x=>x.id===${r.id}))">Düzenle</button>
+          <button class="icon-btn" onclick="kopyalaRecord(${r.id})">⎘ Kopyala</button>
           <button class="icon-btn del" onclick="deleteRecord(${r.id})">Sil</button>
         </div>
       </div>
@@ -2823,8 +2874,9 @@ function renderListe(){
       <td><span class="badge badge-${r.type==="tekrar"?"tekrar-type":r.type}">${typeLabel(r.type,r.dal)}</span></td>
       <td>${dalLabel(r.dal)}</td><td>${r.dava||'—'}</td>
       <td><div class="action-btns">
-        <button class="icon-btn" style="${r.tamamlandi?'color:#22c55e;border-color:#22c55e;':''}" onclick="event.stopPropagation();toggleTamamlandi(${r.id})" title="${r.tamamlandi?'Geri Al':'Tamamlandı işaretle'}">${r.tamamlandi?'↩ Geri Al':'○'}</button>
+        <button class="icon-btn" onclick="event.stopPropagation();toggleTamamlandi(${r.id})" title="${r.tamamlandi?'Geri Al':'Tamamlandı işaretle'}">${r.tamamlandi?'↩ Geri Al':'○'}</button>
         <button class="icon-btn" onclick="event.stopPropagation();openModal(records.find(x=>x.id===${r.id}))">Düzenle</button>
+        <button class="icon-btn" onclick="event.stopPropagation();copyRecord(${r.id})">Kopyala</button>
         <button class="icon-btn del" onclick="event.stopPropagation();deleteRecord(${r.id})">Sil</button>
       </div></td>
     </tr>`;
