@@ -2445,6 +2445,7 @@ function renderCalDetail(){
         ${r.tekrarAnaId?`<div style="margin-top:8px;padding:5px 10px;background:#fef3c7;border-radius:6px;font-size:11px;color:#92400e;">↻ Tekrarlayan iş</div>`:''}
         <div style="display:flex;gap:7px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">
           ${r.type==='durusma'&&!r.tamamlandi?`<button class="icon-btn" style="background:#1e40af;color:#fff;border-color:#1e40af;font-weight:600;" onclick="closeCalDetail();openDurusmaSonuc(${r.id})">📋 Sonuç Gir</button>`:''}
+          ${r.type==='genel'&&!r.tamamlandi&&(r.baslik||'').includes('Duruşma Tarihini Öğren')?`<button class="icon-btn" style="background:#1e40af;color:#fff;border-color:#1e40af;font-weight:600;" onclick="closeCalDetail();setTimeout(()=>{openKayitModal(${r.id});setTimeout(()=>durusmaTarihiGir(${r.id}),150);},100)">📅 Duruşma Tarihi Gir</button>`:''}
           <button class="icon-btn" style="${r.tamamlandi?'color:#22c55e;border-color:#22c55e;font-weight:600;':''}" onclick="toggleTamamlandi(${r.id})">${r.tamamlandi?'↩ Geri Al':'○ Tamamlandı'}</button>
           <button class="icon-btn" onclick="closeCalDetail();openModal(records.find(x=>x.id===${r.id}))">Düzenle</button>
           
@@ -2531,7 +2532,9 @@ function openKayitModal(id){
   ].filter(Boolean);
   body+=rows.map(row=>`<div class="kayit-row"><div class="kayit-row-label">${row.l}</div><div class="kayit-row-val">${row.v}</div></div>`).join('');
   const isDurusma = r.type==='durusma';
+  const isMazeretTakip = r.type==='genel' && !r.tamamlandi && (r.baslik||'').includes('Duruşma Tarihini Öğren');
   body+=`<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;padding-top:4px;">
+    ${isMazeretTakip?`<button class="icon-btn" style="flex:1;padding:10px;background:#1e40af;color:#fff;border-color:#1e40af;font-weight:600;" onclick="durusmaTarihiGir(${r.id})">📅 Duruşma Tarihi Gir</button>`:''}
     ${isDurusma&&!r.tamamlandi?`<button class="icon-btn" style="flex:1;padding:10px;background:#1e40af;color:#fff;border-color:#1e40af;font-weight:600;" onclick="closeKayitModal();openDurusmaSonuc(${r.id})">📋 Sonuç Gir</button>`:''}
     <button class="icon-btn" style="flex:1;padding:10px;${r.tamamlandi?'color:#22c55e;border-color:#22c55e;font-weight:600;':''}" onclick="toggleTamamlandi(${r.id});closeKayitModal();">${r.tamamlandi?'↩ Geri Al':'○ Tamamlandı'}</button>
     <button class="icon-btn" style="flex:1;padding:10px;" onclick="closeKayitModal();openModal(records.find(x=>x.id===${r.id}))">✎ Düzenle</button>
@@ -2695,19 +2698,81 @@ async function durusmaSonucMazeret(){
     baslik:'Duruşma Tarihini Öğren',
     not_alani:getBaslik(r)+' - mazeret sonrası yeni tarihi öğren',
     muvekkil:r.muvekkil||null, mahkeme:r.mahkeme||null, dava:r.dava||null,
-    dal:r.dal||null, tamamlandi:false
+    dal:r.dal||null, tamamlandi:false,
+    buro_id:_buro?_buro.id:null
   };
   const {error} = await sb.from('kayitlar').insert(yeniRec);
   if(error){ alert('Hata: '+error.message); return; }
   // Orijinal duruşmayı tamamlandı yap
-  const _mazeretRec=records.find(x=>x.id===_durusmaSonucId);
-  const _mazeretEskiNot=_mazeretRec&&_mazeretRec.not?_mazeretRec.not+'\n':'';
+  const _mazeretEskiNot=r.not?r.not+'\n':'';
   await sb.from('kayitlar').update({tamamlandi:true, not_alani:_mazeretEskiNot+'Mazeret gönderildi → '+formatDate(tarihStr)+' tarihinde takip edilecek'}).eq('id',_durusmaSonucId);
   closeDurusmaSonuc();
   await loadRecords();
   alert('✓ Mazeret kaydedildi. '+formatDate(tarihStr)+' tarihine hatırlatıcı eklendi.');
 }
 function closeCalDetail(){
+  // ── MAZERET SONRASI DURUŞMA TARİHİ GİRİŞİ ───────────────────────
+function durusmaTarihiGir(id){
+  const r = records.find(x=>x.id===id);
+  if(!r) return;
+  const existing = document.getElementById('durusma-tarih-form');
+  if(existing){ existing.remove(); return; }
+  const container = document.getElementById('km-body');
+  const formDiv = document.createElement('div');
+  formDiv.id = 'durusma-tarih-form';
+  formDiv.style.cssText = 'background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:14px;margin-bottom:14px;';
+  formDiv.innerHTML = `
+    <div style="font-size:12px;font-weight:600;color:#1e40af;margin-bottom:10px;">📅 Yeni Duruşma Tarihini Gir</div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:130px;">
+        <label style="font-size:11px;color:#374151;font-weight:500;display:block;margin-bottom:4px;">Tarih</label>
+        <input type="date" id="yeni-durusma-tarih" style="width:100%;padding:8px 10px;font-size:14px;border:1px solid #d1d5db;border-radius:8px;font-family:inherit;">
+      </div>
+      <div style="flex:1;min-width:100px;">
+        <label style="font-size:11px;color:#374151;font-weight:500;display:block;margin-bottom:4px;">Saat (opsiyonel)</label>
+        <input type="time" id="yeni-durusma-saat" style="width:100%;padding:8px 10px;font-size:14px;border:1px solid #d1d5db;border-radius:8px;font-family:inherit;">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button onclick="durusmaTarihiKaydet(${id})" style="flex:1;padding:10px;background:#1e40af;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">Duruşmayı Ekle</button>
+      <button onclick="document.getElementById('durusma-tarih-form').remove()" style="padding:10px 14px;background:transparent;border:1px solid #d1d5db;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit;">İptal</button>
+    </div>
+  `;
+  container.insertBefore(formDiv, container.firstChild);
+}
+
+async function durusmaTarihiKaydet(genelIsId){
+  const tarih = (document.getElementById('yeni-durusma-tarih')||{}).value;
+  const saat  = (document.getElementById('yeni-durusma-saat')||{}).value;
+  if(!tarih){ alert('Tarih seçiniz.'); return; }
+  const r = records.find(x=>x.id===genelIsId);
+  if(!r){ alert('Kayıt bulunamadı.'); return; }
+  const yeniDurusma = {
+    type:'durusma',
+    date:tarih,
+    saat:saat||null,
+    baslik:r.mahkeme||'Duruşma',
+    mahkeme:r.mahkeme||null,
+    muvekkil:r.muvekkil||null,
+    dava:r.dava||null,
+    dal:r.dal||null,
+    not_alani:'Mazeret sonrası yeni tarih. Kaynak: '+formatDate(r.date)+' tarihli hatırlatıcı.',
+    tamamlandi:false,
+    buro_id:_buro?_buro.id:null
+  };
+  const {error} = await sb.from('kayitlar').insert(yeniDurusma);
+  if(error){ alert('Hata: '+error.message); return; }
+  const eskiNot = r.not ? r.not+'\n' : '';
+  await sb.from('kayitlar').update({
+    tamamlandi:true,
+    not_alani:eskiNot+'Duruşma tarihi girildi → '+formatDate(tarih)+(saat?' saat '+saat:'')
+  }).eq('id',genelIsId);
+  closeKayitModal();
+  await loadRecords();
+  await eDurusmaTalebiOlustur({...yeniDurusma});
+  await loadRecords();
+  alert('✓ Duruşma '+formatDate(tarih)+(saat?' saat '+saat:'')+' tarihine eklendi.');
+}
   document.getElementById('cal-detail-panel').classList.remove('open');
   document.getElementById('cal-detail-overlay').classList.remove('open');
 }
