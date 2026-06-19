@@ -106,6 +106,21 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .hesap-row-desc{color:var(--text3);font-size:11px;margin-left:6px;font-weight:400;}
 .hesap-son{background:#22c55e;color:#fff;padding:9px 13px;font-size:13px;font-weight:700;text-align:center;letter-spacing:.02em;}
 
+
+.cal-search-bar{display:flex;gap:8px;margin-bottom:12px;flex-shrink:0;}
+.cal-search-bar input{flex:1;font-size:13px;padding:9px 12px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface);color:var(--text);font-family:inherit;}
+.cal-search-bar input:focus{outline:none;border-color:var(--navy);}
+.cal-search-results{display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:12px;flex-shrink:0;max-height:260px;overflow-y:auto;}
+.cal-search-results.show{display:block;}
+.cal-search-head{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:12px;font-weight:600;color:var(--text2);}
+.cal-search-item{display:grid;grid-template-columns:95px 1fr auto;gap:10px;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);cursor:pointer;font-size:13px;}
+.cal-search-item:last-child{border-bottom:none;}
+.cal-search-item:hover{background:var(--surface2);}
+.cal-search-date{font-size:12px;color:var(--text2);white-space:nowrap;}
+.cal-search-title{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cal-search-sub{font-size:11px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;}
+@media(max-width:768px){.cal-search-item{grid-template-columns:78px 1fr;}.cal-search-item .badge{display:none;}}
+
 /* TAKVİM - masaüstü ve mobil ortak */
 .cal-wrap{display:flex;flex-direction:column;height:100%;touch-action:pan-y;}
 .cal-nav-bar{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-shrink:0;}
@@ -514,6 +529,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
           <span class="cal-month-label" id="cal-month-label"></span>
           <button class="btn btn-sm" onclick="changeMonth(1)">&#8594;</button>
         </div>
+        <div class="cal-search-bar">
+          <input type="text" id="cal-search" placeholder="🔍 Müvekkil, mahkeme, dosya no veya başlık ara..." oninput="renderTakvimArama()" autocomplete="new-password">
+          <button class="btn btn-sm" onclick="clearTakvimArama()">Temizle</button>
+        </div>
+        <div class="cal-search-results" id="cal-search-results"></div>
         <div class="cal-header">
           <span>Pzt</span><span>Sal</span><span>Çar</span><span>Per</span><span>Cum</span><span>Cmt</span><span>Paz</span>
         </div>
@@ -2080,7 +2100,7 @@ function tebligLabel(t){return{etebligat:'E-Tebligat',tefhim:'Tefhim',fiziki:'Fi
 function getBaslik(r){return r.baslik||r.istipi||r.not||'—';}
 function typeBadgeColor(t){return{durusma:'var(--blue-light)',sure:'var(--amber)',genel:'var(--green-light)'}[t]||'var(--border)';}
 function typeTextColor(t){return{durusma:'var(--blue-dark)',sure:'var(--amber-dark)',genel:'var(--green-dark)'}[t]||'var(--text)';}
-function renderAll(){renderDashboard();renderCal();if(document.getElementById('view-liste').classList.contains('active'))renderListe();}
+function renderAll(){renderDashboard();renderCal();renderTakvimArama();if(document.getElementById('view-liste').classList.contains('active'))renderListe();}
 
 // ── DASHBOARD ─────────────────────────────────────────────────────
 function gunKaldiLabel(dateStr, type){
@@ -2343,6 +2363,51 @@ function calTouchEnd(e){
   if(Math.abs(dx)>50){changeMonth(dx<0?1:-1);}
 }
 function changeMonth(dir){currentMonth+=dir;if(currentMonth>11){currentMonth=0;currentYear++;}if(currentMonth<0){currentMonth=11;currentYear--;}renderCal();}
+
+function clearTakvimArama(){
+  const inp=document.getElementById('cal-search');
+  if(inp) inp.value='';
+  renderTakvimArama();
+}
+
+function renderTakvimArama(){
+  const inp=document.getElementById('cal-search');
+  const box=document.getElementById('cal-search-results');
+  if(!inp||!box) return;
+  const q=(inp.value||'').trim().toLowerCase();
+  if(!q){box.classList.remove('show');box.innerHTML='';return;}
+  const esc=s=>String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m]));
+  const bugun=new Date();bugun.setHours(0,0,0,0);
+  let sonuc=records.filter(r=>{
+    const metin=[getBaslik(r),r.muvekkil,r.mahkeme,r.dava,r.not,typeLabel(r.type,r.dal),dalLabel(r.dal)].join(' ').toLowerCase();
+    return metin.includes(q);
+  }).sort((a,b)=>{
+    const da=new Date((a.date||'')+'T12:00:00'), db=new Date((b.date||'')+'T12:00:00');
+    const ag=(!a.tamamlandi&&da>=bugun)?0:1, bg=(!b.tamamlandi&&db>=bugun)?0:1;
+    if(ag!==bg) return ag-bg;
+    return ag===0 ? da-db : db-da;
+  });
+  if(!sonuc.length){
+    box.classList.add('show');
+    box.innerHTML='<div class="cal-search-head"><span>Arama sonucu</span><button class="icon-btn" onclick="clearTakvimArama()">Temizle</button></div><div style="padding:16px;text-align:center;color:var(--text3);font-size:13px;">Kayıt bulunamadı</div>';
+    return;
+  }
+  const rows=sonuc.slice(0,30).map(r=>{
+    const muvekkil=r.muvekkil?`<span class="mv-link" onclick='event.stopPropagation();openMuvekkilModal(${JSON.stringify(r.muvekkil)})'>${esc(r.muvekkil)}</span>`:'—';
+    const durum=r.tamamlandi?' · ✓ tamamlandı':(new Date((r.date||'')+'T12:00:00')<bugun?' · geçmiş':'');
+    return `<div class="cal-search-item" onclick="showCalDetail('${r.date}',${r.id})">
+      <div class="cal-search-date">${formatDate(r.date)}${r.saat?'<br>'+esc(r.saat):''}</div>
+      <div style="min-width:0;">
+        <div class="cal-search-title">${esc(getBaslik(r))}</div>
+        <div class="cal-search-sub">${muvekkil}${r.mahkeme?' · '+esc(r.mahkeme):''}${r.dava?' · '+esc(r.dava):''}${durum}</div>
+      </div>
+      <span class="badge badge-${r.type==='tekrar'?'tekrar-type':r.type}">${typeLabel(r.type,r.dal)}</span>
+    </div>`;
+  }).join('');
+  box.classList.add('show');
+  box.innerHTML=`<div class="cal-search-head"><span>${sonuc.length} kayıt bulundu</span><button class="icon-btn" onclick="clearTakvimArama()">Temizle</button></div>${rows}${sonuc.length>30?'<div style="padding:8px 12px;font-size:11px;color:var(--text3);text-align:center;">İlk 30 sonuç gösteriliyor.</div>':''}`;
+}
+
 function renderCal(){
   const months=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
   document.getElementById('cal-month-label').textContent=months[currentMonth]+' '+currentYear;
