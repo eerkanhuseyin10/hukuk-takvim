@@ -198,6 +198,28 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .mv-link:hover{color:var(--navy-dark);}
 .kayit-modal{background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-width:580px;max-height:90vh;overflow-y:auto;overflow-x:hidden;margin:0 auto;}
 @media(min-width:640px){.kayit-modal-overlay{align-items:center;padding:16px;}.kayit-modal{border-radius:var(--radius-lg);}}
+/* ── REFERANS ────────────────────────────────────────────────── */
+.referans-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;}
+.referans-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;cursor:pointer;transition:all .15s;}
+.referans-card:hover{border-color:var(--navy);background:var(--surface2);}
+.referans-card-icon{font-size:26px;margin-bottom:8px;}
+.referans-card-baslik{font-size:14px;font-weight:600;margin-bottom:4px;line-height:1.3;}
+.referans-card-ozet{font-size:12px;color:var(--text2);line-height:1.4;}
+.referans-detay-overlay{position:fixed;inset:0;background:rgba(15,22,40,0.5);display:flex;align-items:flex-end;justify-content:center;z-index:280;padding:0;}
+.referans-detay-modal{background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-width:820px;max-height:90vh;overflow-y:auto;overflow-x:hidden;margin:0 auto;}
+@media(min-width:640px){.referans-detay-overlay{align-items:center;padding:16px;}.referans-detay-modal{border-radius:var(--radius-lg);}}
+.referans-detay-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 13px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:1;}
+.ref-table{width:100%;border-collapse:collapse;font-size:12.5px;margin:8px 0 20px;}
+.ref-table th{background:var(--surface2);text-align:left;padding:7px 9px;border-bottom:2px solid var(--border2);font-weight:600;white-space:nowrap;}
+.ref-table td{padding:6px 9px;border-bottom:1px solid var(--border);vertical-align:top;}
+.ref-table tbody tr:hover td{background:var(--surface2);}
+.ref-section-title{font-size:13px;font-weight:700;color:var(--navy);margin:20px 0 8px;padding-bottom:5px;border-bottom:2px solid var(--amber);}
+.ref-section-title:first-child{margin-top:0;}
+.ref-badge-alir{color:#166534;font-weight:700;}
+.ref-badge-alamaz{color:#991b1b;font-weight:700;}
+.ref-flow-box{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);padding:12px 14px;margin-bottom:10px;}
+.ref-flow-num{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--navy);color:#fff;font-size:11px;font-weight:700;margin-right:8px;flex-shrink:0;}
+.ref-note{font-size:12px;color:var(--text2);background:var(--navy-light);border-radius:var(--radius);padding:10px 13px;margin-top:6px;}
 .kayit-modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 13px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:1;}
 .kayit-modal-body{padding:16px 20px 24px;}
 .kayit-row{display:flex;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;}
@@ -267,7 +289,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 /* MOBILE BOTTOM NAV */
 .mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);z-index:100;padding:8px 0 env(safe-area-inset-bottom);}
 .mobile-nav-inner{display:flex;justify-content:space-around;}
-.mobile-nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 16px;background:none;border:none;cursor:pointer;color:var(--text3);font-family:inherit;font-size:10px;font-weight:500;}
+.mobile-nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 9px;background:none;border:none;cursor:pointer;color:var(--text3);font-family:inherit;font-size:9.5px;font-weight:500;}
 .mobile-nav-item.active{color:var(--navy);}
 .mobile-nav-item svg{width:22px;height:22px;}
 
@@ -463,6 +485,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <button class="nav-item" onclick="showView('tamamlanan',this)">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8l4 4 8-8"/></svg>Tamamlanan İşler
     </button>
+    <button class="nav-item" onclick="showView('referans',this)">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 2h8l4 4v8H2z"/><path d="M10 2v4h4M5 9h6M5 12h4"/></svg>Referans
+    </button>
   </nav>
   <div class="sidebar-footer">
     <div class="sync-status">
@@ -581,6 +606,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
         </table>
       </div>
     </div>
+    <!-- REFERANS -->
+    <div class="view" id="view-referans">
+      <div class="section-title">Hukuki Referans &amp; Bilgi Bankası</div>
+      <div class="referans-grid" id="referans-grid"></div>
+    </div>
   </div>
 </div>
 
@@ -606,6 +636,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <button class="mobile-nav-item" onclick="showView('tamamlanan',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l5 5L20 7"/></svg>
       Tamam
+    </button>
+    <button class="mobile-nav-item" onclick="showView('referans',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h10l6 6v10H4z"/><path d="M14 4v6h6M8 13h8M8 16h5"/></svg>
+      Referans
     </button>
   </div>
 </nav>
@@ -1868,6 +1902,7 @@ document.addEventListener('keydown', function(e){
     // Açık olan modalı kapat - en üsttekinden başla
     if(document.getElementById('durusma-sonuc-overlay').style.display==='flex'){closeDurusmaSonuc();return;}
     if(document.getElementById('ek-sure-overlay').style.display==='flex'){closeEkSureOverlay();return;}
+    if(document.getElementById('referans-detay-overlay').style.display==='flex'){closeReferansDetay();return;}
     if(document.getElementById('muvekkil-modal').style.display==='flex'){closeMuvekkilModal();return;}
     if(document.getElementById('kayit-modal').style.display==='flex'){closeKayitModal();return;}
     if(document.getElementById('modal').style.display==='flex'){closeModal();return;}
@@ -3194,16 +3229,355 @@ function renderTamamlanan(){
     </div></td>
   </tr>`).join('');
 }
+
+// ══════════════════════════════════════════════════════════════════
+// ── REFERANS / BİLGİ BANKASI ────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════
+const REFERANS_ITEMS=[
+  {id:'aaut-tarife',baslik:'AAÜT 2026 Tarifesi',ozet:'Avukatlık Asgari Ücret Tarifesi — 2025/2026 karşılaştırmalı tam tarife',icon:'⚖️'},
+  {id:'maktu-nispi',baslik:'Maktu mu Nispi mi?',ozet:'AAÜT m.13 karar şeması ve istisna hükümleri (m.7, m.9, m.10, m.11, m.12, m.16, m.17)',icon:'🧭'},
+  {id:'ucretli-izinler',baslik:'İşveren Tarafından Verilmesi Gereken Ücretli İzinler',ozet:'Yıllık izin, evlilik, doğum, ölüm, süt izni vb. süreleri ve kriterleri',icon:'🗓️'},
+  {id:'kidem-ihbar',baslik:'İşten Ayrılış Nedenine Göre Tazminat Hakları',ozet:'50 SGK çıkış koduna göre kıdem, ihbar tazminatı ve işsizlik maaşı hakkı',icon:'💼'},
+  {id:'sgk-kodlari',baslik:'SGK Çıkış Kodları (50 Kod)',ozet:'İşten ayrılış bildirgesinde kullanılan kodların hızlı referans listesi',icon:'🔢'},
+];
+function renderReferans(){
+  const wrap=document.getElementById('referans-grid');
+  if(!wrap)return;
+  wrap.innerHTML=REFERANS_ITEMS.map(x=>`<div class="referans-card" onclick="openReferansDetay('${x.id}')">
+    <div class="referans-card-icon">${x.icon}</div>
+    <div class="referans-card-baslik">${x.baslik}</div>
+    <div class="referans-card-ozet">${x.ozet}</div>
+  </div>`).join('');
+}
+function openReferansDetay(id){
+  const item=REFERANS_ITEMS.find(x=>x.id===id);if(!item)return;
+  document.getElementById('ref-baslik').textContent=item.icon+' '+item.baslik;
+  document.getElementById('ref-body').innerHTML=REFERANS_ICERIK[id]();
+  document.getElementById('referans-detay-overlay').style.display='flex';
+}
+function closeReferansDetay(){
+  document.getElementById('referans-detay-overlay').style.display='none';
+}
+function refRow(kalem,v25,v26){
+  return `<tr><td>${kalem}</td><td>${v25}</td><td>${v26}</td></tr>`;
+}
+const REFERANS_ICERIK={
+  // ── AAÜT TARİFESİ ──────────────────────────────────────────────
+  'aaut-tarife':function(){
+    let h='<div class="ref-note">2025 ve 2026 yılı Avukatlık Asgari Ücret Tarifesi karşılaştırmalı olarak sunulmaktadır. Tutarlar TL\'dir.</div>';
+
+    h+='<div class="ref-section-title">BİRİNCİ KISIM · BİRİNCİ BÖLÜM — Dava ve Takiplerin Dışındaki Hukuki Yardımlarda Ödenecek Ücret</div>';
+    h+='<table class="ref-table"><thead><tr><th style="width:60%;">Kalem</th><th>2025</th><th>2026</th></tr></thead><tbody>';
+    h+=refRow('1. Büroda sözlü danışma (ilk 1 saate kadar)','3.500,00 TL','4.000,00 TL');
+    h+=refRow('&nbsp;&nbsp;Takip eden her saat için','1.500,00 TL','1.800,00 TL');
+    h+=refRow('2. Çağrı üzerine gidilen yerde sözlü danışma (ilk 1 saate kadar)','6.000,00 TL','7.000,00 TL');
+    h+=refRow('&nbsp;&nbsp;Takip eden her saat için','3.000,00 TL','3.500,00 TL');
+    h+=refRow('3. Yazılı danışma (ilk 1 saate kadar)','6.000,00 TL','7.000,00 TL');
+    h+=refRow('&nbsp;&nbsp;Takip eden her saat için','3.000,00 TL','3.500,00 TL');
+    h+=refRow('4. Her türlü dilekçe yazılması, ihbarname, ihtarname, protesto düzenlenmesi','4.500,00 TL','6.000,00 TL');
+    h+=refRow('5a. Kira sözleşmesi ve benzeri','6.000,00 TL','8.000,00 TL');
+    h+=refRow('5b. Tüzük, yönetmelik, miras sözleşmesi, vasiyetname, vakıf senedi ve benzeri','24.000,00 TL','32.000,00 TL');
+    h+=refRow('5c. Şirket ana sözleşmesi, devir/birleşme vb. ticari sözleşmeler','16.000,00 TL','21.000,00 TL');
+    h+=refRow('6. Arabuluculuğun anlaşmazlıkla sonuçlanması halinde taraf vekilleri için','7.000,00 TL','8.000,00 TL');
+    h+='</tbody></table>';
+
+    h+='<div class="ref-section-title">İKİNCİ BÖLÜM — İş Takibi Konusundaki Hukuki Yardımlarda Ödenecek Ücret</div>';
+    h+='<table class="ref-table"><thead><tr><th style="width:60%;">Kalem</th><th>2025</th><th>2026</th></tr></thead><tbody>';
+    h+=refRow('1. Belgelendirme, ödeme aşamasındaki paranın tahsili, belge örneği çıkarılması gibi işlerin takibi','5.000,00 TL','6.000,00 TL');
+    h+=refRow('2a. Bir hakkın doğumu, tespiti, tescili, nakli, değiştirilmesi, sona erdirilmesi veya korunması','9.000,00 TL','12.000,00 TL');
+    h+=refRow('2b. İpotek tesis/fek dahil — bankalara/finans kuruluşlarına verilen hukuki yardım','2.250,00 TL','3.000,00 TL');
+    h+=refRow('3. Tüzel kişi tacirlerin şirket kuruluşu, ruhsat/imtiyaz, devir, TC vatandaşlığına kabul işleri','45.000,00 TL','60.000,00 TL');
+    h+=refRow('4. Vergi uzlaşma komisyonlarında takip edilen işler','18.000,00 TL','24.000,00 TL');
+    h+=refRow('5a. Uluslararası yargı yerleri — duruşmasız','80.000,00 TL','110.000,00 TL');
+    h+=refRow('5b. Uluslararası yargı yerleri — duruşmalı','150.000,00 TL','200.000,00 TL');
+    h+=refRow('5c. Konusu para olan işlerde ücret 3. Kısma göre belirlenir','—','—');
+    h+=refRow('6. Tüketici hakem heyeti, sebze-meyve hal hakem heyeti (3. kısma göre; altındaysa asıl alacağı geçmemek kaydıyla)','5.000,00 TL','7.000,00 TL');
+    h+='</tbody></table>';
+
+    h+='<div class="ref-section-title">ÜÇÜNCÜ BÖLÜM — 1136 S.K. m.35 Gereğince Zorunlu Sözleşmeli Avukatlara Aylık Ücret</div>';
+    h+='<table class="ref-table"><thead><tr><th style="width:60%;">Kalem</th><th>2025</th><th>2026</th></tr></thead><tbody>';
+    h+=refRow('1. Yapı kooperatiflerinde','19.200,00 TL','27.000,00 TL');
+    h+=refRow('2. Anonim şirketlerde','32.000,00 TL','45.000,00 TL');
+    h+='</tbody></table>';
+    h+='<div class="ref-note">Not: Takip edilen dava/takip/işlerde tarifeye göre hesaplanacak ücret, yıllık ücretin üzerindeyse aradaki eksik miktar avukata ayrıca ödenir.</div>';
+
+    h+='<div class="ref-section-title">DÖRDÜNCÜ BÖLÜM — Sözleşmeli Avukatlara Ödenecek Aylık Ücret</div>';
+    h+='<table class="ref-table"><thead><tr><th style="width:60%;">Kalem</th><th>2025</th><th>2026</th></tr></thead><tbody>';
+    h+=refRow('1. Özel kişi/tüzel kişilerin sözleşmeli avukatlarına','25.000,00 TL','33.000,00 TL');
+    h+=refRow('2. Kamu kurum ve kuruluşlarının sözleşmeli avukatlarına','25.000,00 TL','33.000,00 TL');
+    h+='</tbody></table>';
+
+    h+='<div class="ref-section-title">İKİNCİ KISIM · BİRİNCİ BÖLÜM — Konusu Para Olsa da MAKTU Ücrete Bağlı Hukuki Yardımlar</div>';
+    h+='<table class="ref-table"><thead><tr><th style="width:60%;">Kalem</th><th>2025</th><th>2026</th></tr></thead><tbody>';
+    h+=refRow('1a. İhtiyati haciz, ihtiyati tedbir, delillerin tespiti, icranın geri bırakılması, ödeme/tevdi yeri belirlenmesi — duruşmasız','7.500,00 TL','10.000,00 TL');
+    h+=refRow('1b. Aynısı — duruşmalı','9.500,00 TL','12.500,00 TL');
+    h+=refRow('2. Ortaklığın giderilmesi — satış memurluğu işlerinin takibi','12.500,00 TL','18.000,00 TL');
+    h+=refRow('3. Ortaklığın giderilmesi ve taksim davaları','28.500,00 TL','40.000,00 TL');
+    h+=refRow('4a. Vergi Mahkemeleri — duruşmasız','18.000,00 TL','30.000,00 TL');
+    h+=refRow('4b. Vergi Mahkemeleri — duruşmalı','36.000,00 TL','40.000,00 TL');
+    h+=refRow('5. Tüketici Mahkemeleri — kredi taksit/faiz uyarlama davaları','14.000,00 TL','20.000,00 TL');
+    h+='</tbody></table>';
+
+    h+='<div class="ref-section-title">İKİNCİ BÖLÜM — Konusu Para Olmayan Hukuki Yardımlar (Maktu)</div>';
+    h+='<table class="ref-table"><thead><tr><th style="width:60%;">Kalem</th><th>2025</th><th>2026</th></tr></thead><tbody>';
+    h+=refRow('1. İcra Dairelerinde yapılan takipler','6.000,00 TL','9.000,00 TL');
+    h+=refRow('2. İcra Mahkemelerinde takip edilen işler','7.000,00 TL','11.000,00 TL');
+    h+=refRow('3. İcra Mahkemelerinde takip edilen dava ve duruşmalı işler','12.000,00 TL','18.000,00 TL');
+    h+=refRow('4. Tahliyeye ilişkin icra takipleri','13.500,00 TL','20.000,00 TL');
+    h+=refRow('5. İcra Mahkemelerinde takip edilen ceza işleri','10.000,00 TL','15.000,00 TL');
+    h+=refRow('6. Çocuk teslimi / kişisel ilişki kararlarının yerine getirilmesine muhalefetten kaynaklanan işler','12.000,00 TL','16.000,00 TL');
+    h+=refRow('7. Ceza soruşturma evresinde takip edilen işler','8.000,00 TL','11.000,00 TL');
+    h+=refRow('8. Sulh Hukuk Mahkemeleri','18.000,00 TL','30.000,00 TL');
+    h+=refRow('9. Sulh Ceza Hakimlikleri ve İnfaz Hakimlikleri','13.500,00 TL','18.000,00 TL');
+    h+=refRow('10. Asliye Mahkemeleri','30.000,00 TL','45.000,00 TL');
+    h+=refRow('11. Tüketici Mahkemeleri','15.000,00 TL','22.500,00 TL');
+    h+=refRow('12. Fikri ve Sınai Haklar Mahkemeleri','40.000,00 TL','55.000,00 TL');
+    h+=refRow('13. Ağır Ceza Mahkemeleri','48.000,00 TL','65.000,00 TL');
+    h+=refRow('14. Çocuk Mahkemeleri','30.000,00 TL','45.000,00 TL');
+    h+=refRow('15. Çocuk Ağır Ceza Mahkemeleri','48.000,00 TL','65.000,00 TL');
+    h+=refRow('16. Askerlik Kanunu — Disiplin Kurulları','18.000,00 TL','27.000,00 TL');
+    h+=refRow('17a. İdare ve Vergi Mahkemeleri — duruşmasız','18.000,00 TL','30.000,00 TL');
+    h+=refRow('17b. İdare ve Vergi Mahkemeleri — duruşmalı','36.000,00 TL','40.000,00 TL');
+    h+=refRow('18a. BAM / Bölge İdare M. — ilk derecede görülen davalar','25.000,00 TL','35.000,00 TL');
+    h+=refRow('18b. BAM — istinaf, bir duruşmalı işler','16.000,00 TL','22.000,00 TL');
+    h+=refRow('18c. BAM — istinaf, birden fazla duruşma/keşif gibi işlemli işler','32.000,00 TL','42.000,00 TL');
+    h+=refRow('19a. Sayıştay hesap yargılamaları — duruşmasız','24.000,00 TL','34.000,00 TL');
+    h+=refRow('19b. Sayıştay hesap yargılamaları — duruşmalı','46.500,00 TL','65.000,00 TL');
+    h+=refRow('20. Yargıtay — ilk derecede görülen davalar','46.500,00 TL','65.000,00 TL');
+    h+=refRow('21a. Danıştay — ilk derecede — duruşmasız','28.000,00 TL','40.000,00 TL');
+    h+=refRow('21b. Danıştay — ilk derecede — duruşmalı','56.000,00 TL','65.000,00 TL');
+    h+=refRow('22. Yargıtay/Danıştay/Sayıştay — temyiz yolu, duruşmalı işler','28.000,00 TL','40.000,00 TL');
+    h+=refRow('23. Uyuşmazlık Mahkemesi','30.000,00 TL','40.000,00 TL');
+    h+=refRow('24a. AYM — Yüce Divan sıfatıyla bakılan davalar','90.000,00 TL','120.000,00 TL');
+    h+=refRow('24b. AYM — Bireysel başvuru, duruşmasız','30.000,00 TL','40.000,00 TL');
+    h+=refRow('&nbsp;&nbsp;AYM — Bireysel başvuru, duruşmalı','60.000,00 TL','80.000,00 TL');
+    h+=refRow('24c. AYM — diğer dava ve işler','65.000,00 TL','90.000,00 TL');
+    h+='</tbody></table>';
+
+    h+='<div class="ref-section-title">ÜÇÜNCÜ KISIM — Konusu Para Olan İşler (Nispi — Kademeli Oran Tablosu)</div>';
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">';
+    h+='<table class="ref-table"><thead><tr><th colspan="2">2025 Dilimleri</th></tr><tr><th>Tutar</th><th>Oran</th></tr></thead><tbody>';
+    h+='<tr><td>İlk 400.000 TL için</td><td>%16</td></tr>';
+    h+='<tr><td>Sonra gelen 400.000 TL için</td><td>%15</td></tr>';
+    h+='<tr><td>Sonra gelen 800.000 TL için</td><td>%14</td></tr>';
+    h+='<tr><td>Sonra gelen 1.200.000 TL için</td><td>%13</td></tr>';
+    h+='<tr><td>Sonra gelen 1.200.000 TL için</td><td>%11</td></tr>';
+    h+='<tr><td>Sonra gelen 1.600.000 TL için</td><td>%8</td></tr>';
+    h+='<tr><td>Sonra gelen 2.000.000 TL için</td><td>%5</td></tr>';
+    h+='<tr><td>Sonra gelen 2.400.000 TL için</td><td>%3</td></tr>';
+    h+='<tr><td>Sonra gelen 2.800.000 TL için</td><td>%2</td></tr>';
+    h+='<tr><td>11.600.000 TL\'dan yukarısı için</td><td>%1</td></tr>';
+    h+='</tbody></table>';
+    h+='<table class="ref-table"><thead><tr><th colspan="2">2026 Dilimleri</th></tr><tr><th>Tutar</th><th>Oran</th></tr></thead><tbody>';
+    h+='<tr><td>İlk 600.000 TL için</td><td>%16</td></tr>';
+    h+='<tr><td>Sonra gelen 600.000 TL için</td><td>%15</td></tr>';
+    h+='<tr><td>Sonra gelen 1.200.000 TL için</td><td>%14</td></tr>';
+    h+='<tr><td>Sonra gelen 1.800.000 TL için</td><td>%11</td></tr>';
+    h+='<tr><td>Sonra gelen 2.400.000 TL için</td><td>%8</td></tr>';
+    h+='<tr><td>Sonra gelen 3.000.000 TL için</td><td>%5</td></tr>';
+    h+='<tr><td>Sonra gelen 3.600.000 TL için</td><td>%3</td></tr>';
+    h+='<tr><td>Sonra gelen 4.200.000 TL için</td><td>%2</td></tr>';
+    h+='<tr><td>18.600.000 TL\'dan yukarısı için</td><td>%1</td></tr>';
+    h+='</tbody></table>';
+    h+='</div>';
+    h+='<div class="ref-note">Nispi ücret, dilimlere karşılık gelen oranların ilgili dilim tutarına uygulanıp toplanmasıyla bulunur. 2026 tarifesinde kaynak tabloda 2025\'teki "%13" dilimine karşılık gelen ayrı bir 2026 dilimi görünmemektedir; hesaplamada resmi Tarife metnine bakılması önerilir.</div>';
+    return h;
+  },
+
+  // ── MAKTU MU NİSPİ Mİ ──────────────────────────────────────────
+  'maktu-nispi':function(){
+    let h='<div class="ref-note">AAÜT m.13 karar şeması — bir işin maktu mu yoksa nispi ücrete mi tabi olduğunu belirlemek için izlenecek yol.</div>';
+    h+='<div class="ref-section-title">Karar Akışı</div>';
+    h+='<div class="ref-flow-box"><b>BAŞLA →</b> Konu para veya parayla ölçülebilir mi?</div>';
+    h+='<div class="ref-flow-box" style="margin-left:16px;"><b>HAYIR</b> → <span style="color:var(--navy);font-weight:700;">MAKTU ÜCRET</span> (2. Kısım 2. Bölüm)</div>';
+    h+='<div class="ref-flow-box" style="margin-left:16px;"><b>EVET</b> → Özel bir madde maktuyu mu emrediyor?</div>';
+    h+='<div class="ref-flow-box" style="margin-left:32px;"><b>EVET</b> → <span style="color:#92400e;font-weight:700;">İSTİSNALAR</span> (aşağıdaki istisna hükümlerine göre ücret belirlenir)</div>';
+    h+='<div class="ref-flow-box" style="margin-left:32px;"><b>HAYIR</b> → <span style="color:#166534;font-weight:700;">NİSPİ ÜCRET</span> (3. Kısım) — Taban: 2. kısım maktu ücreti</div>';
+
+    h+='<div class="ref-section-title">İstisna Hükümleri</div>';
+    const istisnalar=[
+      ['Ön şart yokluğu / husumet','m.7/2','Nispi, ama 2. kısım tavanını geçemez'],
+      ['Tahliye / kira tespiti / nafaka','m.9','1 yıllık bedel üzerinden nispi, maktu taban'],
+      ['Manevi tazminat tamamen reddedilirse','m.10/3','Maktu'],
+      ['İcra takibi 56.250 TL altı','m.11/1','Maktu (asıl alacağı geçemez)'],
+      ['Tüketici hakem heyeti itirazı','m.12/1-2','Nispi, kabul/red miktarını geçemez'],
+      ['Dava şartı arabuluculuk, konusu para','m.16/2(a)','Nispi ücretin 1/4 fazlası'],
+      ['Dava şartı arabuluculuk, konusu para değil','m.16/2(b)','Maktu ücretin 1/4 fazlası'],
+      ['Sigorta Tahkim, para ile ölçülemeyen iş','m.17/2','Maktu'],
+    ];
+    h+='<table class="ref-table"><thead><tr><th>#</th><th>Durum</th><th>Madde</th><th>Sonuç</th></tr></thead><tbody>';
+    istisnalar.forEach((x,i)=>{h+=`<tr><td><span class="ref-flow-num">${i+1}</span></td><td>${x[0]}</td><td>${x[1]}</td><td>${x[2]}</td></tr>`;});
+    h+='</tbody></table>';
+
+    h+='<div class="ref-note"><b>Özet İlke:</b> Konu para/parayla ölçülebilirse → <b>Nispi</b> (3. Kısım); konu para değilse veya özel hüküm maktuyu emrediyorsa → <b>Maktu</b> (2. Kısım 2. Bölüm). Çoğu nispi hesapta 2. kısımdaki maktu ücret <b>TABAN</b> işlevi görür.</div>';
+    return h;
+  },
+
+  // ── ÜCRETLİ İZİNLER ────────────────────────────────────────────
+  'ucretli-izinler':function(){
+    const izinler=[
+      ['Yıllık Ücretli İzin','Hizmet süresi 1-5 yıl (5 yıl dahil)','En az 14 gün'],
+      ['','Hizmet süresi 5 yıldan fazla 15 yıldan az','En az 20 gün'],
+      ['','Hizmet süresi 15 yıl (dahil) ve daha fazla','En az 26 gün'],
+      ['Evlilik İzni','İşçinin evlenmesi halinde izin verilir','3 gün'],
+      ['Evlat Edinme İzni','İşçinin evlat edinmesi halinde izin verilir','3 gün'],
+      ['Ölüm İzni','Anne/baba, eş, kardeş, çocuk ölümü halinde','3 gün'],
+      ['Doğum (Babalık) İzni','İşçinin eşinin doğum yapması halinde','10 gün'],
+      ['Engelli Çocuk İzni','İşçilerin en az %70 engelli veya süregen hastalığı olan çocuğunun tedavisinde, sağlık raporuna dayalı olarak ve çalışan eşlerden sadece biri tarafından kullanılır','10 güne kadar'],
+      ['Yeni İş Arama İzni','İhbar süreleri içinde (talebe gerek kalmaksızın), işçiye yeni iş bulması için iş saatleri içinde (işçinin tercihine göre günlük veya toptan) verilir','En az günde 2 saat'],
+      ['Süt İzni','Kadın işçilere 1 yaşından küçük çocuklarını emzirmeleri için fiili çalışma günü içinde verilir','Günde toplam 1,5 saat'],
+      ['Gebe Çalışan Muayene İzni','Gebe çalışanlara gebelikleri süresince periyodik kontroller için verilir','Periyodik kontrolleri süresince'],
+    ];
+    let h='<table class="ref-table"><thead><tr><th style="width:22%;">İzin Adı</th><th>Kriteri</th><th style="width:18%;">Süresi</th></tr></thead><tbody>';
+    izinler.forEach(x=>{h+=`<tr><td style="font-weight:600;">${x[0]}</td><td>${x[1]}</td><td style="font-weight:600;color:var(--navy);">${x[2]}</td></tr>`;});
+    h+='</tbody></table>';
+    h+='<div class="ref-note">Kaynak: İşveren tarafından işçiye verilmesi gereken ücretli izinler (4857 sayılı İş Kanunu ve ilgili mevzuat).</div>';
+    return h;
+  },
+
+  // ── KIDEM / İHBAR / İŞSİZLİK ───────────────────────────────────
+  'kidem-ihbar':function(){
+    // [kod, neden, kıdem, ihbar, işsizlik]
+    const V=[
+    [1,'Deneme süreli iş sözleşmesinin işverence feshi','ALAMAZ','ALAMAZ','ALAMAZ'],
+    [2,'Deneme süreli iş sözleşmesinin işçi tarafından feshi','ALAMAZ','ALAMAZ','ALAMAZ'],
+    [3,'Belirsiz süreli iş sözleşmesinin işçi tarafından feshi (istifa)','ALAMAZ','ALAMAZ','ALAMAZ'],
+    [4,'Belirsiz süreli iş sözleşmesinin işveren tarafından haklı sebep bildirilmeden feshi','ALIR','ALIR','ALIR'],
+    [5,'Belirli süreli iş sözleşmesinin sona ermesi','ALIR','ALAMAZ','ALIR'],
+    [8,'Emeklilik (yaşlılık) veya toptan ödeme nedeniyle','ALIR','ALAMAZ','ALAMAZ'],
+    [9,'Malulen emeklilik nedeniyle','ALIR','ALAMAZ','ALAMAZ'],
+    [10,'Ölüm','ALIR','ALAMAZ','ALAMAZ'],
+    [11,'İş kazası sonucu ölüm','ALIR','ALAMAZ','ALAMAZ'],
+    [12,'Askerlik','ALIR','ALAMAZ','ALAMAZ'],
+    [13,'Kadın işçinin evlenmesi','ALIR','ALAMAZ','ALAMAZ'],
+    [14,'Emeklilik için yaş dışında diğer şartların tamamlanması','ALIR','ALAMAZ','ALAMAZ'],
+    [15,'Toplu işçi çıkarma','ALIR','ALIR','ALIR'],
+    [16,'Sözleşme sona ermeden sigortalının aynı işverene ait diğer işyerine nakli','ALAMAZ','ALAMAZ','ALAMAZ'],
+    [17,'İşyerinin kapanması','ALIR','ALIR','ALIR'],
+    [18,'İşin sona ermesi','ALIR','ALIR','ALIR'],
+    [19,'Mevsim bitimi (iş akdinin askıya alınması halinde kullanılır. Tekrar başlatılmayacaksa "4" nolu kod kullanılır)','ALAMAZ','ALAMAZ','ALAMAZ'],
+    [20,'Kampanya bitimi (iş akdinin askıya alınması halinde kullanılır. Tekrar başlatılmayacaksa "4" nolu kod kullanılır)','ALAMAZ','ALAMAZ','ALAMAZ'],
+    [21,'Statü değişikliği','ALAMAZ','ALAMAZ','ALAMAZ'],
+    [22,'Diğer nedenler','ALAMAZ','ALAMAZ','ALAMAZ'],
+    [23,'İşçi tarafından zorunlu nedenle fesih','ALIR','ALAMAZ','ALIR'],
+    [24,'İşçi tarafından sağlık nedeniyle fesih','ALIR','ALAMAZ','ALIR'],
+    [25,'İşçi tarafından işverenin ahlak ve iyiniyet kurallarına aykırı davranışı nedeni ile fesih','ALIR','ALAMAZ','ALIR'],
+    [26,'Disiplin kurulu kararı ile fesih','ALAMAZ','ALAMAZ','ALAMAZ'],
+    [27,'İşveren tarafından zorunlu nedenlerle ve tutukluluk nedeniyle fesih','ALIR','ALAMAZ','ALIR'],
+    [28,'İşveren tarafından sağlık nedeni ile fesih','ALIR','ALAMAZ','ALIR'],
+    [29,'Mülga — 1/4/2021 tarihli ve 2021/9 sayılı Genelge','ALAMAZ','ALAMAZ','ALAMAZ'],
+    [30,'Vize süresinin bitimi (iş akdinin askıya alınması halinde kullanılır. Tekrar başlatılmayacaksa "4" nolu kod kullanılır)','ALAMAZ','ALAMAZ','ALAMAZ'],
+    [31,'Borçlar K., Sendikalar K., Grev ve Lokavt K. kapsamında kendi istek ve kusuru dışında fesih','ALIR','ALIR','ALIR'],
+    [32,'4046 sayılı Kanunun 21. maddesine göre özelleştirme nedeni ile feshi','ALIR','ALIR','ALIR'],
+    [33,'Gazeteci tarafından sözleşmenin feshi','ALIR','ALAMAZ','ALIR'],
+    [34,'İşyerinin devri, işin veya işyerinin niteliğinin değişmesi nedeniyle fesih','ALIR','ALIR','ALIR'],
+    [35,'6495 SK nedeniyle devlet memurluğuna geçenler','ALAMAZ','ALAMAZ','ALAMAZ'],
+    [36,'KHK ile işyerinin kapatılması','ALAMAZ','ALAMAZ','ALAMAZ'],
+    [37,'KHK ile kamu görevinden çıkarma','ALAMAZ','ALAMAZ','ALAMAZ'],
+    [38,'Doğum nedeniyle işten ayrılma','ALAMAZ','ALAMAZ','ALAMAZ'],
+    [39,'696 KHK ile kamu işçiliğine geçiş','ALAMAZ','ALAMAZ','ALAMAZ'],
+    [40,'696 KHK ile kamu işçiliğine geçilmemesi sebebiyle çıkış','ALIR','ALIR','ALAMAZ'],
+    [41,'Re\'sen işten ayrılış bildirgesi düzenlenenler','ALAMAZ','ALAMAZ','ALAMAZ'],
+    [42,'İşçinin işe alınırken gerekli vasıf/şartların bulunmadığı halde bulunduğunu ileri sürerek ya da gerçeğe aykırı bilgi/söz ile işvereni yanıltması','ALAMAZ','ALAMAZ','ALAMAZ'],
+    [43,'İşçinin işveren/aile üyelerinin şeref-namusuna dokunacak söz/davranışta bulunması ya da asılsız ihbar/isnadı — 4857/25-II-B','ALAMAZ','ALAMAZ','ALAMAZ'],
+    [44,'İşçinin işverenin başka bir işçisine cinsel tacizde bulunması — 4857/25-II-C','ALAMAZ','ALAMAZ','ALAMAZ'],
+    [45,'İşçinin işverene/aile üyesine sataşması yahut işyerine sarhoş/uyuşturucu almış gelmesi ya da işyerinde bu maddeleri kullanması','ALAMAZ','ALAMAZ','ALAMAZ'],
+    [46,'İşçinin işverenin güvenini kötüye kullanma, hırsızlık, meslek sırlarını ifşa gibi doğruluk ve bağlılığa uymayan davranışları','ALAMAZ','ALAMAZ','ALAMAZ'],
+    [47,'İşçinin işyerinde yedi günden fazla hapisle cezalandırılan ve cezası ertelenmeyen bir suç işlemesi','ALAMAZ','ALAMAZ','ALAMAZ'],
+    [48,'İşçinin izinsiz/haklı sebep olmaksızın art arda 2 iş günü, ya da bir ayda tatil sonrası 2 kez ya da bir ayda 3 iş günü işe gelmemesi','ALAMAZ','ALAMAZ','ALAMAZ'],
+    [49,'İşçinin yapmakla ödevli olduğu görevleri hatırlatıldığı halde yapmamakta ısrar etmesi','ALAMAZ','ALAMAZ','ALAMAZ'],
+    [50,'İşçinin kendi isteği/savsaması yüzünden iş güvenliğini tehlikeye düşürmesi ya da işyeri malına 30 günlük ücretiyle ödenemeyecek derecede zarar vermesi','ALAMAZ','ALAMAZ','ALAMAZ'],
+    ];
+    let h='<div class="ref-note">İşten ayrılış nedenine (SGK çıkış koduna) göre kıdem tazminatı, ihbar tazminatı ve işsizlik maaşı hakkı. Aşağıdaki tabloda arama yapabilirsiniz.</div>';
+    h+='<input type="text" id="kidem-arama" placeholder="🔍 Kod veya neden ara..." style="width:100%;padding:9px 12px;font-size:13px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;margin-bottom:10px;" oninput="filtreleKidemTablosu(this.value)">';
+    h+='<div style="max-height:55vh;overflow-y:auto;"><table class="ref-table" id="kidem-tablo"><thead><tr><th style="width:6%;">Kod</th><th>İşten Ayrılış Nedeni</th><th style="width:11%;">Kıdem</th><th style="width:11%;">İhbar</th><th style="width:11%;">İşsizlik</th></tr></thead><tbody>';
+    V.forEach(x=>{
+      h+=`<tr data-arama="${(x[0]+' '+x[1]).toLowerCase()}"><td>${x[0]}</td><td>${x[1]}</td><td class="${x[2]==='ALIR'?'ref-badge-alir':'ref-badge-alamaz'}">${x[2]}</td><td class="${x[3]==='ALIR'?'ref-badge-alir':'ref-badge-alamaz'}">${x[3]}</td><td class="${x[4]==='ALIR'?'ref-badge-alir':'ref-badge-alamaz'}">${x[4]}</td></tr>`;
+    });
+    h+='</tbody></table></div>';
+    return h;
+  },
+
+  // ── SGK ÇIKIŞ KODLARI ──────────────────────────────────────────
+  'sgk-kodlari':function(){
+    const K=[
+    [1,'Deneme süreli iş sözleşmesinin işverence feshi'],
+    [2,'Deneme süreli iş sözleşmesinin işçi tarafından feshi'],
+    [3,'Belirsiz süreli iş sözleşmesinin işçi tarafından feshi (istifa)'],
+    [4,'Belirsiz süreli iş sözleşmesinin işveren tarafından haklı sebep bildirilmeden feshi'],
+    [5,'Belirli süreli iş sözleşmesinin sona ermesi'],
+    [8,'Emeklilik (yaşlılık) veya toptan ödeme nedeniyle'],
+    [9,'Malulen emeklilik nedeniyle'],
+    [10,'Ölüm'],
+    [11,'İş kazası sonucu ölüm'],
+    [12,'Askerlik'],
+    [13,'Kadın işçinin evlenmesi'],
+    [14,'Emeklilik için yaş dışında diğer şartların tamamlanması'],
+    [15,'Toplu işçi çıkarma'],
+    [16,'Sözleşme sona ermeden sigortalının aynı işverene ait diğer işyerine nakli'],
+    [17,'İşyerinin kapanması'],
+    [18,'İşin sona ermesi'],
+    [19,'Mevsim bitimi (askıya alma; tekrar başlatılmayacaksa "4" kullanılır)'],
+    [20,'Kampanya bitimi (askıya alma; tekrar başlatılmayacaksa "4" kullanılır)'],
+    [21,'Statü değişikliği'],
+    [22,'Diğer nedenler'],
+    [23,'İşçi tarafından zorunlu nedenle fesih'],
+    [24,'İşçi tarafından sağlık nedeniyle fesih'],
+    [25,'İşçi tarafından işverenin ahlak/iyiniyet kurallarına aykırı davranışı nedeniyle fesih'],
+    [26,'Disiplin kurulu kararı ile fesih'],
+    [27,'İşveren tarafından zorunlu nedenlerle ve tutukluluk nedeniyle fesih'],
+    [28,'İşveren tarafından sağlık nedeni ile fesih'],
+    [30,'Vize süresinin bitimi (askıya alma; tekrar başlatılmayacaksa "4" kullanılır)'],
+    [31,'Borçlar K., Sendikalar K., Grev ve Lokavt K. kapsamında kendi istek/kusuru dışında fesih'],
+    [32,'4046 sayılı Kanun m.21 — özelleştirme nedeniyle fesih'],
+    [33,'Gazeteci tarafından sözleşmenin feshi'],
+    [34,'İşyerinin devri, işin/işyerinin niteliğinin değişmesi nedeniyle fesih'],
+    [37,'KHK ile kamu görevinden çıkarma'],
+    [38,'Doğum nedeniyle işten ayrılma'],
+    [39,'696 KHK ile kamu işçiliğine geçiş'],
+    [40,'696 KHK ile kamu işçiliğine geçilememesi sebebiyle çıkış'],
+    [42,'4857/25-II-A'],
+    [43,'4857/25-II-B'],
+    [44,'4857/25-II-C'],
+    [45,'4857/25-II-D'],
+    [46,'4857/25-II-E'],
+    [47,'4857/25-II-F'],
+    [48,'4857/25-II-G'],
+    [49,'4857/25-II-H'],
+    [50,'4857/25-II-I'],
+    ];
+    let h='<div class="ref-note">İşten ayrılış bildirgesinde kullanılan SGK çıkış kodlarının hızlı referans listesi. 42-50 arası kodlar 4857 sayılı Kanun m.25/II bentlerine karşılık gelir — ayrıntılı gerekçeler için "İşten Ayrılış Nedenine Göre Tazminat Hakları" kartına bakabilirsiniz.</div>';
+    h+='<input type="text" id="sgk-arama" placeholder="🔍 Kod veya açıklama ara..." style="width:100%;padding:9px 12px;font-size:13px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;margin-bottom:10px;" oninput="filtreleSgkTablosu(this.value)">';
+    h+='<div style="max-height:55vh;overflow-y:auto;"><table class="ref-table" id="sgk-tablo"><thead><tr><th style="width:12%;">Kod</th><th>Açıklama</th></tr></thead><tbody>';
+    K.forEach(x=>{h+=`<tr data-arama="${(x[0]+' '+x[1]).toLowerCase()}"><td style="font-weight:700;">${x[0]}</td><td>${x[1]}</td></tr>`;});
+    h+='</tbody></table></div>';
+    return h;
+  },
+};
+function filtreleKidemTablosu(q){
+  q=(q||'').toLowerCase();
+  document.querySelectorAll('#kidem-tablo tbody tr').forEach(tr=>{
+    tr.style.display=tr.dataset.arama.includes(q)?'':'none';
+  });
+}
+function filtreleSgkTablosu(q){
+  q=(q||'').toLowerCase();
+  document.querySelectorAll('#sgk-tablo tbody tr').forEach(tr=>{
+    tr.style.display=tr.dataset.arama.includes(q)?'':'none';
+  });
+}
+
 function showView(v,el){
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.nav-item,.mobile-nav-item').forEach(x=>x.classList.remove('active'));
   document.getElementById('view-'+v).classList.add('active');
   if(el)el.classList.add('active');
-  document.getElementById('topbar-title').textContent={dashboard:'Özet',takvim:'Takvim',liste:'Tüm Kayıtlar',tamamlanan:'Tamamlanan İşler'}[v]||'Takvim';
+  document.getElementById('topbar-title').textContent={dashboard:'Özet',takvim:'Takvim',liste:'Tüm Kayıtlar',tamamlanan:'Tamamlanan İşler',referans:'Referans'}[v]||'Takvim';
   if(v==='takvim')renderCal();
   if(v==='liste')renderListe();
   if(v==='dashboard')renderDashboard();
   if(v==='tamamlanan')renderTamamlanan();
+  if(v==='referans')renderReferans();
 }
 
 authBaslat();
@@ -3251,6 +3625,16 @@ authBaslat();
       <button class="sonuc-btn mazeret" onclick="ekSureTalebiUygula('1ay')"><span>📅</span><span>+1 Ay</span></button>
       <button class="btn" style="width:100%;margin-top:8px;" onclick="closeEkSureOverlay()">Vazgeç</button>
     </div>
+  </div>
+</div>
+<div class="referans-detay-overlay" id="referans-detay-overlay" style="display:none;" onclick="closeReferansDetay()">
+  <div class="referans-detay-modal" onclick="event.stopPropagation()" ontouchstart="swipeStart(event)" ontouchend="swipeEnd(event,closeReferansDetay)">
+    <div style="width:40px;height:4px;background:var(--border2);border-radius:2px;margin:10px auto 0;"></div>
+    <div class="referans-detay-header">
+      <h2 id="ref-baslik" style="font-size:15px;font-weight:700;"></h2>
+      <button class="btn" onclick="closeReferansDetay()">✕</button>
+    </div>
+    <div id="ref-body" style="padding:16px 20px 24px;"></div>
   </div>
 </div>
 <div class="kayit-modal-overlay" id="kayit-modal" style="display:none;" onclick="closeKayitModal()">
