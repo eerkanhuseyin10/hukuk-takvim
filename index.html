@@ -778,6 +778,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
       <!-- GENEL İŞ -->
       <div id="form-genel" style="display:none;">
+        <div class="fg istipi-wrap-genel">
+          <label>İş Tipi (opsiyonel — seçince başlığı doldurur)</label>
+          <input class="istipi-search istipi-search-genel" id="istipi-search-genel" type="text" placeholder="Arama veya seçiniz..." oninput="filterIstipiGenel(this.value)" onfocus="showIstipiListGenel()">
+          <div class="istipi-list" id="istipi-list-genel" style="display:none;"></div>
+        </div>
         <div class="fg"><label>İş Başlığı</label><input type="text" id="f-genel-baslik" placeholder="İş başlığı girin" autocomplete="new-password"></div>
         <div class="frow">
           <div class="fg"><label>Tarih</label><input type="date" id="f-genel-tarih"></div>
@@ -1436,6 +1441,18 @@ function filterIstipi(val){renderIstipiList(val);document.getElementById('istipi
 function showIstipiList(){renderIstipiList(document.getElementById('istipi-search').value);document.getElementById('istipi-list').style.display='block';}
 function selectIstipi(val){selectedIstipi=val;document.getElementById('istipi-search').value=val;document.getElementById('f-istipi-val').value=val;document.getElementById('f-istipi-text').value=val;document.getElementById('istipi-list').style.display='none';hesapla();}
 document.addEventListener('click',e=>{if(!e.target.closest('.istipi-wrap')&&!e.target.closest('.istipi-search')){const l=document.getElementById('istipi-list');if(l)l.style.display='none';}});
+// ── GENEL İŞ İÇİN İŞ TİPİ HIZLI SEÇİCİ ─────────────────────────────
+function renderIstipiListGenel(filter=''){
+  const list=document.getElementById('istipi-list-genel');
+  if(!list)return;
+  const filtered=filter?IS_TIPLERI.filter(x=>x.toLowerCase().includes(filter.toLowerCase())):IS_TIPLERI;
+  if(!filtered.length){list.innerHTML='<div class="istipi-item" style="color:var(--text3);">Sonuç yok</div>';return;}
+  list.innerHTML=filtered.map(x=>`<div class="istipi-item" onclick="selectIstipiGenel('${x.replace(/'/g,"\\'")}')">${x}</div>`).join('');
+}
+function filterIstipiGenel(val){renderIstipiListGenel(val);document.getElementById('istipi-list-genel').style.display='block';}
+function showIstipiListGenel(){renderIstipiListGenel(document.getElementById('istipi-search-genel').value);document.getElementById('istipi-list-genel').style.display='block';}
+function selectIstipiGenel(val){document.getElementById('istipi-search-genel').value=val;document.getElementById('f-genel-baslik').value=val;document.getElementById('istipi-list-genel').style.display='none';}
+document.addEventListener('click',e=>{if(!e.target.closest('.istipi-wrap-genel')&&!e.target.closest('.istipi-search-genel')){const l=document.getElementById('istipi-list-genel');if(l)l.style.display='none';}});
 
 // ── YIL ───────────────────────────────────────────────────────────
 function renderDrum(id){
@@ -1791,7 +1808,7 @@ function openModal(editRecord,prefillDate){
   document.querySelectorAll('.chip,.type-tab,.sure-birim-btn').forEach(c=>c.classList.remove('sel'));
   document.querySelector('.type-tab').classList.add('sel');
   const cy=new Date().getFullYear();
-  ['f-teblig-tarihi','f-mahkeme','f-dava-no','f-muvekkil','f-not-sure','f-sure-miktar','f-durusma-mahkeme-adi','f-durusma-no','f-durusma-muvekkil','f-durusma-not','f-durusma-saat','f-genel-baslik','f-genel-mahkeme','f-genel-no','f-genel-muvekkil','f-genel-aciklama','f-genel-saat','istipi-search','f-istipi-val','f-istipi-text','f-durusma-randevu-mahkeme'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});;
+  ['f-teblig-tarihi','f-mahkeme','f-dava-no','f-muvekkil','f-not-sure','f-sure-miktar','f-durusma-mahkeme-adi','f-durusma-no','f-durusma-muvekkil','f-durusma-not','f-durusma-saat','f-genel-baslik','f-genel-mahkeme','f-genel-no','f-genel-muvekkil','f-genel-aciklama','f-genel-saat','istipi-search','f-istipi-val','f-istipi-text','f-durusma-randevu-mahkeme','istipi-search-genel'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});;
   setYil('f-dava-yil',cy);setYil('f-durusma-yil',cy);setYil('f-genel-yil',cy);
   const today=prefillDate||'';
   document.getElementById('f-durusma-tarih').value=today;
@@ -1813,6 +1830,7 @@ function openModal(editRecord,prefillDate){
   const ftbd=document.getElementById('f-tekrar-bitis-d');if(ftbd)ftbd.value='';
   document.getElementById('eteb-uyari').style.display='none';
   document.getElementById('istipi-list').style.display='none';
+  const ilg=document.getElementById('istipi-list-genel');if(ilg)ilg.style.display='none';
   document.getElementById('form-sure').style.display='block';
   document.getElementById('form-durusma').style.display='none';
   document.getElementById('form-genel').style.display='none';
@@ -3235,10 +3253,8 @@ function renderTamamlanan(){
 // ══════════════════════════════════════════════════════════════════
 const REFERANS_ITEMS=[
   {id:'aaut-tarife',baslik:'AAÜT 2026 Tarifesi',ozet:'Avukatlık Asgari Ücret Tarifesi — 2025/2026 karşılaştırmalı tam tarife',icon:'⚖️'},
-  {id:'maktu-nispi',baslik:'Maktu mu Nispi mi?',ozet:'AAÜT m.13 karar şeması ve istisna hükümleri (m.7, m.9, m.10, m.11, m.12, m.16, m.17)',icon:'🧭'},
   {id:'ucretli-izinler',baslik:'İşveren Tarafından Verilmesi Gereken Ücretli İzinler',ozet:'Yıllık izin, evlilik, doğum, ölüm, süt izni vb. süreleri ve kriterleri',icon:'🗓️'},
   {id:'kidem-ihbar',baslik:'İşten Ayrılış Nedenine Göre Tazminat Hakları',ozet:'50 SGK çıkış koduna göre kıdem, ihbar tazminatı ve işsizlik maaşı hakkı',icon:'💼'},
-  {id:'sgk-kodlari',baslik:'SGK Çıkış Kodları (50 Kod)',ozet:'İşten ayrılış bildirgesinde kullanılan kodların hızlı referans listesi',icon:'🔢'},
 ];
 function renderReferans(){
   const wrap=document.getElementById('referans-grid');
@@ -3384,35 +3400,6 @@ const REFERANS_ICERIK={
     return h;
   },
 
-  // ── MAKTU MU NİSPİ Mİ ──────────────────────────────────────────
-  'maktu-nispi':function(){
-    let h='<div class="ref-note">AAÜT m.13 karar şeması — bir işin maktu mu yoksa nispi ücrete mi tabi olduğunu belirlemek için izlenecek yol.</div>';
-    h+='<div class="ref-section-title">Karar Akışı</div>';
-    h+='<div class="ref-flow-box"><b>BAŞLA →</b> Konu para veya parayla ölçülebilir mi?</div>';
-    h+='<div class="ref-flow-box" style="margin-left:16px;"><b>HAYIR</b> → <span style="color:var(--navy);font-weight:700;">MAKTU ÜCRET</span> (2. Kısım 2. Bölüm)</div>';
-    h+='<div class="ref-flow-box" style="margin-left:16px;"><b>EVET</b> → Özel bir madde maktuyu mu emrediyor?</div>';
-    h+='<div class="ref-flow-box" style="margin-left:32px;"><b>EVET</b> → <span style="color:#92400e;font-weight:700;">İSTİSNALAR</span> (aşağıdaki istisna hükümlerine göre ücret belirlenir)</div>';
-    h+='<div class="ref-flow-box" style="margin-left:32px;"><b>HAYIR</b> → <span style="color:#166534;font-weight:700;">NİSPİ ÜCRET</span> (3. Kısım) — Taban: 2. kısım maktu ücreti</div>';
-
-    h+='<div class="ref-section-title">İstisna Hükümleri</div>';
-    const istisnalar=[
-      ['Ön şart yokluğu / husumet','m.7/2','Nispi, ama 2. kısım tavanını geçemez'],
-      ['Tahliye / kira tespiti / nafaka','m.9','1 yıllık bedel üzerinden nispi, maktu taban'],
-      ['Manevi tazminat tamamen reddedilirse','m.10/3','Maktu'],
-      ['İcra takibi 56.250 TL altı','m.11/1','Maktu (asıl alacağı geçemez)'],
-      ['Tüketici hakem heyeti itirazı','m.12/1-2','Nispi, kabul/red miktarını geçemez'],
-      ['Dava şartı arabuluculuk, konusu para','m.16/2(a)','Nispi ücretin 1/4 fazlası'],
-      ['Dava şartı arabuluculuk, konusu para değil','m.16/2(b)','Maktu ücretin 1/4 fazlası'],
-      ['Sigorta Tahkim, para ile ölçülemeyen iş','m.17/2','Maktu'],
-    ];
-    h+='<table class="ref-table"><thead><tr><th>#</th><th>Durum</th><th>Madde</th><th>Sonuç</th></tr></thead><tbody>';
-    istisnalar.forEach((x,i)=>{h+=`<tr><td><span class="ref-flow-num">${i+1}</span></td><td>${x[0]}</td><td>${x[1]}</td><td>${x[2]}</td></tr>`;});
-    h+='</tbody></table>';
-
-    h+='<div class="ref-note"><b>Özet İlke:</b> Konu para/parayla ölçülebilirse → <b>Nispi</b> (3. Kısım); konu para değilse veya özel hüküm maktuyu emrediyorsa → <b>Maktu</b> (2. Kısım 2. Bölüm). Çoğu nispi hesapta 2. kısımdaki maktu ücret <b>TABAN</b> işlevi görür.</div>';
-    return h;
-  },
-
   // ── ÜCRETLİ İZİNLER ────────────────────────────────────────────
   'ucretli-izinler':function(){
     const izinler=[
@@ -3497,72 +3484,10 @@ const REFERANS_ICERIK={
     h+='</tbody></table></div>';
     return h;
   },
-
-  // ── SGK ÇIKIŞ KODLARI ──────────────────────────────────────────
-  'sgk-kodlari':function(){
-    const K=[
-    [1,'Deneme süreli iş sözleşmesinin işverence feshi'],
-    [2,'Deneme süreli iş sözleşmesinin işçi tarafından feshi'],
-    [3,'Belirsiz süreli iş sözleşmesinin işçi tarafından feshi (istifa)'],
-    [4,'Belirsiz süreli iş sözleşmesinin işveren tarafından haklı sebep bildirilmeden feshi'],
-    [5,'Belirli süreli iş sözleşmesinin sona ermesi'],
-    [8,'Emeklilik (yaşlılık) veya toptan ödeme nedeniyle'],
-    [9,'Malulen emeklilik nedeniyle'],
-    [10,'Ölüm'],
-    [11,'İş kazası sonucu ölüm'],
-    [12,'Askerlik'],
-    [13,'Kadın işçinin evlenmesi'],
-    [14,'Emeklilik için yaş dışında diğer şartların tamamlanması'],
-    [15,'Toplu işçi çıkarma'],
-    [16,'Sözleşme sona ermeden sigortalının aynı işverene ait diğer işyerine nakli'],
-    [17,'İşyerinin kapanması'],
-    [18,'İşin sona ermesi'],
-    [19,'Mevsim bitimi (askıya alma; tekrar başlatılmayacaksa "4" kullanılır)'],
-    [20,'Kampanya bitimi (askıya alma; tekrar başlatılmayacaksa "4" kullanılır)'],
-    [21,'Statü değişikliği'],
-    [22,'Diğer nedenler'],
-    [23,'İşçi tarafından zorunlu nedenle fesih'],
-    [24,'İşçi tarafından sağlık nedeniyle fesih'],
-    [25,'İşçi tarafından işverenin ahlak/iyiniyet kurallarına aykırı davranışı nedeniyle fesih'],
-    [26,'Disiplin kurulu kararı ile fesih'],
-    [27,'İşveren tarafından zorunlu nedenlerle ve tutukluluk nedeniyle fesih'],
-    [28,'İşveren tarafından sağlık nedeni ile fesih'],
-    [30,'Vize süresinin bitimi (askıya alma; tekrar başlatılmayacaksa "4" kullanılır)'],
-    [31,'Borçlar K., Sendikalar K., Grev ve Lokavt K. kapsamında kendi istek/kusuru dışında fesih'],
-    [32,'4046 sayılı Kanun m.21 — özelleştirme nedeniyle fesih'],
-    [33,'Gazeteci tarafından sözleşmenin feshi'],
-    [34,'İşyerinin devri, işin/işyerinin niteliğinin değişmesi nedeniyle fesih'],
-    [37,'KHK ile kamu görevinden çıkarma'],
-    [38,'Doğum nedeniyle işten ayrılma'],
-    [39,'696 KHK ile kamu işçiliğine geçiş'],
-    [40,'696 KHK ile kamu işçiliğine geçilememesi sebebiyle çıkış'],
-    [42,'4857/25-II-A'],
-    [43,'4857/25-II-B'],
-    [44,'4857/25-II-C'],
-    [45,'4857/25-II-D'],
-    [46,'4857/25-II-E'],
-    [47,'4857/25-II-F'],
-    [48,'4857/25-II-G'],
-    [49,'4857/25-II-H'],
-    [50,'4857/25-II-I'],
-    ];
-    let h='<div class="ref-note">İşten ayrılış bildirgesinde kullanılan SGK çıkış kodlarının hızlı referans listesi. 42-50 arası kodlar 4857 sayılı Kanun m.25/II bentlerine karşılık gelir — ayrıntılı gerekçeler için "İşten Ayrılış Nedenine Göre Tazminat Hakları" kartına bakabilirsiniz.</div>';
-    h+='<input type="text" id="sgk-arama" placeholder="🔍 Kod veya açıklama ara..." style="width:100%;padding:9px 12px;font-size:13px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;margin-bottom:10px;" oninput="filtreleSgkTablosu(this.value)">';
-    h+='<div style="max-height:55vh;overflow-y:auto;"><table class="ref-table" id="sgk-tablo"><thead><tr><th style="width:12%;">Kod</th><th>Açıklama</th></tr></thead><tbody>';
-    K.forEach(x=>{h+=`<tr data-arama="${(x[0]+' '+x[1]).toLowerCase()}"><td style="font-weight:700;">${x[0]}</td><td>${x[1]}</td></tr>`;});
-    h+='</tbody></table></div>';
-    return h;
-  },
 };
 function filtreleKidemTablosu(q){
   q=(q||'').toLowerCase();
   document.querySelectorAll('#kidem-tablo tbody tr').forEach(tr=>{
-    tr.style.display=tr.dataset.arama.includes(q)?'':'none';
-  });
-}
-function filtreleSgkTablosu(q){
-  q=(q||'').toLowerCase();
-  document.querySelectorAll('#sgk-tablo tbody tr').forEach(tr=>{
     tr.style.display=tr.dataset.arama.includes(q)?'':'none';
   });
 }
