@@ -1040,19 +1040,31 @@ async function lySilMahkeme(deger){
   renderListeYonetim();
 }
 // ── GELİŞTİRME NOTLARI ──────────────────────────────────────────────
+const ADMIN_BURO_ID='0d961c7f-fb7f-4679-95da-06704dcea589';
 let GELISTIRME_NOTLARI=[];
+let TUM_BUROLARDAN_NOTLAR=[];
 async function notlariYukle(){
   if(!_buro)return;
   const{data,error}=await sb.from('gelistirme_notlari').select('*').eq('buro_id',_buro.id).order('created_at',{ascending:false});
   if(error){console.warn('Notlar okunamadı (tablo kurulmamış olabilir):',error.message);return;}
   GELISTIRME_NOTLARI=data||[];
+  if(_buro.id===ADMIN_BURO_ID)await tumBurolardanNotlariYukle();
+}
+async function tumBurolardanNotlariYukle(){
+  const{data,error}=await sb.from('gelistirme_notlari').select('*').neq('buro_id',ADMIN_BURO_ID).order('created_at',{ascending:false});
+  if(error){console.warn('Diğer bürolardan notlar okunamadı:',error.message);return;}
+  const notlar=data||[];
+  const buroIdler=[...new Set(notlar.map(n=>n.buro_id))];
+  let adMap={};
+  if(buroIdler.length){
+    const{data:burolar}=await sb.from('burolar').select('id,ad').in('id',buroIdler);
+    (burolar||[]).forEach(b=>{adMap[b.id]=b.ad;});
+  }
+  TUM_BUROLARDAN_NOTLAR=notlar.map(n=>({...n,buro_adi:adMap[n.buro_id]||'Bilinmeyen Büro'}));
 }
 function renderNotlar(){
   const el=document.getElementById('notlar-liste');
   if(!el)return;
-  if(!GELISTIRME_NOTLARI.length){el.innerHTML='<div class="ly-empty">Henüz not eklenmemiş.</div>';return;}
-  const aktif=GELISTIRME_NOTLARI.filter(n=>!n.tamamlandi);
-  const biten=GELISTIRME_NOTLARI.filter(n=>n.tamamlandi);
   const satir=n=>`<div class="not-row${n.tamamlandi?' done':''}">
     <input type="checkbox" ${n.tamamlandi?'checked':''} onchange="notToggle(${n.id},this.checked)">
     <div style="flex:1;">
@@ -1061,7 +1073,28 @@ function renderNotlar(){
     </div>
     <button onclick="notSil(${n.id})">🗑</button>
   </div>`;
-  el.innerHTML=aktif.map(satir).join('')+(biten.length?`<div style="font-size:11px;color:var(--text3);margin:14px 0 6px;text-transform:uppercase;letter-spacing:.06em;">Tamamlanan (${biten.length})</div>`+biten.map(satir).join(''):'');
+  let html='';
+  if(!GELISTIRME_NOTLARI.length){
+    html='<div class="ly-empty">Henüz not eklenmemiş.</div>';
+  } else {
+    const aktif=GELISTIRME_NOTLARI.filter(n=>!n.tamamlandi);
+    const biten=GELISTIRME_NOTLARI.filter(n=>n.tamamlandi);
+    html=aktif.map(satir).join('')+(biten.length?`<div style="font-size:11px;color:var(--text3);margin:14px 0 6px;text-transform:uppercase;letter-spacing:.06em;">Tamamlanan (${biten.length})</div>`+biten.map(satir).join(''):'');
+  }
+  if(_buro?.id===ADMIN_BURO_ID){
+    html+='<div class="ref-section-title">🌐 Diğer Bürolardan Gelen Notlar (salt okunur)</div>';
+    if(!TUM_BUROLARDAN_NOTLAR.length){
+      html+='<div class="ly-empty">Henüz başka büro not bırakmadı.</div>';
+    } else {
+      html+=TUM_BUROLARDAN_NOTLAR.map(n=>`<div class="not-row" style="opacity:0.85;">
+        <div style="flex:1;">
+          <div class="not-metin">${esc(n.not_metni)}</div>
+          <div class="not-tarih"><b>${esc(n.buro_adi)}</b>${n.yazan?' · '+esc(n.yazan):''} · ${formatDate((n.created_at||'').split('T')[0])}${n.tamamlandi?' · ✓ tamamlandı':''}</div>
+        </div>
+      </div>`).join('');
+    }
+  }
+  el.innerHTML=html;
 }
 function openNotlar(){
   renderNotlar();
