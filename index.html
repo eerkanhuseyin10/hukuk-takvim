@@ -12,7 +12,7 @@
 <meta name="theme-color" content="#1a1a1a">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -3474,46 +3474,126 @@ function roundRectPath(ctx,x,y,w,h,r){
 }
 
 function kayitPaylasimMetni(r){
-  return `📌 ${getBaslik(r)}\n\nMüvekkil: ${r.muvekkil||'-'}\nMahkeme: ${r.mahkeme||'-'}\nDosya No: ${r.dava||'-'}\nTarih: ${formatDate(r.date)}${r.saat?' '+r.saat:''}\nTür: ${typeLabel(r.type,r.dal)}${r.not?'\n\nNot: '+r.not:''}`;
+  return `📌 ${getBaslik(r)}\n\nMüvekkil: ${r.muvekkil||'-'}\nMahkeme: ${r.mahkeme||'-'}\nDosya No: ${r.dava||'-'}\nTarih: ${formatDate(r.date)}${r.saat?' '+r.saat:''}\nTür: ${typeLabel(r.type,r.dal)}${r.not?'\n\nNot: '+r.not:''}\n\n— ${_buro?.ad||''}`;
+}
+
+async function fontlariHazirla(){
+  try{
+    await Promise.all([
+      document.fonts.load("800 44px Inter"),
+      document.fonts.load("700 32px Inter"),
+      document.fonts.load("600 30px Inter"),
+      document.fonts.load("500 26px Inter"),
+      document.fonts.load("400 26px Inter"),
+    ]);
+    await document.fonts.ready;
+  }catch(e){}
 }
 
 function kayitKartCanvas(r){
-  const W=1080,H=1350;
+  const W=1080,H=1400;
+  const buroAdi=_buro?.ad||'Büro';
+  const monogram=buroAdi.trim().charAt(0).toLocaleUpperCase('tr-TR')||'B';
   const c=document.createElement('canvas');
   c.width=W;c.height=H;
   const ctx=c.getContext('2d');
-  ctx.fillStyle='#f5f6f8';ctx.fillRect(0,0,W,H);
-  roundRectPath(ctx,70,70,W-140,H-140,42);ctx.fillStyle='#ffffff';ctx.fill();
-  ctx.strokeStyle='#e2e5ea';ctx.lineWidth=3;ctx.stroke();
-  ctx.fillStyle='#1f1f1f';roundRectPath(ctx,70,70,W-140,148,42);ctx.fill();
-  ctx.fillStyle='#d4af70';ctx.font='700 42px Segoe UI, Arial, sans-serif';ctx.fillText('Sekreter',110,135);
-  ctx.fillStyle='rgba(255,255,255,0.72)';ctx.font='400 28px Segoe UI, Arial, sans-serif';ctx.fillText('İş Kartı',110,178);
+  const F=(w,s)=>`${w} ${s}px Inter, 'Segoe UI', Arial, sans-serif`;
+
+  // Dış zemin — hafif degrade
+  const bgGrad=ctx.createLinearGradient(0,0,0,H);
+  bgGrad.addColorStop(0,'#eef0f3');bgGrad.addColorStop(1,'#e4e7ec');
+  ctx.fillStyle=bgGrad;ctx.fillRect(0,0,W,H);
+
+  // Kart gövdesi — gölge + beyaz kart
+  ctx.save();
+  ctx.shadowColor='rgba(20,20,30,0.18)';ctx.shadowBlur=46;ctx.shadowOffsetY=18;
+  roundRectPath(ctx,64,64,W-128,H-128,30);ctx.fillStyle='#ffffff';ctx.fill();
+  ctx.restore();
+  roundRectPath(ctx,64,64,W-128,H-128,30);ctx.strokeStyle='#e4e6ea';ctx.lineWidth=2;ctx.stroke();
+
+  // Üst başlık şeridi — lacivert
+  roundRectPath(ctx,64,64,W-128,158,30);
+  ctx.save();ctx.clip();
+  ctx.fillStyle='#1f1f1f';ctx.fillRect(64,64,W-128,158);
+  ctx.restore();
+
+  // Monogram rozeti
+  ctx.beginPath();ctx.arc(146,143,38,0,Math.PI*2);ctx.fillStyle='#d4af70';ctx.fill();
+  ctx.fillStyle='#1a1a1a';ctx.font=F(800,32);ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(monogram,146,145);
+  ctx.textAlign='left';ctx.textBaseline='alphabetic';
+
+  // Büro adı + alt başlık
+  ctx.fillStyle='#ffffff';ctx.font=F(700,36);ctx.fillText(buroAdi,204,133);
+  ctx.fillStyle='rgba(255,255,255,0.55)';ctx.font=F(500,24);ctx.fillText('İş Bilgilendirme Kartı',204,168);
+
+  // Durum rozeti (sağ üst)
   const typeColor={sure:'#ef4444',durusma:'#3b82f6',genel:'#22c55e',tekrar:'#f59e0b'}[r.type]||'#6b7280';
-  ctx.fillStyle=typeColor;roundRectPath(ctx,760,112,210,50,25);ctx.fill();
-  ctx.fillStyle='#ffffff';ctx.font='700 24px Segoe UI, Arial, sans-serif';ctx.textAlign='center';ctx.fillText(typeLabel(r.type,r.dal),865,146);ctx.textAlign='left';
-  ctx.fillStyle='#1a1d23';ctx.font='700 50px Segoe UI, Arial, sans-serif';
-  let y=300;y=wrapCanvasText(ctx,getBaslik(r),110,y,860,62,3)+28;
-  function row(label,value){
-    if(!value) value='-';
-    ctx.fillStyle='#9aa0ac';ctx.font='700 24px Segoe UI, Arial, sans-serif';ctx.fillText(label.toUpperCase(),110,y);
-    y+=36;ctx.fillStyle='#1a1d23';ctx.font='600 34px Segoe UI, Arial, sans-serif';
-    y=wrapCanvasText(ctx,value,110,y,860,42,2)+26;
+  const badgeLabel=(r.tamamlandi?'✓ Tamamlandı':typeLabel(r.type,r.dal)).toUpperCase();
+  ctx.font=F(700,22);
+  const badgeW=Math.max(180,ctx.measureText(badgeLabel).width+56);
+  const badgeX=W-64-30-badgeW;
+  roundRectPath(ctx,badgeX,102,badgeW,44,22);ctx.fillStyle=r.tamamlandi?'#16a34a':typeColor;ctx.fill();
+  ctx.fillStyle='#ffffff';ctx.textAlign='center';ctx.fillText(badgeLabel,badgeX+badgeW/2,130);
+  ctx.textAlign='left';
+
+  // Konu başlığı
+  let y=290;
+  ctx.fillStyle='#1a1d23';ctx.font=F(800,46);
+  y=wrapCanvasText(ctx,getBaslik(r),110,y,860,58,2)+18;
+
+  // İnce ayraç
+  ctx.strokeStyle='#e9ebef';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(110,y);ctx.lineTo(970,y);ctx.stroke();
+  y+=48;
+
+  // İki sütunlu bilgi bloğu
+  const colL=110,colR=560,colW=400;
+  function bilgiHucre(x,yy,label,value){
+    ctx.fillStyle='#9aa0ac';ctx.font=F(700,21);
+    ctx.fillText(label.toLocaleUpperCase('tr-TR'),x,yy);
+    ctx.fillStyle='#1a1d23';ctx.font=F(600,30);
+    return wrapCanvasText(ctx,value||'—',x,yy+34,colW,38,2);
   }
-  row('Müvekkil',r.muvekkil||'-');
-  row('Mahkeme',r.mahkeme||'-');
-  row('Dosya No',r.dava||'-');
-  row('Tarih',formatDate(r.date)+(r.saat?' · '+r.saat:''));
-  if(r.dal) row('Dal',dalLabel(r.dal));
+  const yA=bilgiHucre(colL,y,'Müvekkil',r.muvekkil);
+  const yB=bilgiHucre(colR,y,'Mahkeme',r.mahkeme);
+  y=Math.max(yA,yB)+34;
+  const yC=bilgiHucre(colL,y,'Dosya No',r.dava);
+  const yD=bilgiHucre(colR,y,'Tarih',formatDate(r.date)+(r.saat?' · '+r.saat:''));
+  y=Math.max(yC,yD)+34;
+  if(r.dal){
+    y=bilgiHucre(colL,y,'Hukuk Dalı',dalLabel(r.dal))+34;
+  }
+
+  // Not kutusu
   if(r.not){
-    ctx.fillStyle='#9aa0ac';ctx.font='700 24px Segoe UI, Arial, sans-serif';ctx.fillText('NOT',110,y);
-    y+=36;ctx.fillStyle='#5a6070';ctx.font='400 30px Segoe UI, Arial, sans-serif';
-    y=wrapCanvasText(ctx,r.not,110,y,860,40,6)+10;
+    const notBoxY=y;
+    ctx.font=F(400,28);
+    // Yüksekliği önceden ölç
+    const tempLines=String(r.not).replace(/\s+/g,' ').trim().split(' ');
+    let line='',lineCount=1;
+    for(const w of tempLines){const t=line?line+' '+w:w;if(ctx.measureText(t).width>760&&line){lineCount++;line=w;}else{line=t;}}
+    lineCount=Math.min(lineCount,5);
+    const boxH=64+lineCount*36;
+    roundRectPath(ctx,110,notBoxY,860,boxH,16);ctx.fillStyle='#faf6ee';ctx.fill();
+    ctx.strokeStyle='#f0e4c8';ctx.lineWidth=1.5;roundRectPath(ctx,110,notBoxY,860,boxH,16);ctx.stroke();
+    ctx.fillStyle='#a9812f';ctx.font=F(700,20);ctx.fillText('NOT',140,notBoxY+38);
+    ctx.fillStyle='#5a5342';ctx.font=F(400,28);
+    wrapCanvasText(ctx,r.not,140,notBoxY+74,800,36,5);
+    y=notBoxY+boxH+30;
   }
-  ctx.fillStyle='#f0f2f5';roundRectPath(ctx,110,1165,860,86,20);ctx.fill();
-  ctx.fillStyle='#5a6070';ctx.font='500 28px Segoe UI, Arial, sans-serif';
-  ctx.fillText('Paylaşım tarihi: '+formatDate(new Date().toISOString().slice(0,10)),140,1218);
+
+  // Alt bilgi şeridi
+  const footerY=H-64-92;
+  ctx.strokeStyle='#e9ebef';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(110,footerY);ctx.lineTo(970,footerY);ctx.stroke();
+  ctx.fillStyle='#1a1d23';ctx.font=F(700,26);ctx.fillText(buroAdi,110,footerY+42);
+  ctx.fillStyle='#9aa0ac';ctx.font=F(400,22);
+  ctx.fillText(formatDate(new Date().toISOString().slice(0,10))+' tarihinde oluşturuldu',110,footerY+72);
+  ctx.textAlign='right';ctx.fillStyle='#b7bcc5';ctx.font=F(400,20);
+  wrapCanvasText2Right(ctx,'Bu bilgilendirme amaçlıdır, resmi belge niteliği taşımaz.',970,footerY+72);
+  ctx.textAlign='left';
   return c;
 }
+function wrapCanvasText2Right(ctx,text,rightX,y){ctx.fillText(text,rightX,y);}
 
 function canvasToBlob(canvas){
   return new Promise(resolve=>canvas.toBlob(resolve,'image/png',0.95));
@@ -3523,6 +3603,7 @@ async function shareKayitCard(id){
   const r=records.find(x=>x.id===id);
   if(!r) return;
   try{
+    await fontlariHazirla();
     const canvas=kayitKartCanvas(r);
     const blob=await canvasToBlob(canvas);
     const fileName='is-karti-'+(r.dava||getBaslik(r)||r.id).toString().replace(/[^a-zA-Z0-9ğüşöçıİĞÜŞÖÇ-]+/g,'-').slice(0,45)+'.png';
