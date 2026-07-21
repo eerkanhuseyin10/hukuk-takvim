@@ -226,6 +226,12 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .ly-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:6px;font-size:13px;}
 .ly-row button{background:none;border:none;color:#ef4444;cursor:pointer;font-size:13px;padding:2px 6px;flex-shrink:0;}
 .ly-empty{font-size:12.5px;color:var(--text3);padding:6px 2px 16px;}
+.not-row{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:6px;font-size:13px;}
+.not-row input[type=checkbox]{margin-top:3px;flex-shrink:0;accent-color:var(--navy);cursor:pointer;}
+.not-row .not-metin{flex:1;line-height:1.5;word-break:break-word;}
+.not-row.done .not-metin{text-decoration:line-through;color:var(--text3);}
+.not-row .not-tarih{font-size:10.5px;color:var(--text3);margin-top:2px;}
+.not-row button{background:none;border:none;color:#ef4444;cursor:pointer;font-size:13px;padding:2px 4px;flex-shrink:0;}
 .kayit-modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 13px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:1;}
 .kayit-modal-body{padding:16px 20px 24px;}
 .kayit-row{display:flex;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;}
@@ -441,7 +447,42 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <div class="profil-btn-row">
       <button onclick="closeProfil();openProfilimModal()" class="btn btn-primary" style="width:100%;margin-bottom:8px;">👤 Profilim</button>
       <button onclick="closeProfil();openListeYonetim()" class="btn" style="width:100%;margin-bottom:8px;">⚙️ Liste Yönetimi</button>
+      <button onclick="closeProfil();openNotlar()" class="btn" style="width:100%;margin-bottom:8px;">💡 Geliştirme Notları</button>
       <button onclick="cikisYap()" class="btn" style="width:100%;color:#ef4444;border-color:rgba(239,68,68,0.3);">↪ Çıkış Yap</button>
+    </div>
+  </div>
+</div>
+
+<!-- HIZLI NOT — FLOATING BUTON -->
+<button id="hizli-not-btn" onclick="openHizliNot()" title="Geliştirme notu ekle" style="position:fixed;right:18px;bottom:86px;width:48px;height:48px;border-radius:50%;background:#d4af70;color:#1a1a1a;border:none;box-shadow:0 4px 14px rgba(0,0,0,0.25);font-size:20px;cursor:pointer;z-index:250;display:flex;align-items:center;justify-content:center;">💡</button>
+
+<!-- HIZLI NOT MODAL -->
+<div id="hizli-not-overlay" style="position:fixed;inset:0;background:rgba(15,22,40,0.5);display:none;align-items:center;justify-content:center;z-index:410;padding:20px;" onclick="closeHizliNot()">
+  <div style="background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:420px;padding:20px;" onclick="event.stopPropagation()">
+    <div style="font-size:14px;font-weight:700;margin-bottom:10px;">💡 Aklına ne geldiyse not al</div>
+    <textarea id="hn-metin" rows="4" placeholder="Örn: Dava no aramasına baro sicil no da eklensin..." style="width:100%;padding:10px 12px;font-size:13px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;resize:vertical;margin-bottom:10px;" onkeydown="if(event.key==='Enter'&&event.ctrlKey)hizliNotKaydet()"></textarea>
+    <div style="display:flex;gap:8px;">
+      <button class="btn" style="flex:1;" onclick="closeHizliNot()">Vazgeç</button>
+      <button class="btn btn-primary" style="flex:1;" onclick="hizliNotKaydet()">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<!-- GELİŞTİRME NOTLARI MODAL -->
+<div id="notlar-overlay" class="referans-detay-overlay" style="display:none;" onclick="closeNotlar()">
+  <div class="referans-detay-modal" onclick="event.stopPropagation()">
+    <div style="width:40px;height:4px;background:var(--border2);border-radius:2px;margin:10px auto 0;"></div>
+    <div class="referans-detay-header">
+      <h2 style="font-size:15px;font-weight:700;">💡 Geliştirme Notları</h2>
+      <button class="btn" onclick="closeNotlar()">✕</button>
+    </div>
+    <div style="padding:16px 20px 24px;">
+      <div class="ref-note">Uygulamayla ilgili eksik/eklenmesi gereken şeyleri buraya not al, sonra toplu olarak değerlendirelim.</div>
+      <div style="display:flex;gap:8px;margin:10px 0 16px;">
+        <input type="text" id="not-yeni" placeholder="Yeni not..." style="flex:1;padding:9px 12px;font-size:13px;border:1px solid var(--border2);border-radius:var(--radius);font-family:inherit;" onkeydown="if(event.key==='Enter')notEkle()">
+        <button class="btn btn-primary" onclick="notEkle()">Ekle</button>
+      </div>
+      <div id="notlar-liste"></div>
     </div>
   </div>
 </div>
@@ -998,6 +1039,81 @@ async function lySilMahkeme(deger){
   if(_buro){const{error}=await sb.from('secenekler').delete().eq('buro_id',_buro.id).eq('tur','mahkeme').eq('deger',deger);if(error)alert('Silme hatası: '+error.message);}
   renderListeYonetim();
 }
+// ── GELİŞTİRME NOTLARI ──────────────────────────────────────────────
+let GELISTIRME_NOTLARI=[];
+async function notlariYukle(){
+  if(!_buro)return;
+  const{data,error}=await sb.from('gelistirme_notlari').select('*').eq('buro_id',_buro.id).order('created_at',{ascending:false});
+  if(error){console.warn('Notlar okunamadı (tablo kurulmamış olabilir):',error.message);return;}
+  GELISTIRME_NOTLARI=data||[];
+}
+function renderNotlar(){
+  const el=document.getElementById('notlar-liste');
+  if(!el)return;
+  if(!GELISTIRME_NOTLARI.length){el.innerHTML='<div class="ly-empty">Henüz not eklenmemiş.</div>';return;}
+  const aktif=GELISTIRME_NOTLARI.filter(n=>!n.tamamlandi);
+  const biten=GELISTIRME_NOTLARI.filter(n=>n.tamamlandi);
+  const satir=n=>`<div class="not-row${n.tamamlandi?' done':''}">
+    <input type="checkbox" ${n.tamamlandi?'checked':''} onchange="notToggle(${n.id},this.checked)">
+    <div style="flex:1;">
+      <div class="not-metin">${esc(n.not_metni)}</div>
+      <div class="not-tarih">${n.yazan?esc(n.yazan)+' · ':''}${formatDate((n.created_at||'').split('T')[0])}</div>
+    </div>
+    <button onclick="notSil(${n.id})">🗑</button>
+  </div>`;
+  el.innerHTML=aktif.map(satir).join('')+(biten.length?`<div style="font-size:11px;color:var(--text3);margin:14px 0 6px;text-transform:uppercase;letter-spacing:.06em;">Tamamlanan (${biten.length})</div>`+biten.map(satir).join(''):'');
+}
+function openNotlar(){
+  renderNotlar();
+  document.getElementById('notlar-overlay').style.display='flex';
+}
+function closeNotlar(){
+  document.getElementById('notlar-overlay').style.display='none';
+}
+async function notEkle(){
+  const inp=document.getElementById('not-yeni');
+  const metin=(inp.value||'').trim();
+  if(!metin)return;
+  if(!_buro)return;
+  const yazan=_user?.user_metadata?.full_name||_user?.email?.split('@')[0]||null;
+  const{data,error}=await sb.from('gelistirme_notlari').insert({buro_id:_buro.id,not_metni:metin,yazan}).select().maybeSingle();
+  if(error){alert('Not eklenemedi: '+error.message);return;}
+  if(data)GELISTIRME_NOTLARI.unshift(data);
+  inp.value='';
+  renderNotlar();
+}
+async function notToggle(id,tamamlandi){
+  GELISTIRME_NOTLARI=GELISTIRME_NOTLARI.map(n=>n.id===id?{...n,tamamlandi}:n);
+  renderNotlar();
+  const{error}=await sb.from('gelistirme_notlari').update({tamamlandi}).eq('id',id);
+  if(error)alert('Güncellenemedi: '+error.message);
+}
+async function notSil(id){
+  if(!confirm('Bu notu silmek istediğinize emin misiniz?'))return;
+  GELISTIRME_NOTLARI=GELISTIRME_NOTLARI.filter(n=>n.id!==id);
+  renderNotlar();
+  const{error}=await sb.from('gelistirme_notlari').delete().eq('id',id);
+  if(error)alert('Silinemedi: '+error.message);
+}
+// Hızlı not — floating buton
+function openHizliNot(){
+  document.getElementById('hn-metin').value='';
+  document.getElementById('hizli-not-overlay').style.display='flex';
+  setTimeout(()=>document.getElementById('hn-metin').focus(),50);
+}
+function closeHizliNot(){
+  document.getElementById('hizli-not-overlay').style.display='none';
+}
+async function hizliNotKaydet(){
+  const metin=(document.getElementById('hn-metin').value||'').trim();
+  if(!metin)return;
+  if(!_buro)return;
+  const yazan=_user?.user_metadata?.full_name||_user?.email?.split('@')[0]||null;
+  const{data,error}=await sb.from('gelistirme_notlari').insert({buro_id:_buro.id,not_metni:metin,yazan}).select().maybeSingle();
+  if(error){alert('Not eklenemedi: '+error.message);return;}
+  if(data)GELISTIRME_NOTLARI.unshift(data);
+  closeHizliNot();
+}
 const SB_URL = 'https://uocdxifomlrbzorizrud.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvY2R4aWZvbWxyYnpvcml6cnVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzI1MTEsImV4cCI6MjA4OTAwODUxMX0.Vf0hXl-s96DEvGDF3gHNgGyd8EQvvuF8p-XzWmJcv9M';
 
@@ -1228,6 +1344,7 @@ async function authSonrasiIslem(){
   const sad = document.getElementById('sidebar-buro-ad');
   if(sad) sad.textContent = _buro.ad;
   await ozelSecenekleriYukle();
+  await notlariYukle();
   await loadRecords();
 }
 
@@ -2117,6 +2234,8 @@ document.addEventListener('keydown', function(e){
     if(document.getElementById('ek-sure-overlay').style.display==='flex'){closeEkSureOverlay();return;}
     if(document.getElementById('referans-detay-overlay').style.display==='flex'){closeReferansDetay();return;}
     if(document.getElementById('liste-yonetim-overlay').style.display==='flex'){closeListeYonetim();return;}
+    if(document.getElementById('notlar-overlay').style.display==='flex'){closeNotlar();return;}
+    if(document.getElementById('hizli-not-overlay').style.display==='flex'){closeHizliNot();return;}
     if(document.getElementById('muvekkil-modal').style.display==='flex'){closeMuvekkilModal();return;}
     if(document.getElementById('kayit-modal').style.display==='flex'){closeKayitModal();return;}
     if(document.getElementById('modal').style.display==='flex'){closeModal();return;}
