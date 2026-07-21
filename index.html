@@ -3255,6 +3255,7 @@ const REFERANS_ITEMS=[
   {id:'aaut-tarife',baslik:'AAÜT 2026 Tarifesi',ozet:'Avukatlık Asgari Ücret Tarifesi — 2025/2026 karşılaştırmalı tam tarife',icon:'⚖️'},
   {id:'ucretli-izinler',baslik:'İşveren Tarafından Verilmesi Gereken Ücretli İzinler',ozet:'Yıllık izin, evlilik, doğum, ölüm, süt izni vb. süreleri ve kriterleri',icon:'🗓️'},
   {id:'kidem-ihbar',baslik:'İşten Ayrılış Nedenine Göre Tazminat Hakları',ozet:'50 SGK çıkış koduna göre kıdem, ihbar tazminatı ve işsizlik maaşı hakkı',icon:'💼'},
+  {id:'tuketici-hakem',baslik:'Tüketici Hakem Heyetleri',ozet:'Başvuru yöntemleri, yetkili heyet, görev/üyeler ve 2026 parasal sınırları',icon:'🛒'},
 ];
 function renderReferans(){
   const wrap=document.getElementById('referans-grid');
@@ -3482,6 +3483,83 @@ const REFERANS_ICERIK={
       h+=`<tr data-arama="${(x[0]+' '+x[1]).toLowerCase()}"><td>${x[0]}</td><td>${x[1]}</td><td class="${x[2]==='ALIR'?'ref-badge-alir':'ref-badge-alamaz'}">${x[2]}</td><td class="${x[3]==='ALIR'?'ref-badge-alir':'ref-badge-alamaz'}">${x[3]}</td><td class="${x[4]==='ALIR'?'ref-badge-alir':'ref-badge-alamaz'}">${x[4]}</td></tr>`;
     });
     h+='</tbody></table></div>';
+    return h;
+  },
+
+  // ── TÜKETİCİ HAKEM HEYETLERİ ────────────────────────────────────
+  'tuketici-hakem':function(){
+    let h='<div class="ref-note">Kaynak: T.C. Ticaret Bakanlığı — Tüketicinin Korunması ve Piyasa Gözetimi Genel Müdürlüğü.</div>';
+
+    h+='<div class="ref-section-title">Görevi Nedir? Kimlerden Oluşur?</div>';
+    h+='<div class="ref-flow-box"><b>Görevi:</b> 6502 sayılı Tüketicinin Korunması Hakkında Kanun\'a göre; tüketici işlemleri ve tüketiciye yönelik uygulamalardan doğabilecek uyuşmazlıklara çözüm bulmak amacıyla kurulan heyetlerdir.</div>';
+    h+='<table class="ref-table"><thead><tr><th style="width:26%;">Görev</th><th>Kim</th></tr></thead><tbody>';
+    h+='<tr><td style="font-weight:600;">Başkan</td><td>İllerde Ticaret İl Müdürü; ilçelerde Kaymakam veya görevlendirdiği memur</td></tr>';
+    h+='<tr><td style="font-weight:600;">Diğer Üyeler</td><td>Belediye temsilcisi · Baro temsilcisi · Tacir/Esnaf temsilcisi · Tüketici örgütü temsilcisi</td></tr>';
+    h+='</tbody></table>';
+
+    h+='<div class="ref-section-title">Başvuru Yöntemleri</div>';
+    h+='<table class="ref-table"><thead><tr><th style="width:8%;">#</th><th>Yöntem</th></tr></thead><tbody>';
+    h+='<tr><td><span class="ref-flow-num">1</span></td><td>Şahsen</td></tr>';
+    h+='<tr><td><span class="ref-flow-num">2</span></td><td>Avukat aracılığıyla</td></tr>';
+    h+='<tr><td><span class="ref-flow-num">3</span></td><td>Posta yoluyla</td></tr>';
+    h+='<tr><td><span class="ref-flow-num">4</span></td><td>e-Devlet üzerinden TÜBİS (tuketicisikayeti.ticaret.gov.tr)</td></tr>';
+    h+='</tbody></table>';
+    h+='<div class="ref-note">⚠️ Sözlü başvuru yapılamaz.</div>';
+
+    h+='<div class="ref-section-title">Başvuru Nasıl Yapılır?</div>';
+    h+='<ul style="font-size:12.5px;line-height:1.7;margin:0 0 14px;padding-left:18px;">'
+      +'<li>Uyuşmazlık konusunu içeren dilekçe hazırlanır.</li>'
+      +'<li>Varsa delil oluşturan belgeler eklenir.</li>'
+      +'<li>Başvuru, Tüketici Hakem Heyetine verilir.</li>'
+      +'<li>Ticaret Bakanlığı internet sayfasındaki başvuru formu kullanılabilir.</li></ul>';
+
+    h+='<div class="ref-section-title">Başvuruda Yer Alması Zorunlu Bilgiler</div>';
+    h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px;">';
+    h+='<ul style="font-size:12.5px;line-height:1.7;margin:0;padding-left:18px;">'
+      +'<li>Ad, soyad / unvan</li>'
+      +'<li>T.C. kimlik no / pasaport no / yabancı kimlik no</li>'
+      +'<li>Tüketici değilse vergi kimlik no</li>'
+      +'<li>Adres ve iletişim bilgileri</li>'
+      +'<li>Varsa vekilin adı, soyadı, vergi kimlik no ve adresi</li></ul>';
+    h+='<ul style="font-size:12.5px;line-height:1.7;margin:0;padding-left:18px;">'
+      +'<li>Uyuşmazlık konusu</li>'
+      +'<li>Talep</li>'
+      +'<li>Türk Lirası cinsinden uyuşmazlık değeri</li>'
+      +'<li>Şikayet edilen kişiye / firmaya ilişkin bilgiler</li></ul>';
+    h+='</div>';
+    h+='<div class="ref-note">Uyuşmazlık değeri döviz cinsindense, başvuru tarihindeki TCMB efektif döviz satış kuru esas alınarak Türk Lirası\'na çevrilir.</div>';
+
+    h+='<div class="ref-section-title">Elektronik Başvuru</div>';
+    h+='<ul style="font-size:12.5px;line-height:1.7;margin:0 0 14px;padding-left:18px;">'
+      +'<li>Elektronik başvuruların TÜBİS ile yapılması zorunludur.</li>'
+      +'<li>Başvuru formu eksiksiz doldurulmalıdır.</li>'
+      +'<li>Varsa bilgi ve belgeler sisteme yüklenmelidir.</li>'
+      +'<li>Bu şartlar sağlanırsa başvuru geçerli olur.</li></ul>';
+
+    h+='<div class="ref-section-title">Hangi Heyete Başvuru Yapılabilir?</div>';
+    h+='<div class="ref-flow-box">Başvurular, tüketicinin yerleşim yerinin bulunduğu veya tüketici işleminin yapıldığı yerdeki tüketici hakem heyetine yapılabilir.</div>';
+    h+='<table class="ref-table"><thead><tr><th style="width:26%;">Heyet</th><th>Yetki Alanı</th></tr></thead><tbody>';
+    h+='<tr><td style="font-weight:600;">İl Tüketici Hakem Heyetleri</td><td>İl sınırları içinde yetkilidir</td></tr>';
+    h+='<tr><td style="font-weight:600;">İlçe Tüketici Hakem Heyetleri</td><td>İlçe sınırları içinde yetkilidir</td></tr>';
+    h+='<tr><td style="font-weight:600;">Heyet kurulmayan ilçeler</td><td>Bakanlıkça o ilçe için belirlenen hakem heyeti yetkilidir</td></tr>';
+    h+='</tbody></table>';
+
+    h+='<div class="ref-section-title">Tüketici Hakem Heyeti Bulunmayan Yerlerde Başvuru</div>';
+    h+='<ul style="font-size:12.5px;line-height:1.7;margin:0 0 8px;padding-left:18px;">'
+      +'<li>İllerde <b>Ticaret İl Müdürlükleri</b>, ilçelerde <b>Kaymakamlıklar</b> bünyesinde faaliyet gösterilir.</li>'
+      +'<li>Ancak her ilçede tüketici hakem heyeti bulunmamaktadır.</li>'
+      +'<li>Bazı heyetlerin yetki alanı, heyet bulunmayan ilçeleri de kapsayacak şekilde genişletilerek yetkilendirilmiş olabilir.</li></ul>';
+    h+='<div class="ref-flow-box">Kaymakamlık / irtibat personeli → Başvurunun alınması → <b>TÜBİS\'e kayıt</b></div>';
+    h+='<div class="ref-note">Başvurular, ilgili kaymakamlıklardaki irtibat personeli aracılığıyla alınarak TÜBİS\'e kaydedilir.</div>';
+
+    h+='<div class="ref-section-title">2026 Yılı Parasal Sınırları</div>';
+    h+='<div class="ref-note">Başvuru sınırları, tüketici uyuşmazlıklarının değerleri açısından her yıl Hazine ve Maliye Bakanlığı tarafından ilan edilen yeniden değerleme oranına göre yeniden belirlenir.</div>';
+    h+='<table class="ref-table"><thead><tr><th style="width:30%;">Uyuşmazlık Değeri</th><th>Sonuç</th></tr></thead><tbody>';
+    h+='<tr><td class="ref-badge-alir" style="font-weight:700;">186.000 TL\'nin altında</td><td>İlçe veya İl Tüketici Hakem Heyetine başvuru yapılması zorunludur.</td></tr>';
+    h+='<tr><td class="ref-badge-alamaz" style="font-weight:700;">186.000 TL ve üzeri</td><td>Tüketici Hakem Heyetine başvuru yapılamaz. Önce dava şartı arabuluculuk, ardından Tüketici Mahkemesi.</td></tr>';
+    h+='</tbody></table>';
+    h+='<div class="ref-flow-box">6502 sayılı Kanun m.73/A kapsamında: <b>1)</b> Dava şartı arabuluculuk → <b>2)</b> Tüketici mahkemesi → <b>3)</b> Tüketici mahkemesi bulunmayan yerlerde asliye hukuk mahkemesi</div>';
+    h+='<div class="ref-note"><b>2026 yılı için 186.000 (yüz seksen altı bin) Türk Lirası</b>, Tüketici Hakem Heyetlerinin görev alanını belirleyen başvuru sınırıdır.</div>';
     return h;
   },
 };
