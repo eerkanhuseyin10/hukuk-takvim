@@ -376,6 +376,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
         <button onclick="authEkrani('unuttum')" style="background:none;border:none;cursor:pointer;font-size:12px;color:#d4af70;font-family:inherit;padding:0;text-decoration:underline;">Şifremi unuttum</button>
       </div>
       <button class="buro-btn" onclick="emailGiris()">Giriş Yap</button>
+      <div class="buro-or">veya</div>
+      <button class="buro-link" onclick="authEkrani('kayitol')">Hesabın yok mu? Kayıt Ol</button>
     </div>
 
     <!-- ŞİFREMİ UNUTTUM FORMU -->
@@ -399,6 +401,22 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
       <button class="buro-link" onclick="authEkrani('giris')">Giriş sayfasına dön</button>
     </div>
 
+    <!-- KAYIT OL FORMU -->
+    <div id="auth-kayitol-form" style="display:none;">
+      <div style="display:flex;gap:0;margin-bottom:16px;border:1px solid rgba(255,255,255,0.15);border-radius:10px;overflow:hidden;">
+        <button type="button" id="ko-tab-yeni" onclick="koModSec('yeni')" style="flex:1;padding:9px 0;font-size:12.5px;font-weight:600;border:none;cursor:pointer;font-family:inherit;background:#d4af70;color:#1a1a1a;">Yeni Büro Kur</button>
+        <button type="button" id="ko-tab-katil" onclick="koModSec('katil')" style="flex:1;padding:9px 0;font-size:12.5px;font-weight:600;border:none;cursor:pointer;font-family:inherit;background:transparent;color:rgba(255,255,255,0.6);">Büroya Katıl</button>
+      </div>
+      <input class="buro-input" id="ko-buro-adi" type="text" placeholder="Büronuzun adı" style="margin-bottom:10px;">
+      <input class="buro-input" id="ko-buro-kodu" type="text" placeholder="Büro kodu (davet edenden alın)" style="margin-bottom:10px;display:none;">
+      <input class="buro-input" id="ko-email" type="email" placeholder="E-posta adresiniz" autocomplete="email" style="margin-bottom:10px;">
+      <input class="buro-input" id="ko-sifre" type="password" placeholder="Şifre (min. 6 karakter)" autocomplete="new-password" style="margin-bottom:10px;">
+      <input class="buro-input" id="ko-sifre2" type="password" placeholder="Şifreyi tekrar girin" autocomplete="new-password" style="margin-bottom:16px;" onkeydown="if(event.key==='Enter')kayitOl()">
+      <button class="buro-btn" onclick="kayitOl()">Kayıt Ol</button>
+      <div class="buro-or">veya</div>
+      <button class="buro-link" onclick="authEkrani('giris')">Giriş sayfasına dön</button>
+    </div>
+
     <div id="auth-msg" style="margin-top:14px;font-size:12px;color:rgba(255,255,255,0.5);min-height:16px;text-align:center;"></div>
   </div>
 </div>
@@ -414,6 +432,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
       </div>
     </div>
     <div class="profil-row"><span class="profil-row-label">Büro</span><span class="profil-row-val" id="profil-buro">—</span></div>
+    <div class="profil-row"><span class="profil-row-label">Büro Kodu</span><span class="profil-row-val" id="profil-buro-kodu" style="cursor:pointer;font-family:monospace;font-size:10px;" onclick="kopyalaBuroKodu()" title="Kopyalamak için tıkla">—</span></div>
     <div class="profil-row"><span class="profil-row-label">Kayıt tarihi</span><span class="profil-row-val" id="profil-tarih">—</span></div>
     <div class="profil-row"><span class="profil-row-label">Toplam kayıt</span><span class="profil-row-val" id="profil-kayit">—</span></div>
     <div class="profil-btn-row">
@@ -889,7 +908,16 @@ const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 // ── AUTH & PROFİL SİSTEMİ ────────────────────────────────────────
 let _user = null;
-let _buro = {id:'0d961c7f-fb7f-4679-95da-06704dcea589', ad:'Erkan Hukuk'}; // Sabit büro
+let _buro = null; // Giriş sonrası buroBilgisiYukle() ile doldurulur
+async function buroBilgisiYukle(){
+  if(!_user)return false;
+  const{data:uyelik,error:e1}=await sb.from('buro_uyeleri').select('buro_id').eq('user_id',_user.id).limit(1).maybeSingle();
+  if(e1||!uyelik){console.error('Büro üyeliği okunamadı:',e1?.message);return false;}
+  const{data:buro,error:e2}=await sb.from('burolar').select('id,ad').eq('id',uyelik.buro_id).maybeSingle();
+  if(e2||!buro){console.error('Büro kaydı okunamadı:',e2?.message);return false;}
+  _buro={id:buro.id, ad:buro.ad};
+  return true;
+}
 // ── AÇILIŞ EKRANI: EN AZ 7 SANİYE GÖRÜNSÜN ────────────────────────
 const YUKLEME_BASLANGIC=Date.now();
 const YUKLEME_MIN_MS=7000;
@@ -973,8 +1001,6 @@ const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 function showApp(){
   document.getElementById('auth-overlay').style.display='none';
   document.querySelector('.app').style.display='flex';
-  const sad = document.getElementById('sidebar-buro-ad');
-  if(sad) sad.textContent = 'Erkan Hukuk';
   updateAvatar();
   gizleYuklemeEkrani();
 }
@@ -991,6 +1017,14 @@ function updateAvatar(){
   if(av1) av1.textContent = harf;
   if(av2) av2.textContent = harf;
 }
+function kopyalaBuroKodu(){
+  if(!_buro?.id)return;
+  navigator.clipboard?.writeText(_buro.id).then(()=>{
+    const el=document.getElementById('profil-buro-kodu');
+    const eski=el.textContent;el.textContent='✓ Kopyalandı!';
+    setTimeout(()=>{el.textContent=eski;},1200);
+  }).catch(()=>{alert('Büro kodu: '+_buro.id);});
+}
 
 // Profil dropdown
 function openProfil(){
@@ -1000,7 +1034,8 @@ function openProfil(){
   const isim = _user.user_metadata?.full_name || _user.email?.split('@')[0] || '?';
   document.getElementById('profil-isim').textContent = isim;
   document.getElementById('profil-email').textContent = _user.email || '—';
-  document.getElementById('profil-buro').textContent = 'Erkan Hukuk';
+  document.getElementById('profil-buro').textContent = _buro?.ad || '—';
+  document.getElementById('profil-buro-kodu').textContent = _buro?.id || '—';
   document.getElementById('profil-kayit').textContent = records.length + ' kayıt';
   if(_user.created_at){
     const d = new Date(_user.created_at);
@@ -1069,10 +1104,52 @@ function authEkrani(ekran){
   document.getElementById('auth-giris-form').style.display='none';
   document.getElementById('auth-unuttum-form').style.display='none';
   document.getElementById('auth-yenile-form').style.display='none';
+  document.getElementById('auth-kayitol-form').style.display='none';
   document.getElementById('auth-msg').textContent='';
   if(ekran==='giris') document.getElementById('auth-giris-form').style.display='block';
   else if(ekran==='unuttum') document.getElementById('auth-unuttum-form').style.display='block';
   else if(ekran==='yenile') document.getElementById('auth-yenile-form').style.display='block';
+  else if(ekran==='kayitol') document.getElementById('auth-kayitol-form').style.display='block';
+}
+let _koMod='yeni';
+function koModSec(mod){
+  _koMod=mod;
+  const yeniTab=document.getElementById('ko-tab-yeni'), katilTab=document.getElementById('ko-tab-katil');
+  const buroAdi=document.getElementById('ko-buro-adi'), buroKodu=document.getElementById('ko-buro-kodu');
+  if(mod==='yeni'){
+    yeniTab.style.background='#d4af70';yeniTab.style.color='#1a1a1a';
+    katilTab.style.background='transparent';katilTab.style.color='rgba(255,255,255,0.6)';
+    buroAdi.style.display='block';buroKodu.style.display='none';
+  } else {
+    katilTab.style.background='#d4af70';katilTab.style.color='#1a1a1a';
+    yeniTab.style.background='transparent';yeniTab.style.color='rgba(255,255,255,0.6)';
+    buroAdi.style.display='none';buroKodu.style.display='block';
+  }
+}
+async function kayitOl(){
+  const email=(document.getElementById('ko-email').value||'').trim();
+  const sifre=document.getElementById('ko-sifre').value||'';
+  const sifre2=document.getElementById('ko-sifre2').value||'';
+  const buroAdi=(document.getElementById('ko-buro-adi').value||'').trim();
+  const buroKodu=(document.getElementById('ko-buro-kodu').value||'').trim();
+  if(!email||!sifre){setAuthMsg('E-posta ve şifre zorunludur.','#f87171');return;}
+  if(sifre.length<6){setAuthMsg('Şifre en az 6 karakter olmalıdır.','#f87171');return;}
+  if(sifre!==sifre2){setAuthMsg('Şifreler eşleşmiyor.','#f87171');return;}
+  if(_koMod==='yeni'&&!buroAdi){setAuthMsg('Büro adı zorunludur.','#f87171');return;}
+  if(_koMod==='katil'&&!buroKodu){setAuthMsg('Büro kodu zorunludur.','#f87171');return;}
+  setAuthMsg('Kayıt oluşturuluyor...','rgba(255,255,255,0.5)');
+  const meta=_koMod==='yeni'?{buro_adi:buroAdi}:{katil_buro_id:buroKodu};
+  const{data,error}=await sb.auth.signUp({email,password:sifre,options:{data:meta}});
+  if(error){setAuthMsg('Hata: '+error.message,'#f87171');return;}
+  if(data.session){
+    // E-posta onayı kapalıysa direkt oturum açılır
+    _user=data.user;
+    setAuthMsg('');
+    await authSonrasiIslem();
+  } else {
+    setAuthMsg('✓ Kayıt oluşturuldu. E-postanıza gelen onay bağlantısına tıklayıp giriş yapabilirsiniz.','#4ade80');
+    setTimeout(()=>{authEkrani('giris');},3000);
+  }
 }
 
 function setAuthMsg(msg, color){
@@ -1138,7 +1215,15 @@ async function sifreYenile(){
 }
 
 async function authSonrasiIslem(){
+  const buroVarMi=await buroBilgisiYukle();
+  if(!buroVarMi){
+    showApp();
+    document.querySelector('.app').innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;text-align:center;padding:24px;"><div><div style="font-size:16px;font-weight:700;margin-bottom:8px;">Büro bilgisi bulunamadı</div><div style="font-size:13px;color:var(--text2);max-width:340px;margin:0 auto 16px;">Hesabınız henüz bir büroya bağlı değil. Lütfen destek ile iletişime geçin.</div><button class="btn" onclick="cikisYap()">Çıkış Yap</button></div></div>';
+    return;
+  }
   showApp();
+  const sad = document.getElementById('sidebar-buro-ad');
+  if(sad) sad.textContent = _buro.ad;
   await ozelSecenekleriYukle();
   await loadRecords();
 }
