@@ -278,6 +278,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .istipi-search:focus{outline:none;border-color:var(--navy);}
 .istipi-list{max-height:160px;overflow-y:auto;border:1px solid var(--border2);border-radius:var(--radius);background:var(--surface);}
 .istipi-item{padding:9px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--border);}
+.istipi-item.istipi-ekle{color:var(--navy);font-weight:600;background:var(--navy-light);}
 .istipi-item:last-child{border-bottom:none;}
 .istipi-item:hover,.istipi-item.sel{background:var(--navy-light);}
 .istipi-item.sel{font-weight:500;color:var(--navy);}
@@ -859,6 +860,38 @@ const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 // ── AUTH & PROFİL SİSTEMİ ────────────────────────────────────────
 let _user = null;
 let _buro = {id:'0d961c7f-fb7f-4679-95da-06704dcea589', ad:'Erkan Hukuk'}; // Sabit büro
+// ── BÜROYA ÖZEL EKLENEN İŞ TİPİ / MAHKEME LİSTELERİ ────────────────
+let OZEL_ISTIPI=[];
+let OZEL_MAHKEME=[];
+async function ozelSecenekleriYukle(){
+  if(!_buro)return;
+  const{data,error}=await sb.from('secenekler').select('*').eq('buro_id',_buro.id);
+  if(error){console.warn('secenekler tablosu okunamadı (kurulum gerekebilir):',error.message);return;}
+  OZEL_ISTIPI=(data||[]).filter(x=>x.tur==='istipi').map(x=>x.deger);
+  OZEL_MAHKEME=(data||[]).filter(x=>x.tur==='mahkeme').map(x=>x.deger);
+}
+function tumIstipiListesi(){
+  return [...new Set([...IS_TIPLERI,...OZEL_ISTIPI])].sort((a,b)=>a.localeCompare(b,'tr'));
+}
+function tumMahkemeListesi(){
+  return [...new Set([...MAHKEMELER,...OZEL_MAHKEME])].sort((a,b)=>a.localeCompare(b,'tr'));
+}
+async function yeniIstipiKaydet(deger){
+  deger=titleCase(deger.trim());if(!deger)return deger;
+  if(!tumIstipiListesi().some(x=>x.toLowerCase()===deger.toLowerCase())){
+    OZEL_ISTIPI.push(deger);
+    if(_buro){const{error}=await sb.from('secenekler').insert({buro_id:_buro.id,tur:'istipi',deger});if(error)console.warn('İş tipi kaydedilemedi:',error.message);}
+  }
+  return deger;
+}
+async function yeniIstipiEkleSureli(deger){const v=await yeniIstipiKaydet(deger);selectIstipi(v);}
+async function yeniIstipiEkleGenel(deger){const v=await yeniIstipiKaydet(deger);selectIstipiGenel(v);}
+async function ogrenMahkeme(deger){
+  deger=(deger||'').trim();if(!deger)return;
+  if(tumMahkemeListesi().some(x=>x.toLowerCase()===deger.toLowerCase()))return;
+  OZEL_MAHKEME.push(deger);
+  if(_buro){const{error}=await sb.from('secenekler').insert({buro_id:_buro.id,tur:'mahkeme',deger});if(error)console.warn('Mahkeme kaydedilemedi:',error.message);}
+}
 const SB_URL = 'https://uocdxifomlrbzorizrud.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvY2R4aWZvbWxyYnpvcml6cnVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzI1MTEsImV4cCI6MjA4OTAwODUxMX0.Vf0hXl-s96DEvGDF3gHNgGyd8EQvvuF8p-XzWmJcv9M';
 
@@ -1031,6 +1064,7 @@ async function sifreYenile(){
 
 async function authSonrasiIslem(){
   showApp();
+  await ozelSecenekleriYukle();
   await loadRecords();
 }
 
@@ -1433,9 +1467,14 @@ let currentMonth=new Date().getMonth(),currentYear=new Date().getFullYear(),open
 // ── İŞ TİPİ ──────────────────────────────────────────────────────
 function renderIstipiList(filter=''){
   const list=document.getElementById('istipi-list');
-  const filtered=filter?IS_TIPLERI.filter(x=>x.toLowerCase().includes(filter.toLowerCase())):IS_TIPLERI;
-  if(!filtered.length){list.innerHTML='<div class="istipi-item" style="color:var(--text3);">Sonuç yok</div>';return;}
-  list.innerHTML=filtered.map(x=>`<div class="istipi-item${selectedIstipi===x?' sel':''}" onclick="selectIstipi('${x.replace(/'/g,"\\'")}')">${x}</div>`).join('');
+  const all=tumIstipiListesi();
+  const tam=(filter||'').trim();
+  const filtered=tam?all.filter(x=>x.toLowerCase().includes(tam.toLowerCase())):all;
+  let html=filtered.map(x=>`<div class="istipi-item${selectedIstipi===x?' sel':''}" onclick="selectIstipi('${x.replace(/'/g,"\\'")}')">${x}</div>`).join('');
+  if(tam&&!all.some(x=>x.toLowerCase()===tam.toLowerCase())){
+    html+=`<div class="istipi-item istipi-ekle" onclick="yeniIstipiEkleSureli('${tam.replace(/'/g,"\\'")}')">➕ "${tam}" olarak yeni iş tipi ekle</div>`;
+  }
+  list.innerHTML=html||'<div class="istipi-item" style="color:var(--text3);">Sonuç yok</div>';
 }
 function filterIstipi(val){renderIstipiList(val);document.getElementById('istipi-list').style.display='block';}
 function showIstipiList(){renderIstipiList(document.getElementById('istipi-search').value);document.getElementById('istipi-list').style.display='block';}
@@ -1445,9 +1484,14 @@ document.addEventListener('click',e=>{if(!e.target.closest('.istipi-wrap')&&!e.t
 function renderIstipiListGenel(filter=''){
   const list=document.getElementById('istipi-list-genel');
   if(!list)return;
-  const filtered=filter?IS_TIPLERI.filter(x=>x.toLowerCase().includes(filter.toLowerCase())):IS_TIPLERI;
-  if(!filtered.length){list.innerHTML='<div class="istipi-item" style="color:var(--text3);">Sonuç yok</div>';return;}
-  list.innerHTML=filtered.map(x=>`<div class="istipi-item" onclick="selectIstipiGenel('${x.replace(/'/g,"\\'")}')">${x}</div>`).join('');
+  const all=tumIstipiListesi();
+  const tam=(filter||'').trim();
+  const filtered=tam?all.filter(x=>x.toLowerCase().includes(tam.toLowerCase())):all;
+  let html=filtered.map(x=>`<div class="istipi-item" onclick="selectIstipiGenel('${x.replace(/'/g,"\\'")}')">${x}</div>`).join('');
+  if(tam&&!all.some(x=>x.toLowerCase()===tam.toLowerCase())){
+    html+=`<div class="istipi-item istipi-ekle" onclick="yeniIstipiEkleGenel('${tam.replace(/'/g,"\\'")}')">➕ "${tam}" olarak yeni iş tipi ekle</div>`;
+  }
+  list.innerHTML=html||'<div class="istipi-item" style="color:var(--text3);">Sonuç yok</div>';
 }
 function filterIstipiGenel(val){renderIstipiListGenel(val);document.getElementById('istipi-list-genel').style.display='block';}
 function showIstipiListGenel(){renderIstipiListGenel(document.getElementById('istipi-search-genel').value);document.getElementById('istipi-list-genel').style.display='block';}
@@ -2077,6 +2121,7 @@ async function saveRecord(){
     rec={type:'genel',date,baslik:titleCase(document.getElementById('f-genel-baslik').value.trim())||'Genel İş',saat:document.getElementById('f-genel-saat').value,mahkeme:titleCase(document.getElementById('f-genel-mahkeme').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-genel-muvekkil').value.trim()),not:_tamNot};
   }
   const btn=document.getElementById('save-btn');btn.textContent='Kaydediliyor...';btn.disabled=true;
+  if(rec.mahkeme)ogrenMahkeme(rec.mahkeme);
   if(!_buro){alert('Oturum hatası.');return;}
   rec.buroId=_buro.id;
   if(ST.editId){
@@ -2821,9 +2866,10 @@ function showMahkemeDropdown(inputId, ddId){
   const dd=document.getElementById(ddId);
   if(!input||!dd) return;
   const val=input.value.toLocaleLowerCase('tr-TR').trim();
+  const kaynak=tumMahkemeListesi();
   const matches=val
-    ? MAHKEMELER.filter(m=>m.toLocaleLowerCase('tr-TR').includes(val))
-    : MAHKEMELER;
+    ? kaynak.filter(m=>m.toLocaleLowerCase('tr-TR').includes(val))
+    : kaynak;
   if(!matches.length){dd.style.display='none';return;}
   dd.innerHTML=matches.map(m=>{
     const safe=m.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
