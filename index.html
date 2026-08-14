@@ -770,6 +770,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
       <!-- SÜRE -->
       <div id="form-sure">
+        <div id="sure-oto-alanlar">
         <div class="fg">
           <label>Tebliğ Tarihi</label>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
@@ -792,13 +793,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
             <button class="chip" onclick="setChip('dal','tahkim',this)">Tahkim</button>
           </div>
         </div>
-        <div class="fg">
-          <label>İş Tipi</label>
-          <input class="istipi-search" id="istipi-search" type="text" placeholder="Arama veya seçiniz..." oninput="filterIstipi(this.value)" onfocus="showIstipiList()">
-          <div class="istipi-list" id="istipi-list" style="display:none;"></div>
-          <input type="hidden" id="f-istipi-val">
-          <input type="hidden" id="f-istipi-text">
-        </div>
         <div class="sure-input-box">
           <div class="sure-input-title">Süre</div>
           <div style="display:flex;gap:6px;align-items:center;">
@@ -809,6 +803,24 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
           </div>
         </div>
         <div class="sure-hesap" id="sure-hesap-box"></div>
+        <button type="button" onclick="manuelSonGunAc()" style="background:none;border:none;color:var(--navy);font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;padding:4px 0 12px;text-decoration:underline;">Tebligat bilgim yok, son günü direkt gireyim</button>
+        </div>
+        <div id="sure-manuel-alan" style="display:none;">
+          <div class="fg">
+            <label>Son Gün</label>
+            <input type="date" id="f-sure-son-gun-manuel">
+          </div>
+          <button type="button" onclick="manuelSonGunKapat()" style="background:none;border:none;color:var(--navy);font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;padding:0 0 12px;text-decoration:underline;">← Tebliğ tarihinden hesaplamaya dön</button>
+        </div>
+        <div class="dosya-box">
+          <div class="dosya-box-title">İş Tipi</div>
+          <div class="fg" style="margin-bottom:0;">
+          <input class="istipi-search" id="istipi-search" type="text" placeholder="Arama veya seçiniz..." oninput="filterIstipi(this.value)" onfocus="showIstipiList()">
+          <div class="istipi-list" id="istipi-list" style="display:none;"></div>
+          <input type="hidden" id="f-istipi-val">
+          <input type="hidden" id="f-istipi-text">
+          </div>
+        </div>
         <div class="dosya-box">
           <div class="dosya-box-title">Dosya Bilgileri</div>
           <div class="fg"><div class="mahkeme-wrap"><input type="text" id="f-mahkeme" placeholder="Gönderen (opsiyonel)" autocomplete="new-password" oninput="showMahkemeDropdown('f-mahkeme','dd-mahkeme')" onfocus="showMahkemeDropdown('f-mahkeme','dd-mahkeme')" onblur="setTimeout(()=>{const d=document.getElementById('dd-mahkeme');if(d)d.style.display='none';},200)"><div class="mahkeme-dropdown" id="dd-mahkeme"></div></div></div>
@@ -936,6 +948,19 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
         </div>
 
         <div class="fg" style="margin-bottom:0;"><label>Açıklama (opsiyonel)</label><textarea id="f-tekrar-aciklama" placeholder="Notlar..."></textarea></div>
+        <div class="dosya-box">
+          <div class="dosya-box-title">Dosya Bilgileri (opsiyonel)</div>
+          <div class="fg"><div class="mahkeme-wrap"><input type="text" id="f-tekrar-mahkeme" placeholder="Mahkeme / Kurum" autocomplete="new-password" oninput="showMahkemeDropdown('f-tekrar-mahkeme','dd-tekrar-mahkeme')" onfocus="showMahkemeDropdown('f-tekrar-mahkeme','dd-tekrar-mahkeme')" onblur="setTimeout(()=>{const d=document.getElementById('dd-tekrar-mahkeme');if(d)d.style.display='none';},200)"><div class="mahkeme-dropdown" id="dd-tekrar-mahkeme"></div></div></div>
+          <div class="fg">
+            <label>Esas No</label>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <select id="f-tekrar-yil" style="padding:9px 10px;font-size:14px;border:1px solid var(--border2);border-radius:10px;background:var(--surface);color:var(--text);font-family:inherit;width:90px;"><option value="2020">2020</option><option value="2021">2021</option><option value="2022">2022</option><option value="2023">2023</option><option value="2024">2024</option><option value="2025">2025</option><option value="2026" selected>2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option></select>
+              <span style="color:var(--text3);font-size:16px;">/</span>
+              <input type="text" id="f-tekrar-no" style="flex:1;" placeholder="Esas No" autocomplete="new-password">
+            </div>
+          </div>
+          <div class="fg" style="margin-bottom:0;"><input type="text" id="f-tekrar-muvekkil" placeholder="Müvekkil" autocomplete="new-password"></div>
+        </div>
       </div>
     </div>
 
@@ -2031,6 +2056,7 @@ async function genelIsleriTasi(){
     .eq('type','genel')
     .eq('tamamlandi',false)
     .is('tekrar_ana_id',null)
+    .or('gecmis_kayit.is.null,gecmis_kayit.eq.false')
     .lt('date',_bs);
   return !error;
 }
@@ -2038,8 +2064,8 @@ function setSyncStatus(s,t){
   document.getElementById('sync-dot').className='sync-dot'+(s==='error'?' error':s==='loading'?' loading':'');
   document.getElementById('sync-text').textContent=t;
 }
-function dbToLocal(r){return{id:r.id,type:r.type,date:r.date,baslik:r.baslik||'',muvekkil:r.muvekkil||'',mahkeme:r.mahkeme||'',dava:r.dava||'',dal:r.dal||'',istipi:r.istipi||'',istipiVal:r.istipi_val||'',tebligTarihi:r.teblig_tarihi||'',tebligSekli:r.teblig_sekli||'',sureMiktar:r.sure_miktar,sureBirim:r.sure_birim||'',hesapDetay:r.hesap_detay||null,not:r.not_alani||'',saat:r.saat||'',tekrarTipi:r.tekrar_tipi||null,tekrarBitis:r.tekrar_bitis||null,tekrarAnaId:r.tekrar_ana_id||null,tamamlandi:r.tamamlandi===true};}
-function localToDB(r){return{type:r.type,date:r.date,buro_id:r.buroId||(_buro?_buro.id:null),baslik:r.baslik||null,muvekkil:r.muvekkil||null,mahkeme:r.mahkeme||null,dava:r.dava||null,dal:r.dal||null,istipi:r.istipi||null,istipi_val:r.istipiVal||null,teblig_tarihi:r.tebligTarihi||null,teblig_sekli:r.tebligSekli||null,sure_miktar:r.sureMiktar||null,sure_birim:r.sureBirim||null,hesap_detay:r.hesapDetay||null,not_alani:r.not||null,saat:r.saat||null,tekrar_tipi:r.tekrarTipi||null,tekrar_bitis:r.tekrarBitis||null,tekrar_ana_id:r.tekrarAnaId||null,tamamlandi:r.tamamlandi||false};}
+function dbToLocal(r){return{id:r.id,type:r.type,date:r.date,baslik:r.baslik||'',muvekkil:r.muvekkil||'',mahkeme:r.mahkeme||'',dava:r.dava||'',dal:r.dal||'',istipi:r.istipi||'',istipiVal:r.istipi_val||'',tebligTarihi:r.teblig_tarihi||'',tebligSekli:r.teblig_sekli||'',sureMiktar:r.sure_miktar,sureBirim:r.sure_birim||'',hesapDetay:r.hesap_detay||null,not:r.not_alani||'',saat:r.saat||'',tekrarTipi:r.tekrar_tipi||null,tekrarBitis:r.tekrar_bitis||null,tekrarAnaId:r.tekrar_ana_id||null,tamamlandi:r.tamamlandi===true,gecmisKayit:r.gecmis_kayit===true};}
+function localToDB(r){return{type:r.type,date:r.date,buro_id:r.buroId||(_buro?_buro.id:null),baslik:r.baslik||null,muvekkil:r.muvekkil||null,mahkeme:r.mahkeme||null,dava:r.dava||null,dal:r.dal||null,istipi:r.istipi||null,istipi_val:r.istipiVal||null,teblig_tarihi:r.tebligTarihi||null,teblig_sekli:r.tebligSekli||null,sure_miktar:r.sureMiktar||null,sure_birim:r.sureBirim||null,hesap_detay:r.hesapDetay||null,not_alani:r.not||null,saat:r.saat||null,tekrar_tipi:r.tekrarTipi||null,tekrar_bitis:r.tekrarBitis||null,tekrar_ana_id:r.tekrarAnaId||null,tamamlandi:r.tamamlandi||false,gecmis_kayit:r.gecmisKayit||false};}
 
 // ── SÜRE MOTORU ───────────────────────────────────────────────────
 function isAdliTatil(d){const m=d.getMonth(),g=d.getDate();return(m===6&&g>=20)||m===7;}
@@ -2132,6 +2158,17 @@ function setType(t,el){
   document.getElementById('modal-title').textContent=titles[t]+(ST.editId?' — Düzenle':' Ekle');
 }
 function toggleCollapsible(h){h.querySelector('.collapsible-arrow').classList.toggle('open');h.nextElementSibling.classList.toggle('open');}
+let ST_MANUEL_SURE=false;
+function manuelSonGunAc(){
+  ST_MANUEL_SURE=true;
+  document.getElementById('sure-oto-alanlar').style.display='none';
+  document.getElementById('sure-manuel-alan').style.display='block';
+}
+function manuelSonGunKapat(){
+  ST_MANUEL_SURE=false;
+  document.getElementById('sure-oto-alanlar').style.display='block';
+  document.getElementById('sure-manuel-alan').style.display='none';
+}
 function hesapla(){
   const teb=document.getElementById('f-teblig-tarihi').value;
   const mik=parseInt(document.getElementById('f-sure-miktar').value);
@@ -2153,8 +2190,9 @@ function openModal(editRecord,prefillDate){
   document.querySelectorAll('.chip,.type-tab,.sure-birim-btn').forEach(c=>c.classList.remove('sel'));
   document.querySelector('.type-tab').classList.add('sel');
   const cy=new Date().getFullYear();
-  ['f-teblig-tarihi','f-mahkeme','f-dava-no','f-muvekkil','f-not-sure','f-sure-miktar','f-durusma-mahkeme-adi','f-durusma-no','f-durusma-muvekkil','f-durusma-not','f-durusma-saat','f-genel-baslik','f-genel-mahkeme','f-genel-no','f-genel-muvekkil','f-genel-aciklama','f-genel-saat','istipi-search','f-istipi-val','f-istipi-text','f-durusma-randevu-mahkeme','istipi-search-genel'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});;
-  setYil('f-dava-yil',cy);setYil('f-durusma-yil',cy);setYil('f-genel-yil',cy);
+  ['f-teblig-tarihi','f-mahkeme','f-dava-no','f-muvekkil','f-not-sure','f-sure-miktar','f-durusma-mahkeme-adi','f-durusma-no','f-durusma-muvekkil','f-durusma-not','f-durusma-saat','f-genel-baslik','f-genel-mahkeme','f-genel-no','f-genel-muvekkil','f-genel-aciklama','f-genel-saat','istipi-search','f-istipi-val','f-istipi-text','f-durusma-randevu-mahkeme','istipi-search-genel','f-sure-son-gun-manuel'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  manuelSonGunKapat();
+  setYil('f-dava-yil',cy);setYil('f-durusma-yil',cy);setYil('f-genel-yil',cy);setYil('f-tekrar-yil',cy);
   const today=prefillDate||'';
   document.getElementById('f-durusma-tarih').value=today;
   document.getElementById('f-genel-tarih').value=today;
@@ -2218,6 +2256,9 @@ function openModal(editRecord,prefillDate){
       document.getElementById('f-tekrar-tarih').value=editRecord.date||'';
       document.getElementById('f-tekrar-bitis2').value=editRecord.tekrarBitis||'';
       document.getElementById('f-tekrar-aciklama').value=editRecord.not||'';
+      document.getElementById('f-tekrar-mahkeme').value=editRecord.mahkeme||'';
+      document.getElementById('f-tekrar-muvekkil').value=editRecord.muvekkil||'';
+      const tdp=(editRecord.dava||'').split('/');setYil('f-tekrar-yil',tdp[0]||cy);document.getElementById('f-tekrar-no').value=tdp[1]||'';
       if(editRecord.tekrarTipi){
         ST_TEKRAR_SIKLIK=editRecord.tekrarTipi;
         const sc=document.querySelector('#tekrar-siklik-chips .chip[onclick*="\''+editRecord.tekrarTipi+'\'"]');
@@ -2384,9 +2425,15 @@ async function kopyalaRecord(id){
 async function saveRecord(){
   let rec={};
   if(ST.type==='sure'){
-    if(!ST.hesaplananTarih){alert('Lütfen tebliğ tarihi, hukuk dalı, süre birimi ve miktarı girin.');return;}
     const yil=document.getElementById('f-dava-yil').value,no=document.getElementById('f-dava-no').value.trim();
-    rec={type:'sure',date:ST.hesaplananTarih,baslik:titleCase(selectedIstipi)||'Süreli İş',tebligTarihi:document.getElementById('f-teblig-tarihi').value,tebligSekli:ST.teblig,dal:ST.dal,sureMiktar:parseInt(document.getElementById('f-sure-miktar').value),sureBirim:ST.birim,istipi:selectedIstipi,istipiVal:selectedIstipi,mahkeme:titleCase(document.getElementById('f-mahkeme').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-muvekkil').value.trim()),not:sentenceCase(document.getElementById('f-not-sure').value.trim()),hesapDetay:ST.hesapDetay};
+    if(ST_MANUEL_SURE){
+      const manuelTarih=document.getElementById('f-sure-son-gun-manuel').value;
+      if(!manuelTarih){alert('Lütfen son günü girin.');return;}
+      rec={type:'sure',date:manuelTarih,baslik:titleCase(selectedIstipi)||'Süreli İş',tebligTarihi:'',tebligSekli:'',dal:ST.dal||'',sureMiktar:null,sureBirim:'',istipi:selectedIstipi,istipiVal:selectedIstipi,mahkeme:titleCase(document.getElementById('f-mahkeme').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-muvekkil').value.trim()),not:sentenceCase(document.getElementById('f-not-sure').value.trim()),hesapDetay:null};
+    } else {
+      if(!ST.hesaplananTarih){alert('Lütfen tebliğ tarihi, hukuk dalı, süre birimi ve miktarı girin. (Tebligat bilginiz yoksa "Tebligat bilgim yok, son günü direkt gireyim" seçeneğini kullanabilirsiniz.)');return;}
+      rec={type:'sure',date:ST.hesaplananTarih,baslik:titleCase(selectedIstipi)||'Süreli İş',tebligTarihi:document.getElementById('f-teblig-tarihi').value,tebligSekli:ST.teblig,dal:ST.dal,sureMiktar:parseInt(document.getElementById('f-sure-miktar').value),sureBirim:ST.birim,istipi:selectedIstipi,istipiVal:selectedIstipi,mahkeme:titleCase(document.getElementById('f-mahkeme').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-muvekkil').value.trim()),not:sentenceCase(document.getElementById('f-not-sure').value.trim()),hesapDetay:ST.hesapDetay};
+    }
   }else if(ST.type==='durusma'){
     const date=document.getElementById('f-durusma-tarih').value;if(!date){alert('Tarih zorunludur.');return;}
     const yil=document.getElementById('f-durusma-yil').value,no=document.getElementById('f-durusma-no').value.trim();
@@ -2400,7 +2447,8 @@ async function saveRecord(){
     const date=document.getElementById('f-tekrar-tarih').value;
     if(!date){alert('Başlangıç tarihi zorunludur.');return;}
     if(!ST_TEKRAR_SIKLIK){alert('Tekrar sıklığı seçiniz.');return;}
-    rec={type:'tekrar',date,baslik:titleCase(document.getElementById('f-tekrar-baslik').value.trim())||'Tekrarlayan İş',not:sentenceCase(document.getElementById('f-tekrar-aciklama').value.trim()),tekrarTipi:ST_TEKRAR_SIKLIK,tekrarBitis:document.getElementById('f-tekrar-bitis2').value||null};
+    const yil=document.getElementById('f-tekrar-yil').value,no=document.getElementById('f-tekrar-no').value.trim();
+    rec={type:'tekrar',date,baslik:titleCase(document.getElementById('f-tekrar-baslik').value.trim())||'Tekrarlayan İş',not:sentenceCase(document.getElementById('f-tekrar-aciklama').value.trim()),tekrarTipi:ST_TEKRAR_SIKLIK,tekrarBitis:document.getElementById('f-tekrar-bitis2').value||null,mahkeme:titleCase(document.getElementById('f-tekrar-mahkeme').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-tekrar-muvekkil').value.trim())};
   }else{
     const date=document.getElementById('f-genel-tarih').value;if(!date){alert('Tarih zorunludur.');return;}
     const yil=document.getElementById('f-genel-yil').value,no=document.getElementById('f-genel-no').value.trim();
@@ -2422,7 +2470,12 @@ async function saveRecord(){
       const _olusturmaNotSatiri=formatDate(_bugunStr)+' tarihinde oluşturuldu. Planlandığı tarih: '+formatDate(date)+'.';
       _tamNot=_mevcutNot?_mevcutNot+'\n'+_olusturmaNotSatiri:_olusturmaNotSatiri;
     }
-    rec={type:'genel',date,baslik:titleCase(document.getElementById('f-genel-baslik').value.trim())||'Genel İş',saat:document.getElementById('f-genel-saat').value,mahkeme:titleCase(document.getElementById('f-genel-mahkeme').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-genel-muvekkil').value.trim()),not:_tamNot};
+    rec={type:'genel',date,baslik:titleCase(document.getElementById('f-genel-baslik').value.trim())||'Genel İş',saat:document.getElementById('f-genel-saat').value,mahkeme:titleCase(document.getElementById('f-genel-mahkeme').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-genel-muvekkil').value.trim()),not:_tamNot,gecmisKayit:(()=>{
+      if(ST.editId){const _eskiRec=records.find(r=>r.id===ST.editId);return _eskiRec?.gecmisKayit||false;}
+      const _bugun3=new Date();_bugun3.setHours(0,0,0,0);
+      const _tarihObj=new Date(date+'T12:00:00');_tarihObj.setHours(0,0,0,0);
+      return _tarihObj<_bugun3;
+    })()};
   }
   const btn=document.getElementById('save-btn');btn.textContent='Kaydediliyor...';btn.disabled=true;
   if(rec.mahkeme)ogrenMahkeme(rec.mahkeme);
@@ -2441,6 +2494,9 @@ async function saveRecord(){
         not_alani:localToDB(rec).not_alani,
         tekrar_tipi:localToDB(rec).tekrar_tipi,
         tekrar_bitis:localToDB(rec).tekrar_bitis,
+        mahkeme:localToDB(rec).mahkeme,
+        dava:localToDB(rec).dava,
+        muvekkil:localToDB(rec).muvekkil,
       };
       await sb.from('kayitlar').update(tekrarGuncelle).eq('tekrar_ana_id',anaId);
       await sb.from('kayitlar').update(tekrarGuncelle).eq('id',anaId);
