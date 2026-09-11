@@ -1,6 +1,6 @@
 /* Sekreter renderer: 09-audit-log.js */
 const ISLEM_ADLARI={INSERT:'Eklendi',UPDATE:'Güncellendi',DELETE:'Silindi'};
-const TABLO_ADLARI={kayitlar:'Takvim kaydı',muvekkiller:'Müvekkil',dava_dosyalari:'Dava dosyası',dosya_evraklari:'Dosya evrakı',dosya_islem_gecmisi:'Dosya işlemi',dosya_mali_hareketleri:'Dosya mali hareketi',ofis_mali_hareketleri:'Ofis mali hareketi',mali_makbuzlar:'Makbuz',mali_ortaklar:'Ortaklık ayarı',buro_uyeleri:'Büro kullanıcısı',buro_ayarlari:'Büro ayarı'};
+const TABLO_ADLARI={kayitlar:'Takvim kaydı',muvekkiller:'Müvekkil',dava_dosyalari:'Dava dosyası',dosya_evraklari:'Dosya evrakı',dosya_islem_gecmisi:'Dosya işlemi',dosya_mali_hareketleri:'Dosya mali hareketi',ofis_mali_hareketleri:'Ofis mali hareketi',mali_makbuzlar:'Makbuz',mali_ortaklar:'Ortaklık ayarı',buro_uyeleri:'Büro kullanıcısı',buro_ayarlari:'Büro ayarı',tam_yedek_geri_yukleme:'Tam veri yedeği'};
 function islemGunluguTarih(v){try{return new Date(v).toLocaleString('tr-TR',{dateStyle:'medium',timeStyle:'short'});}catch(e){return '—';}}
 async function openIslemGunlugu(){
   if(!_buro||_buro.rol!=='yonetici'){alert('İşlem günlüğünü yalnızca büro yöneticisi görebilir.');return;}
