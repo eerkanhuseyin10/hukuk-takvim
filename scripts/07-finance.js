@@ -2,6 +2,7 @@
 let MALI_HAREKETLER=[],OFIS_MALI_HAREKETLER=[],MALI_ORTAKLAR=[],MALI_AYARLAR=[],MALI_MAKBUZLAR=[];
 async function maliSekmesiniAc(el){
   if(!_buro||!['yonetici','ortak'].includes(_buro.rol)){alert('Mali Takip yalnızca büro yöneticisi ve ortaklar tarafından kullanılabilir.');return;}
+  await guvenlikOlayiKaydet('mali_alan_acildi',true);
   showView('mali',el);
 }
 let AKTIF_MALI_ALT_SEKME='genel';

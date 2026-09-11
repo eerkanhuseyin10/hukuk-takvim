@@ -86,6 +86,7 @@ async function tamVeriYedegiIndir(){
     a.href=url;a.download='Sekreter-Tam-Yedek-'+yedekDosyaTarihi()+'.json';a.click();
     setTimeout(()=>URL.revokeObjectURL(url),1000);
     const adet=Object.values(sonuc).reduce((n,l)=>n+(Array.isArray(l)?l.length:0),0);
+    await guvenlikOlayiKaydet('tam_yedek_indirildi');
     disaAktarMesaj('Tam yedek hazırlandı: '+adet+' kayıt indirildi. Dosyayı güvenli bir yerde saklayın.');
   }catch(e){disaAktarMesaj('Tam yedek oluşturulamadı: '+(e.message||e),true);}
   finally{if(btn){btn.disabled=false;btn.textContent='.json Tam Yedeği İndir';}}

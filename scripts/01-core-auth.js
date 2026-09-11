@@ -568,6 +568,7 @@ async function authSonrasiIslem(){
   const sad = document.getElementById('sidebar-buro-ad');
   if(sad) sad.textContent = _buro.ad;
   rolArayuzunuUygula();
+  await guvenlikOlayiKaydet('oturum_acildi',true);
   await ozelSecenekleriYukle();
   await notlariYukle();
   await loadRecords();
