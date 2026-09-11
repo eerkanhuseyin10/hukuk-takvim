@@ -12,6 +12,11 @@ function openDisaAktar(){
       <div class="modal-handle"></div>
       <div class="modal-header"><h2>Yedek ve Dışa Aktar</h2><button class="btn" onclick="closeDisaAktar()">✕</button></div>
       <div class="modal-body">
+        <div style="border:1px solid #86efac;background:#f0fdf4;border-radius:12px;padding:15px;margin-bottom:12px;">
+          <div style="font-size:14px;font-weight:700;margin-bottom:5px;">Tam veri yedeği</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:12px;">Takvim, müvekkil, dava dosyası, mali kayıtlar, makbuzlar, büro ayarları ve evrak listesini tek dosyada indirir.</div>
+          <button id="tam-yedek-btn" class="btn btn-primary" style="width:100%;" onclick="tamVeriYedegiIndir()">.json Tam Yedeği İndir</button>
+        </div>
         <div style="border:1px solid var(--border);border-radius:12px;padding:15px;margin-bottom:12px;">
           <div style="font-size:14px;font-weight:700;margin-bottom:5px;">Excel / Numbers yedeği</div>
           <div style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:12px;">Tüm kayıtları, duruşmaları, süreli işleri, tamamlananları ve müvekkil özetini ayrı sayfalarda indirir.</div>
@@ -32,6 +37,50 @@ function openDisaAktar(){
 function closeDisaAktar(){const el=document.getElementById('disa-aktar-overlay');if(el)el.style.display='none';}
 function disaAktarMesaj(metin,hata=false){const el=document.getElementById('disa-aktar-msg');if(el){el.textContent=metin;el.style.color=hata?'#dc2626':'#166534';}}
 function yedekDosyaTarihi(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+async function yedekTabloyuOku(tablo,filtreAlan='buro_id',filtreDeger=null){
+  const tumu=[];
+  for(let baslangic=0;;baslangic+=1000){
+    let sorgu=sb.from(tablo).select('*').range(baslangic,baslangic+999);
+    if(filtreAlan&&filtreDeger!==null)sorgu=sorgu.eq(filtreAlan,filtreDeger);
+    const{data,error}=await sorgu;
+    if(error)throw new Error(tablo+': '+error.message);
+    tumu.push(...(data||[]));
+    if(!data||data.length<1000)break;
+  }
+  return tumu;
+}
+async function tamVeriYedegiIndir(){
+  const btn=document.getElementById('tam-yedek-btn');
+  if(!_buro?.id){disaAktarMesaj('Büro bilgisi bulunamadı. Önce tekrar giriş yapın.',true);return;}
+  if(btn){btn.disabled=true;btn.textContent='Yedek hazırlanıyor...';}
+  try{
+    const tablolar=['buro_uyeleri','kayitlar','muvekkiller','dava_dosyalari','dosya_evraklari','dosya_islem_gecmisi','dosya_mali_hareketleri','ofis_mali_hareketleri','mali_ortaklar','mali_ay_ayarlari','mali_ayarlar','mali_makbuzlar','secenekler','gelistirme_notlari'];
+    const sonuc={burolar:await yedekTabloyuOku('burolar','id',_buro.id)};
+    for(const tablo of tablolar)sonuc[tablo]=await yedekTabloyuOku(tablo,'buro_id',_buro.id);
+    const dosyaIds=(sonuc.dava_dosyalari||[]).map(x=>x.id);
+    sonuc.dava_dosyasi_muvekkilleri=[];
+    for(let i=0;i<dosyaIds.length;i+=100){
+      const{data,error}=await sb.from('dava_dosyasi_muvekkilleri').select('*').in('dava_dosyasi_id',dosyaIds.slice(i,i+100));
+      if(error)throw new Error('dava_dosyasi_muvekkilleri: '+error.message);
+      sonuc.dava_dosyasi_muvekkilleri.push(...(data||[]));
+    }
+    const yedek={
+      format:'sekreter-tam-yedek',
+      surum:1,
+      olusturulma_zamani:new Date().toISOString(),
+      buro_id:_buro.id,
+      not:'Evrak kayıtları ve dosya yolları dahildir; Supabase Storage içindeki gerçek evrak dosyaları ayrıca saklanmalıdır.',
+      tablolar:sonuc
+    };
+    const blob=new Blob([JSON.stringify(yedek,null,2)],{type:'application/json;charset=utf-8'});
+    const url=URL.createObjectURL(blob),a=document.createElement('a');
+    a.href=url;a.download='Sekreter-Tam-Yedek-'+yedekDosyaTarihi()+'.json';a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    const adet=Object.values(sonuc).reduce((n,l)=>n+(Array.isArray(l)?l.length:0),0);
+    disaAktarMesaj('Tam yedek hazırlandı: '+adet+' kayıt indirildi. Dosyayı güvenli bir yerde saklayın.');
+  }catch(e){disaAktarMesaj('Tam yedek oluşturulamadı: '+(e.message||e),true);}
+  finally{if(btn){btn.disabled=false;btn.textContent='.json Tam Yedeği İndir';}}
+}
 function kayitSatiri(r){
   return [r.date?new Date(r.date+'T12:00:00'):null,r.saat||'',typeLabel(r.type,r.dal),getBaslik(r),r.muvekkil||'',r.mahkeme||'',r.dava||'',dalLabel(r.dal),r.tamamlandi?'Tamamlandı':'Açık',r.not||''];
 }
@@ -115,4 +164,3 @@ document.addEventListener('keydown',e=>{
 });
 
 authBaslat();
-

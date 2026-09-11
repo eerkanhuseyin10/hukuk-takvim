@@ -28,6 +28,35 @@ function renderBuroKartlari(){
   }).join(''):'<div class="empty-state" style="padding:18px;">Henüz dava dosyası kartı yok.</div>';
 }
 function closeBuroKartDetay(){const o=document.getElementById('buro-kart-detay-overlay');if(o)o.style.display='none';}
+function kartYonetimButonlariniEkle(tur,id){
+  if(_buro?.rol!=='yonetici')return;const govde=document.querySelector('#buro-kart-detay-overlay .modal-body');if(!govde)return;
+  const b=document.createElement('button');b.className='btn';b.style.cssText='width:100%;margin-top:8px;color:#b42318;border-color:#fda29b;';b.textContent=tur==='muvekkil'?'Müvekkili Sil':'Dosyayı Sil';b.onclick=()=>kartSil(tur,id);govde.appendChild(b);
+}
+function openKartBirlestir(tur){
+  if(_buro?.rol!=='yonetici'){alert('Bu işlem yalnızca büro yöneticisine açıktır.');return;}
+  const liste=tur==='muvekkil'?MUVEKKIL_KARTLARI:DAVA_DOSYALARI,ad=x=>tur==='muvekkil'?x.ad:[x.dosya_no,x.mahkeme].filter(Boolean).join(' · ');
+  if(liste.length<2){alert('Birleştirmek için en az iki kart bulunmalıdır.');return;}
+  let o=document.getElementById('kart-birlestir-overlay');if(!o){o=document.createElement('div');o.id='kart-birlestir-overlay';o.className='modal-overlay';o.style.zIndex='580';document.body.appendChild(o);}
+  const secenek='<option value="">Seçiniz...</option>'+liste.slice().sort((a,b)=>ad(a).localeCompare(ad(b),'tr')).map(x=>`<option value="${x.id}">${esc(ad(x)||'İsimsiz kart')}</option>`).join('');
+  o.innerHTML=`<div class="modal" style="max-width:500px;"><div class="modal-header"><div><h2>${tur==='muvekkil'?'Müvekkil':'Dosya'} Birleştir</h2><div style="font-size:11px;color:var(--text2);margin-top:3px;">Bağlı kayıtlar hedef karta taşınır, kaynak kart silinir.</div></div><button class="btn" onclick="document.getElementById('kart-birlestir-overlay').style.display='none'">✕</button></div><div class="modal-body"><div class="fg"><label>Silinecek tekrar kart</label><select id="kart-birlestir-kaynak">${secenek}</select></div><div class="fg"><label>Korunacak ana kart</label><select id="kart-birlestir-hedef">${secenek}</select></div><div style="padding:11px;background:#fff7ed;border-radius:9px;font-size:11px;color:#9a3412;margin-bottom:12px;">Kaynak kartın takvim ve dosya bağlantıları korunacak ana karta aktarılır. İşlem geri alınamaz.</div><button id="kart-birlestir-btn" class="save-btn" onclick="kartBirlestir('${tur}')">Kayıtları Birleştir</button><div id="kart-birlestir-msg" style="font-size:12px;margin-top:8px;"></div></div></div>`;o.style.display='flex';
+}
+async function kartBirlestir(tur){
+  const kaynak=document.getElementById('kart-birlestir-kaynak').value,hedef=document.getElementById('kart-birlestir-hedef').value,msg=document.getElementById('kart-birlestir-msg'),btn=document.getElementById('kart-birlestir-btn');
+  if(!kaynak||!hedef||kaynak===hedef){msg.textContent='Birbirinden farklı iki kart seçin.';return;}if(!confirm('Kaynak kart hedef kartla birleştirilecek ve kaynak kart silinecek. Devam edilsin mi?'))return;
+  btn.disabled=true;btn.textContent='Birleştiriliyor...';const fn=tur==='muvekkil'?'sekreter_muvekkil_birlestir':'sekreter_dosya_birlestir',{error}=await sb.rpc(fn,{kaynak_id:Number(kaynak),hedef_id:Number(hedef)});
+  if(error){msg.textContent='Birleştirme hatası: '+error.message;btn.disabled=false;btn.textContent='Kayıtları Birleştir';return;}document.getElementById('kart-birlestir-overlay').style.display='none';await loadRecords();await buroKartlariYukle();
+}
+async function kartSil(tur,id){
+  if(_buro?.rol!=='yonetici'){alert('Bu işlem yalnızca büro yöneticisine açıktır.');return;}
+  const ad=tur==='muvekkil'?MUVEKKIL_KARTLARI.find(x=>String(x.id)===String(id))?.ad:DAVA_DOSYALARI.find(x=>String(x.id)===String(id))?.dosya_no;
+  const uyari=tur==='muvekkil'?'Müvekkil kartı silinecek; takvim kayıtları korunacak fakat müvekkil bağlantısı kaldırılacak.':'Dosya; işlem geçmişi, mali hareketleri ve evraklarıyla birlikte kalıcı olarak silinecek.';
+  if(!confirm(`${ad||'Bu kayıt'}\n\n${uyari}\n\nDevam edilsin mi?`))return;
+  if(tur==='dosya'){
+    const{data,error}=await sb.from('dosya_evraklari').select('storage_yolu').eq('dava_dosyasi_id',id);if(error){alert('Evrak listesi alınamadı: '+error.message);return;}
+    const yollar=(data||[]).map(x=>x.storage_yolu).filter(Boolean);for(let i=0;i<yollar.length;i+=100){const r=await sb.storage.from('sekreter-evraklari').remove(yollar.slice(i,i+100));if(r.error){alert('Evraklar silinemedi, dosya silme durduruldu: '+r.error.message);return;}}
+  }
+  const fn=tur==='muvekkil'?'sekreter_muvekkil_sil':'sekreter_dosya_sil',{error}=await sb.rpc(fn,{kaynak_id:Number(id)});if(error){alert('Silme hatası: '+error.message);return;}closeBuroKartDetay();await loadRecords();await buroKartlariYukle();
+}
 function kartDetayKayitlariHTML(liste){
   if(!liste.length)return '<div class="empty-state" style="padding:14px;">Bağlı takvim kaydı yok.</div>';
   return liste.slice().sort((a,b)=>(a.date||'').localeCompare(b.date||'')).map(r=>`<div style="padding:9px 11px;border-bottom:1px solid var(--border);cursor:pointer;" onclick="closeBuroKartDetay();openKayitModal(${r.id})"><div style="display:flex;justify-content:space-between;gap:10px;"><b style="font-size:12px;">${esc(getBaslik(r))}</b><span style="font-size:11px;white-space:nowrap;${r.tamamlandi?'color:#16a34a;':'color:var(--text2);'}">${r.tamamlandi?'✓ ':''}${formatDate(r.date)}</span></div><div style="font-size:10px;color:var(--text3);margin-top:3px;">${esc(typeLabel(r.type,r.dal))}${r.saat?' · '+esc(r.saat):''}</div></div>`).join('');
@@ -104,6 +133,7 @@ async function openBuroKartDetay(tur,id){
       o.innerHTML=`<div class="modal" style="max-width:720px;"><div class="modal-header"><div><h2>${esc(d.dosya_no||'Dava Dosyası')}</h2><div style="font-size:11px;color:var(--text2);margin-top:2px;">${esc(d.durum||'açık')} · ${muvekkiller.length} müvekkil · ${isler.length} iş</div></div><button class="btn" onclick="closeBuroKartDetay()">✕</button></div><div class="modal-body"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;margin-bottom:16px;">${[['Mahkeme',d.mahkeme],['Konu',d.konu],['Durum',d.durum]].map(x=>`<div style="background:var(--surface2);border-radius:9px;padding:9px 11px;"><div style="font-size:10px;color:var(--text3);">${x[0]}</div><div style="font-size:12px;margin-top:2px;">${esc(x[1]||'—')}</div></div>`).join('')}</div>${d.notlar?`<div style="font-size:12px;padding:10px;background:#fffaf0;border-radius:9px;margin-bottom:15px;white-space:pre-wrap;">${esc(d.notlar)}</div>`:''}<div class="section-title">Bağlı Müvekkiller</div><div class="list-surface" style="margin-bottom:16px;">${muvekkiller.length?muvekkiller.map(m=>`<div style="padding:9px 11px;border-bottom:1px solid var(--border);cursor:pointer;" onclick="openBuroKartDetay('muvekkil',${m.id})"><b style="font-size:12px;">${esc(m.ad)}</b><div style="font-size:10px;color:var(--text2);margin-top:2px;">${esc([m.telefon,m.email].filter(Boolean).join(' · '))}</div></div>`).join(''):'<div class="empty-state" style="padding:14px;">Bağlı müvekkil yok.</div>'}</div><div class="section-title">Dosyanın Takvim Kayıtları</div><div class="list-surface">${kartDetayKayitlariHTML(isler)}</div><button class="btn btn-primary" style="width:100%;margin-top:14px;" onclick="closeBuroKartDetay();openDosyaKartFormu(${d.id})">Dosya Bilgilerini Düzenle</button></div></div>`;
       const takvimBaslik=[...o.querySelectorAll('.section-title')].find(x=>x.textContent==='Dosyanın Takvim Kayıtları');if(takvimBaslik)takvimBaslik.insertAdjacentHTML('beforebegin',ekBilgilerHTML);
     }
+    kartYonetimButonlariniEkle(tur,id);
   }catch(e){o.innerHTML=`<div class="modal" style="max-width:500px;"><div class="modal-body" style="padding:24px;color:#dc2626;">Detay yüklenemedi: ${esc(e.message||e)}<br><button class="btn" style="margin-top:12px;" onclick="closeBuroKartDetay()">Kapat</button></div></div>`;}
 }
 function buroKartFormu(tur,id){
@@ -258,4 +288,3 @@ async function mevcutDosyalariAktar(){
     msg.textContent='✓ '+baglanan+' kayıt dava dosyalarına bağlandı.';btn.textContent='Tamamlandı';await loadRecords();await buroKartlariYukle();setTimeout(()=>{document.getElementById('dosya-aktar-overlay').style.display='none';},1200);
   }catch(e){msg.textContent='Aktarım durdu: '+(e.message||e);msg.style.color='#dc2626';btn.disabled=false;btn.textContent='Tekrar Dene';}
 }
-

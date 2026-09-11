@@ -2,6 +2,7 @@
 let MALI_HAREKETLER=[],OFIS_MALI_HAREKETLER=[],MALI_ORTAKLAR=[],MALI_AYARLAR=[],MALI_MAKBUZLAR=[],MALI_KILIT_ACIK=false,MALI_NAV_EL=null;
 async function maliSifreOzet(s){const b=new TextEncoder().encode(String(s));const h=await crypto.subtle.digest('SHA-256',b);return [...new Uint8Array(h)].map(x=>x.toString(16).padStart(2,'0')).join('');}
 async function maliSekmesiniAc(el){
+  if(!_buro||!['yonetici','ortak'].includes(_buro.rol)){alert('Mali Takip yalnızca büro yöneticisi ve ortaklar tarafından kullanılabilir.');return;}
   if(MALI_KILIT_ACIK){showView('mali',el);return;}MALI_NAV_EL=el;
   const{data,error}=await sb.from('mali_ayarlar').select('buro_id,sifre_ozeti,created_by').eq('buro_id',_buro.id).maybeSingle();
   if(error){alert('Mali erişim ayarı okunamadı: '+error.message);return;}maliSifrePenceresi(data||null);
@@ -118,4 +119,3 @@ function showView(v,el){
   if(v==='mali')maliTakipYukle();
   if(v==='referans')renderReferans();
 }
-

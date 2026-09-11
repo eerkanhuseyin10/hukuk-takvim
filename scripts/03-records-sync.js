@@ -452,7 +452,7 @@ function openModal(editRecord,prefillDate){
   document.querySelectorAll('.chip,.type-tab,.sure-birim-btn').forEach(c=>c.classList.remove('sel'));
   document.querySelector('.type-tab').classList.add('sel');
   const cy=new Date().getFullYear();
-  ['f-teblig-tarihi','f-mahkeme','f-dava-no','f-muvekkil','f-not-sure','f-sure-miktar','f-durusma-mahkeme-adi','f-durusma-no','f-durusma-muvekkil','f-durusma-not','f-durusma-saat','f-genel-baslik','f-genel-mahkeme','f-genel-no','f-genel-muvekkil','f-genel-aciklama','f-genel-saat','istipi-search','f-istipi-val','f-istipi-text','f-durusma-randevu-mahkeme','istipi-search-genel','f-sure-son-gun-manuel'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['f-teblig-tarihi','f-sure-saat','f-mahkeme','f-dava-no','f-muvekkil','f-not-sure','f-sure-miktar','f-durusma-mahkeme-adi','f-durusma-no','f-durusma-muvekkil','f-durusma-not','f-durusma-saat','f-genel-baslik','f-genel-mahkeme','f-genel-no','f-genel-muvekkil','f-genel-aciklama','f-genel-saat','istipi-search','f-istipi-val','f-istipi-text','f-durusma-randevu-mahkeme','istipi-search-genel','f-sure-son-gun-manuel'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   manuelSonGunKapat();
   setYil('f-dava-yil',cy);setYil('f-durusma-yil',cy);setYil('f-genel-yil',cy);setYil('f-tekrar-yil',cy);
   const today=prefillDate||'';
@@ -506,6 +506,7 @@ function openModal(editRecord,prefillDate){
     document.getElementById('form-genel').style.display=editRecord.type==='genel'?'block':'none';
     document.getElementById('form-tekrar').style.display=editRecord.type==='tekrar'?'block':'none';
     if(editRecord.type==='sure'){
+      document.getElementById('f-sure-saat').value=editRecord.saat||'';
       document.getElementById('f-teblig-tarihi').value=editRecord.tebligTarihi||'';
       document.getElementById('f-sure-miktar').value=editRecord.sureMiktar||'';
       document.getElementById('f-mahkeme').value=editRecord.mahkeme||'';
@@ -720,10 +721,10 @@ async function saveRecord(){
     if(ST_MANUEL_SURE){
       const manuelTarih=document.getElementById('f-sure-son-gun-manuel').value;
       if(!manuelTarih){alert('Lütfen son günü girin.');return;}
-      rec={type:'sure',date:manuelTarih,baslik:titleCase(selectedIstipi)||'Süreli İş',tebligTarihi:'',tebligSekli:'',dal:ST.dal||'',sureMiktar:null,sureBirim:'',istipi:selectedIstipi,istipiVal:selectedIstipi,mahkeme:titleCase(document.getElementById('f-mahkeme').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-muvekkil').value.trim()),not:sentenceCase(document.getElementById('f-not-sure').value.trim()),hesapDetay:null};
+      rec={type:'sure',date:manuelTarih,saat:document.getElementById('f-sure-saat').value,baslik:titleCase(selectedIstipi)||'Süreli İş',tebligTarihi:'',tebligSekli:'',dal:ST.dal||'',sureMiktar:null,sureBirim:'',istipi:selectedIstipi,istipiVal:selectedIstipi,mahkeme:titleCase(document.getElementById('f-mahkeme').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-muvekkil').value.trim()),not:sentenceCase(document.getElementById('f-not-sure').value.trim()),hesapDetay:null};
     } else {
       if(!ST.hesaplananTarih){alert('Lütfen tebliğ tarihi, hukuk dalı, süre birimi ve miktarı girin. (Tebligat bilginiz yoksa "Tebligat bilgim yok, son günü direkt gireyim" seçeneğini kullanabilirsiniz.)');return;}
-      rec={type:'sure',date:ST.hesaplananTarih,baslik:titleCase(selectedIstipi)||'Süreli İş',tebligTarihi:document.getElementById('f-teblig-tarihi').value,tebligSekli:ST.teblig,dal:ST.dal,sureMiktar:parseInt(document.getElementById('f-sure-miktar').value),sureBirim:ST.birim,istipi:selectedIstipi,istipiVal:selectedIstipi,mahkeme:titleCase(document.getElementById('f-mahkeme').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-muvekkil').value.trim()),not:sentenceCase(document.getElementById('f-not-sure').value.trim()),hesapDetay:ST.hesapDetay};
+      rec={type:'sure',date:ST.hesaplananTarih,saat:document.getElementById('f-sure-saat').value,baslik:titleCase(selectedIstipi)||'Süreli İş',tebligTarihi:document.getElementById('f-teblig-tarihi').value,tebligSekli:ST.teblig,dal:ST.dal,sureMiktar:parseInt(document.getElementById('f-sure-miktar').value),sureBirim:ST.birim,istipi:selectedIstipi,istipiVal:selectedIstipi,mahkeme:titleCase(document.getElementById('f-mahkeme').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-muvekkil').value.trim()),not:sentenceCase(document.getElementById('f-not-sure').value.trim()),hesapDetay:ST.hesapDetay};
     }
   }else if(ST.type==='durusma'){
     const date=document.getElementById('f-durusma-tarih').value;if(!date){alert('Tarih zorunludur.');return;}
@@ -908,4 +909,3 @@ function silmeIsleminiGeriAl(){
   geriAlBildirimiKapat();
   renderAll();
 }
-

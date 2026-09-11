@@ -6,14 +6,40 @@ const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 // ── AUTH & PROFİL SİSTEMİ ────────────────────────────────────────
 let _user = null;
 let _buro = null; // Giriş sonrası buroBilgisiYukle() ile doldurulur
+let _platformAdmin=false;
+const ROL_ADLARI={platform_admini:'Platform Admini',yonetici:'Yönetici',ortak:'Ortak',calisan:'Çalışan',uye:'Çalışan'};
 async function buroBilgisiYukle(){
   if(!_user)return false;
-  const{data:uyelik,error:e1}=await sb.from('buro_uyeleri').select('buro_id').eq('user_id',_user.id).limit(1).maybeSingle();
+  _platformAdmin=false;_buro=null;
+  const{data:pa}=await sb.from('platform_adminleri').select('user_id').eq('user_id',_user.id).maybeSingle();
+  if(pa){_platformAdmin=true;return 'platform_admini';}
+  const{data:uyelik,error:e1}=await sb.from('buro_uyeleri').select('buro_id,rol').eq('user_id',_user.id).limit(1).maybeSingle();
   if(e1||!uyelik){console.error('Büro üyeliği okunamadı:',e1?.message);return false;}
   const{data:buro,error:e2}=await sb.from('burolar').select('id,ad').eq('id',uyelik.buro_id).maybeSingle();
   if(e2||!buro){console.error('Büro kaydı okunamadı:',e2?.message);return false;}
-  _buro={id:buro.id, ad:buro.ad};
+  _buro={id:buro.id, ad:buro.ad, rol:uyelik.rol||'calisan'};
   return true;
+}
+function rolArayuzunuUygula(){
+  const maliYetkili=_buro&&['yonetici','ortak'].includes(_buro.rol);
+  document.querySelectorAll('[data-role-finance]').forEach(el=>el.style.display=maliYetkili?'':'none');
+  document.querySelectorAll('[data-role-manager]').forEach(el=>el.style.display=_buro?.rol==='yonetici'?'':'none');
+}
+function rolRozeti(rol){const ad=ROL_ADLARI[rol]||rol,renk={yonetici:'#7c3aed',ortak:'#0f766e',calisan:'#475467'}[rol]||'#475467';return `<span style="display:inline-flex;padding:4px 8px;border-radius:999px;background:${renk}15;color:${renk};font-size:11px;font-weight:700;">${ad}</span>`;}
+async function openKullaniciYonetimi(){
+  if(_buro?.rol!=='yonetici'){alert('Bu alan yalnızca büro yöneticisine açıktır.');return;}
+  let o=document.getElementById('kullanici-yonetimi-overlay');if(!o){o=document.createElement('div');o.id='kullanici-yonetimi-overlay';o.className='modal-overlay';o.style.zIndex='590';document.body.appendChild(o);}
+  o.innerHTML='<div class="modal" style="max-width:620px;"><div class="modal-header"><div><h2>Kullanıcılar ve Yetkiler</h2><div style="font-size:11px;color:var(--text2);margin-top:3px;">Yalnızca kendi büronuzdaki hesaplar gösterilir.</div></div><button class="btn" onclick="document.getElementById(\'kullanici-yonetimi-overlay\').style.display=\'none\'">✕</button></div><div class="modal-body"><div id="kullanici-yonetimi-liste" style="color:var(--text2);">Kullanıcılar yükleniyor...</div><div id="kullanici-yonetimi-msg" style="font-size:12px;margin-top:10px;"></div></div></div>';o.style.display='flex';o.onclick=e=>{if(e.target===o)o.style.display='none';};
+  const{data,error}=await sb.rpc('sekreter_buro_kullanicilari');const l=document.getElementById('kullanici-yonetimi-liste');
+  if(error){l.textContent='Kullanıcılar alınamadı: '+error.message;return;}
+  l.innerHTML=(data||[]).map(x=>{const ben=String(x.user_id)===String(_user.id);return `<div style="border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:9px;"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center;"><div style="min-width:0;"><div style="font-weight:650;overflow-wrap:anywhere;">${esc(x.email||'E-posta yok')}</div><div style="margin-top:5px;">${rolRozeti(x.rol)}${ben?' <span style="font-size:11px;color:var(--text2);">Siz</span>':''}</div></div>${ben?'':`<select aria-label="Kullanıcı rolü" onchange="kullaniciRolDegistir('${x.user_id}',this.value)" style="width:auto;min-width:110px;"><option value="calisan" ${x.rol==='calisan'?'selected':''}>Çalışan</option><option value="ortak" ${x.rol==='ortak'?'selected':''}>Ortak</option></select>`}</div>${ben?'':`<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px;"><button class="btn" style="font-size:11px;" onclick="yoneticiligiDevret('${x.user_id}','${esc(x.email||'')}')">Yöneticiliği Devret</button><button class="btn" style="font-size:11px;color:#b42318;border-color:#fda29b;" onclick="uyeyiBurodanCikar('${x.user_id}','${esc(x.email||'')}')">Bürodan Çıkar</button></div>`}</div>`;}).join('')||'Büronuzda kullanıcı bulunamadı.';
+}
+async function kullaniciRolDegistir(userId,rol){const msg=document.getElementById('kullanici-yonetimi-msg');msg.textContent='Yetki güncelleniyor...';const{error}=await sb.rpc('sekreter_uye_rolunu_degistir',{target_user_id:userId,yeni_rol:rol});if(error){msg.textContent='Hata: '+error.message;return;}msg.textContent='✓ Yetki güncellendi.';await openKullaniciYonetimi();}
+async function yoneticiligiDevret(userId,email){if(!confirm(`${email} yeni büro yöneticisi olacak. Siz ortak rolüne geçeceksiniz. Devam edilsin mi?`))return;const{error}=await sb.rpc('sekreter_yoneticiligi_devret',{target_user_id:userId});if(error){alert('Yöneticilik devredilemedi: '+error.message);return;}_buro.rol='ortak';rolArayuzunuUygula();document.getElementById('kullanici-yonetimi-overlay').style.display='none';alert('✓ Yöneticilik devredildi.');}
+async function uyeyiBurodanCikar(userId,email){if(!confirm(`${email} bürodan çıkarılacak. Kullanıcının hesabı silinmeyecek ancak bu büronun verilerine artık erişemeyecek. Devam edilsin mi?`))return;const{error}=await sb.rpc('sekreter_uyeyi_burodan_cikar',{target_user_id:userId});if(error){alert('Kullanıcı çıkarılamadı: '+error.message);return;}await openKullaniciYonetimi();}
+function platformAdminEkraniniGoster(){
+  showApp();
+  document.querySelector('.app').innerHTML=`<main style="min-height:100vh;background:#f5f6f8;padding:32px;display:flex;align-items:center;justify-content:center;"><section style="width:100%;max-width:620px;background:white;border:1px solid #e2e5ea;border-radius:18px;padding:28px;box-shadow:0 12px 35px rgba(15,23,42,.08);"><div style="font-size:12px;font-weight:700;color:#9a742f;letter-spacing:.08em;text-transform:uppercase;">Sekreter Sistem Yönetimi</div><h1 style="font-size:25px;margin:8px 0;">Platform Admini</h1><p style="color:#667085;line-height:1.6;margin:0 0 18px;">Bu hesap büroların takvim, müvekkil, dosya ve mali kayıtlarına bağlı değildir. Böylece müşterilerin özel verileri platform yöneticisinden de ayrılmış olur.</p><div style="padding:14px;border-radius:12px;background:#ecfdf3;color:#166534;margin-bottom:18px;">✓ Büro verilerinden bağımsız güvenli yönetici oturumu</div><div style="display:flex;gap:10px;flex-wrap:wrap;"><button class="btn" onclick="openProfilimModal()">Profil ve Şifre</button><button class="btn" onclick="cikisYap()" style="color:#dc2626;">Çıkış Yap</button></div></section></main>`;
 }
 // ── AÇILIŞ EKRANI: EN AZ 7 SANİYE GÖRÜNSÜN ────────────────────────
 const YUKLEME_BASLANGIC=Date.now();
@@ -244,6 +270,7 @@ function openProfil(){
   document.getElementById('profil-isim').textContent = isim;
   document.getElementById('profil-email').textContent = _user.email || '—';
   document.getElementById('profil-buro').textContent = _buro?.ad || '—';
+  document.getElementById('profil-rol').textContent = ROL_ADLARI[_platformAdmin?'platform_admini':_buro?.rol] || '—';
   document.getElementById('profil-buro-kodu').textContent = _buro?.id || '—';
   document.getElementById('profil-kayit').textContent = records.length + ' kayıt';
   if(_user.created_at){
@@ -262,6 +289,7 @@ function openProfilimModal(){
     document.getElementById('profil-adsoyad-input').value=_user.user_metadata?.full_name||'';
     document.getElementById('profil-email-input').value=_user.email||'';
   }
+  const sil=document.getElementById('hesap-sil-alani');if(sil)sil.style.display=_platformAdmin?'none':'block';
 }
 function closeProfilimModal(){
   document.getElementById('profilim-overlay').style.display='none';
@@ -300,6 +328,46 @@ async function sifreDegistir(){
   document.getElementById('profil-yeni-sifre').value='';
   document.getElementById('profil-yeni-sifre2').value='';
   setProfilMsg('✓ Şifreniz başarıyla değiştirildi.','#22c55e');
+}
+function hesabimiSilPenceresi(){
+  if(_platformAdmin){alert('Platform admini hesabı uygulama içinden silinemez.');return;}
+  let o=document.getElementById('hesap-sil-overlay');if(!o){o=document.createElement('div');o.id='hesap-sil-overlay';o.className='modal-overlay';o.style.zIndex='610';document.body.appendChild(o);}
+  o.innerHTML=`<div class="modal" style="max-width:440px;"><div class="modal-header"><div><h2 style="color:#b42318;">Hesabımı Sil</h2><div style="font-size:11px;color:var(--text2);margin-top:3px;">Bu işlem geri alınamaz.</div></div><button class="btn" onclick="document.getElementById('hesap-sil-overlay').style.display='none'">✕</button></div><div class="modal-body"><div style="padding:12px;border-radius:10px;background:#fff1f0;color:#912018;font-size:12px;line-height:1.5;margin-bottom:14px;">Takvim hesabınız ve büro üyeliğiniz silinecek. Büro yöneticisiyseniz önce yöneticiliği devretmelisiniz.</div><div class="fg"><label>Onaylamak için e-posta adresinizi yazın</label><input id="hesap-sil-email" type="email" placeholder="${esc(_user?.email||'')}"></div><button id="hesap-sil-btn" class="btn" style="width:100%;padding:11px;background:#b42318;color:white;border-color:#b42318;" onclick="hesabimiKaliciSil()">Hesabımı Kalıcı Olarak Sil</button><div id="hesap-sil-msg" style="font-size:12px;margin-top:9px;color:#b42318;"></div></div></div>`;o.style.display='flex';
+}
+async function hesabimiKaliciSil(){
+  const email=(document.getElementById('hesap-sil-email')?.value||'').trim(),msg=document.getElementById('hesap-sil-msg'),btn=document.getElementById('hesap-sil-btn');
+  if(email.toLowerCase()!==String(_user?.email||'').toLowerCase()){msg.textContent='Yazdığınız e-posta hesabınızla eşleşmiyor.';return;}
+  if(!confirm('Hesabınız kalıcı olarak silinecek. Son kez onaylıyor musunuz?'))return;
+  btn.disabled=true;btn.textContent='Hesap siliniyor...';
+  const{error}=await sb.rpc('sekreter_hesabimi_sil',{email_onayi:email});
+  if(error){msg.textContent='Hesap silinemedi: '+error.message;btn.disabled=false;btn.textContent='Hesabımı Kalıcı Olarak Sil';return;}
+  try{await sb.auth.signOut();}catch(e){}location.reload();
+}
+function buromuSilPenceresi(){
+  if(_buro?.rol!=='yonetici'){alert('Bu işlem yalnızca büro yöneticisine açıktır.');return;}
+  let o=document.getElementById('buro-sil-overlay');if(!o){o=document.createElement('div');o.id='buro-sil-overlay';o.className='modal-overlay';o.style.zIndex='620';document.body.appendChild(o);}
+  o.innerHTML=`<div class="modal" style="max-width:460px;"><div class="modal-header"><div><h2 style="color:#b42318;">Büroyu ve Takvimi Sil</h2><div style="font-size:11px;color:var(--text2);margin-top:3px;">Bu işlem geri alınamaz.</div></div><button class="btn" onclick="document.getElementById('buro-sil-overlay').style.display='none'">✕</button></div><div class="modal-body"><div style="padding:13px;border-radius:10px;background:#fff1f0;color:#912018;font-size:12px;line-height:1.55;margin-bottom:14px;"><strong>${esc(_buro.ad)}</strong> bürosunun takvimi, müvekkilleri, dava dosyaları, evrakları ve mali kayıtları kalıcı olarak silinecek. Üyelerin giriş hesapları silinmeyecek ancak bu büroyla bağlantıları kaldırılacak.<br><br>Önce Tam Veri Yedeği indirmeniz kuvvetle önerilir.</div><button class="btn" style="width:100%;margin-bottom:14px;" onclick="document.getElementById('buro-sil-overlay').style.display='none';openDisaAktar()">Önce Yedek Al</button><div class="fg"><label>Onaylamak için büro adını eksiksiz yazın</label><input id="buro-sil-ad" placeholder="${esc(_buro.ad)}" autocomplete="off"></div><label style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--text2);margin-bottom:14px;"><input id="buro-sil-anladim" type="checkbox" style="margin-top:2px;">Bütün büro verilerinin kalıcı olarak silineceğini anlıyorum.</label><button id="buro-sil-btn" class="btn" style="width:100%;padding:11px;background:#b42318;color:white;border-color:#b42318;" onclick="buromuKaliciSil()">Büroyu Kalıcı Olarak Sil</button><div id="buro-sil-msg" style="font-size:12px;margin-top:9px;color:#b42318;"></div></div></div>`;o.style.display='flex';
+}
+async function buroEvraklariniSil(){
+  const kok=await sb.storage.from('sekreter-evraklari').list(_buro.id,{limit:1000});
+  if(kok.error)throw kok.error;
+  const yollar=[];
+  for(const oge of kok.data||[]){
+    if(oge.id)yollar.push(_buro.id+'/'+oge.name);
+    else{const alt=await sb.storage.from('sekreter-evraklari').list(_buro.id+'/'+oge.name,{limit:1000});if(alt.error)throw alt.error;(alt.data||[]).filter(x=>x.id).forEach(x=>yollar.push(_buro.id+'/'+oge.name+'/'+x.name));}
+  }
+  for(let i=0;i<yollar.length;i+=100){const{error}=await sb.storage.from('sekreter-evraklari').remove(yollar.slice(i,i+100));if(error)throw error;}
+}
+async function buromuKaliciSil(){
+  const ad=(document.getElementById('buro-sil-ad')?.value||'').trim(),anladim=document.getElementById('buro-sil-anladim')?.checked,msg=document.getElementById('buro-sil-msg'),btn=document.getElementById('buro-sil-btn');
+  if(ad.toLocaleLowerCase('tr-TR')!==String(_buro?.ad||'').trim().toLocaleLowerCase('tr-TR')){msg.textContent='Yazdığınız büro adı eşleşmiyor.';return;}
+  if(!anladim){msg.textContent='Devam etmek için silme uyarısını onaylayın.';return;}
+  if(!confirm(`${_buro.ad} ve bütün büro verileri kalıcı olarak silinecek. Son kez onaylıyor musunuz?`))return;
+  btn.disabled=true;btn.textContent='Evraklar ve büro verileri siliniyor...';
+  try{await buroEvraklariniSil();}catch(e){msg.textContent='Evraklar silinemedi; veri kaybını önlemek için işlem durduruldu: '+e.message;btn.disabled=false;btn.textContent='Büroyu Kalıcı Olarak Sil';return;}
+  const{error}=await sb.rpc('sekreter_buromu_sil',{buro_adi_onayi:ad});
+  if(error){msg.textContent='Büro silinemedi: '+error.message;btn.disabled=false;btn.textContent='Büroyu Kalıcı Olarak Sil';return;}
+  alert('Büro ve takvim verileri silindi.');try{await sb.auth.signOut();}catch(e){}location.reload();
 }
 function closeProfil(){
   document.getElementById('profil-overlay').style.display='none';
@@ -425,6 +493,7 @@ async function sifreYenile(){
 
 async function authSonrasiIslem(){
   const buroVarMi=await buroBilgisiYukle();
+  if(buroVarMi==='platform_admini'){platformAdminEkraniniGoster();return;}
   if(!buroVarMi){
     showApp();
     document.querySelector('.app').innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;text-align:center;padding:24px;"><div><div style="font-size:16px;font-weight:700;margin-bottom:8px;">Büro bilgisi bulunamadı</div><div style="font-size:13px;color:var(--text2);max-width:340px;margin:0 auto 16px;">Hesabınız henüz bir büroya bağlı değil. Lütfen destek ile iletişime geçin.</div><button class="btn" onclick="cikisYap()">Çıkış Yap</button></div></div>';
@@ -433,6 +502,7 @@ async function authSonrasiIslem(){
   showApp();
   const sad = document.getElementById('sidebar-buro-ad');
   if(sad) sad.textContent = _buro.ad;
+  rolArayuzunuUygula();
   await ozelSecenekleriYukle();
   await notlariYukle();
   await loadRecords();
@@ -464,4 +534,3 @@ async function authBaslat(){
   _user=session.user;
   await authSonrasiIslem();
 }
-

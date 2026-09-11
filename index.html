@@ -94,11 +94,13 @@
       </div>
     </div>
     <div class="profil-row"><span class="profil-row-label">Büro</span><span class="profil-row-val" id="profil-buro">—</span></div>
+    <div class="profil-row"><span class="profil-row-label">Yetki</span><span class="profil-row-val" id="profil-rol">—</span></div>
     <div class="profil-row"><span class="profil-row-label">Büro Kodu</span><span class="profil-row-val" id="profil-buro-kodu" style="cursor:pointer;font-family:monospace;font-size:10px;" onclick="kopyalaBuroKodu()" title="Kopyalamak için tıkla">—</span></div>
     <div class="profil-row"><span class="profil-row-label">Kayıt tarihi</span><span class="profil-row-val" id="profil-tarih">—</span></div>
     <div class="profil-row"><span class="profil-row-label">Toplam kayıt</span><span class="profil-row-val" id="profil-kayit">—</span></div>
     <div class="profil-btn-row">
       <button onclick="closeProfil();openProfilimModal()" class="btn btn-primary" style="width:100%;margin-bottom:8px;">👤 Profilim</button>
+      <button data-role-manager onclick="closeProfil();openKullaniciYonetimi()" class="btn" style="width:100%;margin-bottom:8px;display:none;">👥 Kullanıcılar ve Yetkiler</button>
       <button onclick="closeProfil();openListeYonetim()" class="btn" style="width:100%;margin-bottom:8px;">⚙️ Liste Yönetimi</button>
       <button onclick="closeProfil();openDisaAktar()" class="btn" style="width:100%;margin-bottom:8px;">↓ Yedek ve Dışa Aktar</button>
       <button onclick="closeProfil();openBildirimAyarlari()" class="btn" style="width:100%;margin-bottom:8px;">🔔 Bildirim Ayarları</button>
@@ -205,6 +207,12 @@
       </div>
       <button onclick="sifreDegistir()" class="btn" style="width:100%;padding:11px;font-size:14px;border-color:var(--border2);">Şifreyi Değiştir</button>
       <div id="profilim-msg" style="margin-top:10px;font-size:12px;text-align:center;min-height:16px;"></div>
+      <div id="hesap-sil-alani" style="margin-top:22px;padding-top:18px;border-top:1px solid var(--border);">
+        <div style="font-size:11px;font-weight:700;color:#b42318;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">Tehlikeli Alan</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:10px;">Hesabınız kalıcı olarak silinir. Büro yöneticileri önce yöneticiliği devretmelidir.</div>
+        <button onclick="hesabimiSilPenceresi()" class="btn" style="width:100%;padding:11px;color:#b42318;border-color:#fda29b;">Hesabımı Sil</button>
+        <button data-role-manager onclick="buromuSilPenceresi()" class="btn" style="width:100%;padding:11px;margin-top:8px;color:#fff;background:#b42318;border-color:#b42318;display:none;">Büroyu ve Takvimi Sil</button>
+      </div>
     </div>
   </div>
 </div>
@@ -234,7 +242,7 @@
     <button class="nav-item" onclick="showView('buro',this)">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="5" r="3"/><path d="M1 14c0-3 1.8-5 4-5s4 2 4 5M10 3h5v10h-4"/></svg>Büro Kartları
     </button>
-    <button class="nav-item" onclick="maliSekmesiniAc(this)">
+    <button class="nav-item" data-role-finance onclick="maliSekmesiniAc(this)">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="14" height="10" rx="2"/><path d="M1 6h14M10 10h3"/></svg>Mali Takip
     </button>
   </nav>
@@ -386,7 +394,7 @@
     <div class="view" id="view-buro">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
         <div><div style="font-size:16px;font-weight:700;">Müvekkiller ve Dosyalar</div><div style="font-size:11px;color:var(--text2);margin-top:3px;">Büro rehberi ve dava dosyası kartları</div></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn" onclick="mevcutMuvekkilleriOnizle()">Mevcut Müvekkilleri Aktar</button><button class="btn" onclick="mevcutDosyalariOnizle()">Mevcut Dosyaları Aktar</button><button class="btn" onclick="openMuvekkilKartFormu()">+ Müvekkil</button><button class="btn btn-primary" onclick="openDosyaKartFormu()">+ Dosya</button></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn" onclick="mevcutMuvekkilleriOnizle()">Mevcut Müvekkilleri Aktar</button><button class="btn" onclick="mevcutDosyalariOnizle()">Mevcut Dosyaları Aktar</button><button data-role-manager class="btn" style="display:none;" onclick="openKartBirlestir('muvekkil')">Müvekkil Birleştir</button><button data-role-manager class="btn" style="display:none;" onclick="openKartBirlestir('dosya')">Dosya Birleştir</button><button class="btn" onclick="openMuvekkilKartFormu()">+ Müvekkil</button><button class="btn btn-primary" onclick="openDosyaKartFormu()">+ Dosya</button></div>
       </div>
       <div class="filter-bar"><input id="buro-kart-arama" type="text" placeholder="Müvekkil, dosya no, mahkeme veya konu ara..." oninput="renderBuroKartlari()"></div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;overflow:auto;padding-bottom:12px;">
@@ -459,7 +467,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="7" r="4"/><path d="M2 21c0-5 2.5-8 6-8s6 3 6 8M16 4h6v15h-5"/></svg>
       Büro
     </button>
-    <button class="mobile-nav-item" onclick="maliSekmesiniAc(this)">
+    <button class="mobile-nav-item" data-role-finance onclick="maliSekmesiniAc(this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 9h20M15 14h4"/></svg>
       Mali
     </button>
@@ -556,6 +564,10 @@
             <input type="date" id="f-sure-son-gun-manuel">
           </div>
           <button type="button" onclick="manuelSonGunKapat()" style="background:none;border:none;color:var(--navy);font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;padding:0 0 12px;text-decoration:underline;">← Tebliğ tarihinden hesaplamaya dön</button>
+        </div>
+        <div class="fg">
+          <label>Saat (opsiyonel)</label>
+          <input type="time" id="f-sure-saat">
         </div>
         <div class="dosya-box">
           <div class="dosya-box-title">İş Tipi</div>
