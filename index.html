@@ -226,6 +226,9 @@
       <div id="sidebar-buro-ad" style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:2px;">Hukuk Takvimi</div>
     </div>
   </div>
+  <button id="sidebar-toggle" class="sidebar-toggle" onclick="sidebarDaraltToggle()" title="Sol menüyü daralt" aria-label="Sol menüyü daralt">
+    <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m12.5 5-5 5 5 5"/></svg>
+  </button>
   <nav class="nav">
     <button class="nav-item active" title="Takvim" onclick="showView('takvim',this)">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="14" height="13" rx="1.5"/><path d="M5 1v2M11 1v2M1 6h14"/></svg>Takvim
@@ -258,7 +261,6 @@
 <div class="main">
   <div class="topbar">
     <div class="topbar-left">
-      <button id="sidebar-toggle" class="sidebar-toggle" onclick="sidebarDaraltToggle()" title="Sol menüyü daralt" aria-label="Sol menüyü daralt">☰</button>
       <span class="topbar-title" id="topbar-title">Takvim</span>
     </div>
     <div style="display:flex;align-items:center;gap:10px;">

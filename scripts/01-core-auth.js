@@ -64,7 +64,7 @@ function rolArayuzunuUygula(){
   document.querySelectorAll('[data-role-manager]').forEach(el=>el.style.display=_buro?.rol==='yonetici'?'':'none');
   document.querySelectorAll('[data-role-invite]').forEach(el=>el.style.display=_buro&&['yonetici','ortak'].includes(_buro.rol)?'':'none');
 }
-function sidebarDaraltUygula(dar){const appEl=document.querySelector('.app');if(!appEl)return;appEl.classList.toggle('sidebar-collapsed',!!dar);const b=document.getElementById('sidebar-toggle');if(b){b.textContent=dar?'☰':'☰';b.title=dar?'Sol menüyü aç':'Sol menüyü daralt';b.setAttribute('aria-label',b.title);}}
+function sidebarDaraltUygula(dar){const appEl=document.querySelector('.app');if(!appEl)return;appEl.classList.toggle('sidebar-collapsed',!!dar);const b=document.getElementById('sidebar-toggle');if(b){b.title=dar?'Sol menüyü aç':'Sol menüyü daralt';b.setAttribute('aria-label',b.title);}}
 function sidebarDaraltToggle(){const dar=!document.querySelector('.app')?.classList.contains('sidebar-collapsed');sidebarDaraltUygula(dar);try{localStorage.setItem('sekreter_sidebar_dar',dar?'1':'0');}catch(e){}}
 function sidebarTercihiniYukle(){let dar=false;try{dar=localStorage.getItem('sekreter_sidebar_dar')==='1';}catch(e){}sidebarDaraltUygula(dar);}
 function ayarGrubu(baslik,icerik){return `<section style="border:1px solid var(--border);border-radius:13px;padding:14px;"><div style="font-size:11px;font-weight:750;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;">${baslik}</div><div style="display:grid;gap:8px;">${icerik}</div></section>`;}
