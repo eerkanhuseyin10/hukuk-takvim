@@ -16,7 +16,7 @@
 <div id="loading-overlay" style="position:fixed;inset:0;background:#111;z-index:2000;display:flex;align-items:center;justify-content:center;">
   <div style="text-align:center;max-width:380px;padding:0 28px;">
     <div style="width:40px;height:40px;border:3px solid rgba(212,175,112,0.2);border-top-color:#d4af70;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 20px;"></div>
-    <div style="font-size:19px;line-height:1.65;color:rgba(212,175,112,0.92);font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-style:italic;letter-spacing:0.2px;">Allah'ım! Kazancımıza bolluk ve bereket ihsan eyle. İşlerimizi kolaylaştır, bizleri senden başkasına muhtaç etme. Âmin.</div>
+    <div id="acilis-mesaji" style="font-size:19px;line-height:1.65;color:rgba(212,175,112,0.92);font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-style:italic;letter-spacing:0.2px;">Sekreter hazırlanıyor…</div>
   </div>
 </div>
 
@@ -70,7 +70,7 @@
         <button type="button" id="ko-tab-katil" onclick="koModSec('katil')" style="flex:1;padding:9px 0;font-size:12.5px;font-weight:600;border:none;cursor:pointer;font-family:inherit;background:transparent;color:rgba(255,255,255,0.6);">Büroya Katıl</button>
       </div>
       <input class="buro-input" id="ko-buro-adi" type="text" placeholder="Büronuzun adı" style="margin-bottom:10px;">
-      <input class="buro-input" id="ko-buro-kodu" type="text" placeholder="Büro kodu (davet edenden alın)" style="margin-bottom:10px;display:none;">
+      <input class="buro-input" id="ko-buro-kodu" type="text" placeholder="Tek kullanımlık davet kodu" style="margin-bottom:10px;display:none;">
       <input class="buro-input" id="ko-email" type="email" placeholder="E-posta adresiniz" autocomplete="email" style="margin-bottom:10px;">
       <input class="buro-input" id="ko-sifre" type="password" placeholder="Şifre (min. 6 karakter)" autocomplete="new-password" style="margin-bottom:10px;">
       <input class="buro-input" id="ko-sifre2" type="password" placeholder="Şifreyi tekrar girin" autocomplete="new-password" style="margin-bottom:16px;" onkeydown="if(event.key==='Enter')kayitOl()">
@@ -95,12 +95,13 @@
     </div>
     <div class="profil-row"><span class="profil-row-label">Büro</span><span class="profil-row-val" id="profil-buro">—</span></div>
     <div class="profil-row"><span class="profil-row-label">Yetki</span><span class="profil-row-val" id="profil-rol">—</span></div>
-    <div class="profil-row"><span class="profil-row-label">Büro Kodu</span><span class="profil-row-val" id="profil-buro-kodu" style="cursor:pointer;font-family:monospace;font-size:10px;" onclick="kopyalaBuroKodu()" title="Kopyalamak için tıkla">—</span></div>
     <div class="profil-row"><span class="profil-row-label">Kayıt tarihi</span><span class="profil-row-val" id="profil-tarih">—</span></div>
     <div class="profil-row"><span class="profil-row-label">Toplam kayıt</span><span class="profil-row-val" id="profil-kayit">—</span></div>
     <div class="profil-btn-row">
       <button onclick="closeProfil();openProfilimModal()" class="btn btn-primary" style="width:100%;margin-bottom:8px;">👤 Profilim</button>
       <button data-role-manager onclick="closeProfil();openKullaniciYonetimi()" class="btn" style="width:100%;margin-bottom:8px;display:none;">👥 Kullanıcılar ve Yetkiler</button>
+      <button data-role-invite onclick="closeProfil();openDavetPenceresi()" class="btn" style="width:100%;margin-bottom:8px;display:none;">✉️ Tek Kullanımlık Davet</button>
+      <button data-role-manager onclick="closeProfil();openAcilisMesajiAyari()" class="btn" style="width:100%;margin-bottom:8px;display:none;">✨ Açılış Mesajı / Dua</button>
       <button onclick="closeProfil();openListeYonetim()" class="btn" style="width:100%;margin-bottom:8px;">⚙️ Liste Yönetimi</button>
       <button onclick="closeProfil();openDisaAktar()" class="btn" style="width:100%;margin-bottom:8px;">↓ Yedek ve Dışa Aktar</button>
       <button onclick="closeProfil();openBildirimAyarlari()" class="btn" style="width:100%;margin-bottom:8px;">🔔 Bildirim Ayarları</button>
