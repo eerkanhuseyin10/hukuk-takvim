@@ -518,7 +518,7 @@ async function authSonrasiIslem(){
   if(buroVarMi==='platform_admini'){platformAdminEkraniniGoster();return;}
   if(!buroVarMi){
     showApp();
-    document.querySelector('.app').innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;text-align:center;padding:24px;"><div><div style="font-size:16px;font-weight:700;margin-bottom:8px;">Büro bilgisi bulunamadı</div><div style="font-size:13px;color:var(--text2);max-width:340px;margin:0 auto 16px;">Hesabınız henüz bir büroya bağlı değil. Lütfen destek ile iletişime geçin.</div><button class="btn" onclick="cikisYap()">Çıkış Yap</button></div></div>';
+    document.querySelector('.app').innerHTML=`<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:24px;background:var(--surface2);"><div style="width:100%;max-width:430px;padding:28px;background:var(--surface);border:1px solid var(--border);border-radius:16px;box-shadow:0 16px 40px rgba(15,23,42,.1);"><div style="font-size:20px;font-weight:750;margin-bottom:8px;">Bir büroya katılın</div><div style="font-size:13px;color:var(--text2);line-height:1.6;margin:0 auto 18px;">Hesabınız aktif ancak şu anda bir büroya bağlı değil. Büro yöneticisinden aldığı kodu aşağıya girin.</div><label for="mevcut-hesap-buro-kodu" style="display:block;text-align:left;font-size:12px;font-weight:650;margin-bottom:6px;">Büro kodu</label><input id="mevcut-hesap-buro-kodu" type="text" placeholder="Yöneticinin paylaştığı büro kodu" style="width:100%;margin-bottom:10px;" onkeydown="if(event.key==='Enter')mevcutHesaplaBuroyaKatil()"><button id="mevcut-hesap-katil-btn" class="save-btn" onclick="mevcutHesaplaBuroyaKatil()">Büroya Katıl</button><div id="mevcut-hesap-katil-msg" style="min-height:18px;margin-top:10px;font-size:12px;"></div><button class="btn" style="margin-top:12px;" onclick="cikisYap()">Başka hesapla giriş yap</button></div></div>`;
     return;
   }
   showApp();
@@ -529,6 +529,17 @@ async function authSonrasiIslem(){
   await notlariYukle();
   await loadRecords();
   await buroKartlariYukle();
+}
+
+async function mevcutHesaplaBuroyaKatil(){
+  const kod=(document.getElementById('mevcut-hesap-buro-kodu')?.value||'').trim(),msg=document.getElementById('mevcut-hesap-katil-msg'),btn=document.getElementById('mevcut-hesap-katil-btn');
+  if(!kod){msg.textContent='Büro kodunu girin.';msg.style.color='#b42318';return;}
+  btn.disabled=true;btn.textContent='Katılım yapılıyor...';msg.textContent='';
+  const{data,error}=await sb.rpc('sekreter_buroya_katil',{buro_kodu:kod});
+  if(error){msg.textContent='Katılım yapılamadı: '+error.message;msg.style.color='#b42318';btn.disabled=false;btn.textContent='Büroya Katıl';return;}
+  const sonuc=Array.isArray(data)?data[0]:data;
+  msg.textContent='✓ '+(sonuc?.buro_adi||'Büro')+' bürosuna katıldınız. Takvim açılıyor...';msg.style.color='#15803d';
+  setTimeout(()=>location.reload(),700);
 }
 
 async function cikisYap(){
