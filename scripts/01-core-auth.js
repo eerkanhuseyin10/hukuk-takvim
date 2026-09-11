@@ -73,7 +73,7 @@ function openAyarlarMerkezi(){
   let o=document.getElementById('ayarlar-merkezi-overlay');if(!o){o=document.createElement('div');o.id='ayarlar-merkezi-overlay';o.className='modal-overlay';o.style.zIndex='680';document.body.appendChild(o);}const yonetici=_buro?.rol==='yonetici',davet=_buro&&['yonetici','ortak'].includes(_buro.rol),veriYetkili=_buro&&['yonetici','ortak'].includes(_buro.rol),masaustu=!!window.sekreterDesktop;
   const buro=[yonetici?ayarButonu('👥 Kullanıcılar ve Yetkiler','openKullaniciYonetimi()'):'',davet?ayarButonu('✉️ Tek Kullanımlık Davet','openDavetPenceresi()'):'',yonetici?ayarButonu('✨ Açılış Mesajı / Dua','openAcilisMesajiAyari()'):''].join('');
   const guvenlik=[yonetici?ayarButonu('🕘 İşlem ve Erişim Günlüğü','openIslemGunlugu()'):'',veriYetkili?ayarButonu('↓ Yedek ve Dışa Aktar','openDisaAktar()'):'',ayarButonu('🔔 Bildirim Ayarları','openBildirimAyarlari()'),ayarButonu('🛡️ KVKK Aydınlatma Metni','kvkkAydinlatmaPenceresi()')].join('');
-  const uygulama=[ayarButonu('📋 Liste Yönetimi','openListeYonetim()'),masaustu?ayarButonu('↻ Güncellemeyi Denetle','guncellemeDenetle()'):'',ayarButonu('💡 Geliştirme Notları','openNotlar()')].join('');
+  const uygulama=[ayarButonu('📋 Liste Yönetimi','openListeYonetim()'),masaustu?ayarButonu('↻ Güncellemeyi Denetle','guncellemeDenetle()'):''].join('');
   o.innerHTML=`<div class="modal" style="max-width:620px;"><div class="modal-header"><div><h2>Ayarlar</h2><div style="font-size:11px;color:var(--text2);margin-top:3px;">Büro, güvenlik ve uygulama seçenekleri</div></div><button class="btn" onclick="document.getElementById('ayarlar-merkezi-overlay').style.display='none'">✕</button></div><div class="modal-body" style="display:grid;gap:11px;max-height:75vh;overflow:auto;">${buro?ayarGrubu('Büro Yönetimi',buro):''}${ayarGrubu('Veri ve Güvenlik',guvenlik)}${ayarGrubu('Uygulama',uygulama)}</div></div>`;o.style.display='flex';o.onclick=e=>{if(e.target===o)o.style.display='none';};
 }
 async function openDavetPenceresi(){
@@ -100,7 +100,8 @@ async function uyeyiBurodanCikar(userId,email){if(!confirm(`${email} bürodan ç
 let PLATFORM_YONETIM_VERISI=null;
 async function platformAdminEkraniniGoster(){
   showApp();
-  document.querySelector('.app').innerHTML=`<main style="min-height:100vh;background:#f5f6f8;padding:clamp(16px,3vw,34px);"><section style="width:100%;max-width:1180px;margin:auto;"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:22px;"><div><div style="font-size:11px;font-weight:750;color:#9a742f;letter-spacing:.09em;text-transform:uppercase;">Sekreter Sistem Yönetimi</div><h1 style="font-size:27px;margin:6px 0 4px;">Platform Yönetim Paneli</h1><div style="font-size:12px;color:#667085;">Kullanıcı ve büro üyelikleri · Özel büro içerikleri bu panelde gösterilmez</div></div><div style="display:flex;gap:8px;"><button class="btn" onclick="platformAdminVerileriniYukle()">↻ Yenile</button><button class="btn" onclick="openProfilimModal()">Profil</button><button class="btn" onclick="cikisYap()" style="color:#dc2626;">Çıkış</button></div></div><div id="platform-admin-icerik"><div style="padding:30px;text-align:center;color:#667085;background:white;border:1px solid #e2e5ea;border-radius:16px;">Yönetim bilgileri yükleniyor…</div></div></section></main>`;
+  const hizli=document.getElementById('hizli-not-btn');if(hizli)hizli.style.display='none';
+  document.querySelector('.app').innerHTML=`<main style="min-height:100vh;background:#f5f6f8;padding:clamp(16px,3vw,34px);"><section style="width:100%;max-width:1180px;margin:auto;"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:22px;"><div><div style="font-size:11px;font-weight:750;color:#9a742f;letter-spacing:.09em;text-transform:uppercase;">Sekreter Sistem Yönetimi</div><h1 style="font-size:27px;margin:6px 0 4px;">Platform Yönetim Paneli</h1><div style="font-size:12px;color:#667085;">Kullanıcı ve büro üyelikleri · Özel büro içerikleri bu panelde gösterilmez</div></div><div style="display:flex;gap:8px;"><button class="btn" onclick="openNotlar()">💡 Geliştirme Notları</button><button class="btn" onclick="platformAdminVerileriniYukle()">↻ Yenile</button><button class="btn" onclick="openProfilimModal()">Profil</button><button class="btn" onclick="cikisYap()" style="color:#dc2626;">Çıkış</button></div></div><div id="platform-admin-icerik"><div style="padding:30px;text-align:center;color:#667085;background:white;border:1px solid #e2e5ea;border-radius:16px;">Yönetim bilgileri yükleniyor…</div></div></section></main>`;
   await platformAdminVerileriniYukle();
 }
 function platformTarih(value){if(!value)return 'Henüz giriş yapmadı';const d=new Date(value);return Number.isNaN(d.getTime())?'—':d.toLocaleString('tr-TR',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}
@@ -201,65 +202,42 @@ async function lySilMahkeme(deger){
   renderListeYonetim();
 }
 // ── GELİŞTİRME NOTLARI ──────────────────────────────────────────────
-const ADMIN_BURO_ID='0d961c7f-fb7f-4679-95da-06704dcea589';
 let GELISTIRME_NOTLARI=[];
-let TUM_BUROLARDAN_NOTLAR=[];
 async function notlariYukle(){
-  if(!_buro)return;
-  const{data,error}=await sb.from('gelistirme_notlari').select('*').eq('buro_id',_buro.id).order('created_at',{ascending:false});
+  if(!_user)return;
+  let sorgu=sb.from('gelistirme_notlari').select('*').order('created_at',{ascending:false});
+  if(!_platformAdmin)sorgu=sorgu.eq('user_id',_user.id);
+  const{data,error}=await sorgu;
   if(error){console.warn('Notlar okunamadı (tablo kurulmamış olabilir):',error.message);return;}
   GELISTIRME_NOTLARI=data||[];
-  if(_buro.id===ADMIN_BURO_ID)await tumBurolardanNotlariYukle();
-}
-async function tumBurolardanNotlariYukle(){
-  const{data,error}=await sb.from('gelistirme_notlari').select('*').neq('buro_id',ADMIN_BURO_ID).order('created_at',{ascending:false});
-  if(error){console.warn('Diğer bürolardan notlar okunamadı:',error.message);return;}
-  const notlar=data||[];
-  const buroIdler=[...new Set(notlar.map(n=>n.buro_id))];
-  let adMap={};
-  if(buroIdler.length){
-    const{data:burolar}=await sb.from('burolar').select('id,ad').in('id',buroIdler);
-    (burolar||[]).forEach(b=>{adMap[b.id]=b.ad;});
-  }
-  TUM_BUROLARDAN_NOTLAR=notlar.map(n=>({...n,buro_adi:adMap[n.buro_id]||'Bilinmeyen Büro'}));
 }
 function renderNotlar(){
   const el=document.getElementById('notlar-liste');
   if(!el)return;
-  const satir=n=>`<div class="not-row${n.tamamlandi?' done':''}">
-    <input type="checkbox" ${n.tamamlandi?'checked':''} onchange="notToggle(${n.id},this.checked)">
+  const buroAdlari={};(PLATFORM_YONETIM_VERISI?.burolar||[]).forEach(b=>buroAdlari[b.id]=b.ad);
+  const satir=n=>{const tamam=n.durum==='cozuldu'||n.tamamlandi;return `<div class="not-row${tamam?' done':''}" style="align-items:flex-start;">
+    ${_platformAdmin?`<input type="checkbox" ${tamam?'checked':''} onchange="notToggle(${n.id},this.checked)">`:''}
     <div style="flex:1;">
       <div class="not-metin">${esc(n.not_metni)}</div>
-      <div class="not-tarih">${n.yazan?esc(n.yazan)+' · ':''}${formatDate((n.created_at||'').split('T')[0])}</div>
+      <div class="not-tarih">${_platformAdmin?`<b>${esc(buroAdlari[n.buro_id]||'Bilinmeyen Büro')}</b> · `:''}${n.yazan?esc(n.yazan)+' · ':''}${formatDate((n.created_at||'').split('T')[0])} · ${tamam?'Çözüldü':'İnceleniyor'}</div>
+      ${n.admin_notu?`<div style="margin-top:8px;padding:9px 11px;border-radius:9px;background:${tamam?'#ecfdf3':'var(--surface2)'};font-size:11px;line-height:1.5;"><b>Platform yanıtı:</b> ${esc(n.admin_notu)}</div>`:''}
     </div>
-    <button onclick="notSil(${n.id})">🗑</button>
-  </div>`;
+    ${_platformAdmin?`<button class="btn" style="font-size:11px;" onclick="notCevapla(${n.id})">Yanıtla</button><button onclick="notSil(${n.id})">🗑</button>`:`<button onclick="notSil(${n.id})" title="Notu sil">🗑</button>`}
+  </div>`;};
   let html='';
   if(!GELISTIRME_NOTLARI.length){
-    html='<div class="ly-empty">Henüz not eklenmemiş.</div>';
+    html=`<div class="ly-empty">${_platformAdmin?'Henüz gönderilmiş geliştirme notu yok.':'Henüz geliştirme notu göndermediniz.'}</div>`;
   } else {
-    const aktif=GELISTIRME_NOTLARI.filter(n=>!n.tamamlandi);
-    const biten=GELISTIRME_NOTLARI.filter(n=>n.tamamlandi);
+    const aktif=GELISTIRME_NOTLARI.filter(n=>n.durum!=='cozuldu'&&!n.tamamlandi);
+    const biten=GELISTIRME_NOTLARI.filter(n=>n.durum==='cozuldu'||n.tamamlandi);
     html=aktif.map(satir).join('')+(biten.length?`<div style="font-size:11px;color:var(--text3);margin:14px 0 6px;text-transform:uppercase;letter-spacing:.06em;">Tamamlanan (${biten.length})</div>`+biten.map(satir).join(''):'');
-  }
-  if(_buro?.id===ADMIN_BURO_ID){
-    html+='<div class="ref-section-title">🌐 Diğer Bürolardan Gelen Notlar</div>';
-    if(!TUM_BUROLARDAN_NOTLAR.length){
-      html+='<div class="ly-empty">Henüz başka büro not bırakmadı.</div>';
-    } else {
-      html+=TUM_BUROLARDAN_NOTLAR.map(n=>`<div class="not-row${n.tamamlandi?' done':''}">
-        <input type="checkbox" ${n.tamamlandi?'checked':''} onchange="notToggle(${n.id},this.checked)">
-        <div style="flex:1;">
-          <div class="not-metin">${esc(n.not_metni)}</div>
-          <div class="not-tarih"><b>${esc(n.buro_adi)}</b>${n.yazan?' · '+esc(n.yazan):''} · ${formatDate((n.created_at||'').split('T')[0])}</div>
-        </div>
-        <button onclick="notSil(${n.id})">🗑</button>
-      </div>`).join('');
-    }
   }
   el.innerHTML=html;
 }
-function openNotlar(){
+async function openNotlar(){
+  await notlariYukle();
+  const yeni=document.getElementById('not-yeni-alani');if(yeni)yeni.style.display=_platformAdmin?'none':'flex';
+  const baslik=document.querySelector('#notlar-overlay .referans-detay-header h2');if(baslik)baslik.textContent=_platformAdmin?'💡 Gelen Geliştirme Notları':'💡 Gönderdiğim Notlar';
   renderNotlar();
   document.getElementById('notlar-overlay').style.display='flex';
 }
@@ -272,23 +250,32 @@ async function notEkle(){
   if(!metin)return;
   if(!_buro)return;
   const yazan=_user?.user_metadata?.full_name||_user?.email?.split('@')[0]||null;
-  const{data,error}=await sb.from('gelistirme_notlari').insert({buro_id:_buro.id,not_metni:metin,yazan}).select().maybeSingle();
+  const{data,error}=await sb.from('gelistirme_notlari').insert({buro_id:_buro.id,user_id:_user.id,not_metni:metin,yazan,durum:'acik'}).select().maybeSingle();
   if(error){alert('Not eklenemedi: '+error.message);return;}
   if(data)GELISTIRME_NOTLARI.unshift(data);
   inp.value='';
   renderNotlar();
 }
 async function notToggle(id,tamamlandi){
-  GELISTIRME_NOTLARI=GELISTIRME_NOTLARI.map(n=>n.id===id?{...n,tamamlandi}:n);
-  TUM_BUROLARDAN_NOTLAR=TUM_BUROLARDAN_NOTLAR.map(n=>n.id===id?{...n,tamamlandi}:n);
+  if(!_platformAdmin)return;
+  const durum=tamamlandi?'cozuldu':'acik';
+  GELISTIRME_NOTLARI=GELISTIRME_NOTLARI.map(n=>n.id===id?{...n,tamamlandi,durum}:n);
   renderNotlar();
-  const{error}=await sb.from('gelistirme_notlari').update({tamamlandi}).eq('id',id);
+  const{error}=await sb.from('gelistirme_notlari').update({tamamlandi,durum,yanitlandi_at:new Date().toISOString()}).eq('id',id);
   if(error)alert('Güncellenemedi: '+error.message);
+}
+async function notCevapla(id){
+  if(!_platformAdmin)return;
+  const not=GELISTIRME_NOTLARI.find(n=>n.id===id);if(!not)return;
+  const admin_notu=prompt('Kullanıcıya gösterilecek çözüm veya durum notunu yazın:',not.admin_notu||'');if(admin_notu===null)return;
+  const tamamlandi=confirm('Bu sorun çözüldü olarak işaretlensin mi?'),durum=tamamlandi?'cozuldu':'inceleniyor';
+  const degisiklik={admin_notu:admin_notu.trim()||null,tamamlandi,durum,yanitlandi_at:new Date().toISOString(),yanitlayan_user_id:_user.id};
+  const{error}=await sb.from('gelistirme_notlari').update(degisiklik).eq('id',id);if(error){alert('Yanıt kaydedilemedi: '+error.message);return;}
+  GELISTIRME_NOTLARI=GELISTIRME_NOTLARI.map(n=>n.id===id?{...n,...degisiklik}:n);renderNotlar();
 }
 async function notSil(id){
   if(!confirm('Bu notu silmek istediğinize emin misiniz?'))return;
   GELISTIRME_NOTLARI=GELISTIRME_NOTLARI.filter(n=>n.id!==id);
-  TUM_BUROLARDAN_NOTLAR=TUM_BUROLARDAN_NOTLAR.filter(n=>n.id!==id);
   renderNotlar();
   const{error}=await sb.from('gelistirme_notlari').delete().eq('id',id);
   if(error)alert('Silinemedi: '+error.message);
@@ -307,7 +294,7 @@ async function hizliNotKaydet(){
   if(!metin)return;
   if(!_buro)return;
   const yazan=_user?.user_metadata?.full_name||_user?.email?.split('@')[0]||null;
-  const{data,error}=await sb.from('gelistirme_notlari').insert({buro_id:_buro.id,not_metni:metin,yazan}).select().maybeSingle();
+  const{data,error}=await sb.from('gelistirme_notlari').insert({buro_id:_buro.id,user_id:_user.id,not_metni:metin,yazan,durum:'acik'}).select().maybeSingle();
   if(error){alert('Not eklenemedi: '+error.message);return;}
   if(data)GELISTIRME_NOTLARI.unshift(data);
   closeHizliNot();
@@ -318,6 +305,7 @@ const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 function showApp(){
   document.getElementById('auth-overlay').style.display='none';
   document.querySelector('.app').style.display='flex';
+  const hizli=document.getElementById('hizli-not-btn');if(hizli)hizli.style.display=_platformAdmin?'none':'flex';
   updateAvatar();
   sidebarTercihiniYukle();
   gizleYuklemeEkrani();
