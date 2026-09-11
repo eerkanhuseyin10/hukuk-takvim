@@ -518,7 +518,7 @@ async function authSonrasiIslem(){
   if(buroVarMi==='platform_admini'){platformAdminEkraniniGoster();return;}
   if(!buroVarMi){
     showApp();
-    document.querySelector('.app').innerHTML=`<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:24px;background:var(--surface2);"><div style="width:100%;max-width:430px;padding:28px;background:var(--surface);border:1px solid var(--border);border-radius:16px;box-shadow:0 16px 40px rgba(15,23,42,.1);"><div style="font-size:20px;font-weight:750;margin-bottom:8px;">Bir büroya katılın</div><div style="font-size:13px;color:var(--text2);line-height:1.6;margin:0 auto 18px;">Hesabınız aktif ancak şu anda bir büroya bağlı değil. Büro yöneticisinden aldığı kodu aşağıya girin.</div><label for="mevcut-hesap-buro-kodu" style="display:block;text-align:left;font-size:12px;font-weight:650;margin-bottom:6px;">Büro kodu</label><input id="mevcut-hesap-buro-kodu" type="text" placeholder="Yöneticinin paylaştığı büro kodu" style="width:100%;margin-bottom:10px;" onkeydown="if(event.key==='Enter')mevcutHesaplaBuroyaKatil()"><button id="mevcut-hesap-katil-btn" class="save-btn" onclick="mevcutHesaplaBuroyaKatil()">Büroya Katıl</button><div id="mevcut-hesap-katil-msg" style="min-height:18px;margin-top:10px;font-size:12px;"></div><button class="btn" style="margin-top:12px;" onclick="cikisYap()">Başka hesapla giriş yap</button></div></div>`;
+    document.querySelector('.app').innerHTML=`<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:24px;background:var(--surface2);"><div style="width:100%;max-width:480px;padding:28px;background:var(--surface);border:1px solid var(--border);border-radius:16px;box-shadow:0 16px 40px rgba(15,23,42,.1);"><div style="font-size:21px;font-weight:750;margin-bottom:7px;">Sekreter'e hoş geldiniz</div><div style="font-size:13px;color:var(--text2);line-height:1.6;margin:0 auto 18px;">Hesabınız aktif. Nasıl devam etmek istediğinizi seçin.</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;"><button id="bos-hesap-kur-tab" class="btn btn-primary" onclick="bosHesapSecenekSec('kur')" style="padding:11px 7px;">Kendi Büromu Oluştur</button><button id="bos-hesap-katil-tab" class="btn" onclick="bosHesapSecenekSec('katil')" style="padding:11px 7px;">Büro Koduyla Katıl</button></div><div id="bos-hesap-kur-panel"><label for="mevcut-hesap-buro-adi" style="display:block;text-align:left;font-size:12px;font-weight:650;margin-bottom:6px;">Büro adı</label><input id="mevcut-hesap-buro-adi" type="text" placeholder="Örn. Erkan Hukuk ve Danışmanlık" style="width:100%;margin-bottom:10px;" onkeydown="if(event.key==='Enter')mevcutHesaplaBuroOlustur()"><button id="mevcut-hesap-kur-btn" class="save-btn" onclick="mevcutHesaplaBuroOlustur()">Büroyu Oluştur</button><div style="font-size:11px;color:var(--text3);line-height:1.5;margin-top:9px;">Büronun yöneticisi olursunuz. Daha sonra çalışan ve ortak ekleyebilirsiniz.</div></div><div id="bos-hesap-katil-panel" style="display:none;"><label for="mevcut-hesap-buro-kodu" style="display:block;text-align:left;font-size:12px;font-weight:650;margin-bottom:6px;">Büro kodu</label><input id="mevcut-hesap-buro-kodu" type="text" placeholder="Yöneticinin paylaştığı büro kodu" style="width:100%;margin-bottom:10px;" onkeydown="if(event.key==='Enter')mevcutHesaplaBuroyaKatil()"><button id="mevcut-hesap-katil-btn" class="save-btn" onclick="mevcutHesaplaBuroyaKatil()">Büroya Katıl</button><div style="font-size:11px;color:var(--text3);line-height:1.5;margin-top:9px;">İlk katılımda çalışan olursunuz. Yönetici rolünüzü daha sonra değiştirebilir.</div></div><div id="mevcut-hesap-katil-msg" style="min-height:18px;margin-top:10px;font-size:12px;"></div><button class="btn" style="margin-top:10px;" onclick="cikisYap()">Başka hesapla giriş yap</button></div></div>`;
     return;
   }
   showApp();
@@ -529,6 +529,27 @@ async function authSonrasiIslem(){
   await notlariYukle();
   await loadRecords();
   await buroKartlariYukle();
+}
+
+function bosHesapSecenekSec(secim){
+  const kur=secim==='kur';
+  document.getElementById('bos-hesap-kur-panel').style.display=kur?'block':'none';
+  document.getElementById('bos-hesap-katil-panel').style.display=kur?'none':'block';
+  document.getElementById('bos-hesap-kur-tab').className=kur?'btn btn-primary':'btn';
+  document.getElementById('bos-hesap-katil-tab').className=kur?'btn':'btn btn-primary';
+  const msg=document.getElementById('mevcut-hesap-katil-msg');if(msg)msg.textContent='';
+  setTimeout(()=>document.getElementById(kur?'mevcut-hesap-buro-adi':'mevcut-hesap-buro-kodu')?.focus(),20);
+}
+
+async function mevcutHesaplaBuroOlustur(){
+  const ad=(document.getElementById('mevcut-hesap-buro-adi')?.value||'').trim(),msg=document.getElementById('mevcut-hesap-katil-msg'),btn=document.getElementById('mevcut-hesap-kur-btn');
+  if(ad.length<2){msg.textContent='Geçerli bir büro adı girin.';msg.style.color='#b42318';return;}
+  btn.disabled=true;btn.textContent='Büro oluşturuluyor...';msg.textContent='';
+  const{data,error}=await sb.rpc('sekreter_buro_olustur',{buro_adi_girdisi:ad});
+  if(error){msg.textContent='Büro oluşturulamadı: '+error.message;msg.style.color='#b42318';btn.disabled=false;btn.textContent='Büroyu Oluştur';return;}
+  const sonuc=Array.isArray(data)?data[0]:data;
+  msg.textContent='✓ '+(sonuc?.buro_adi||ad)+' oluşturuldu. Takviminiz açılıyor...';msg.style.color='#15803d';
+  setTimeout(()=>location.reload(),700);
 }
 
 async function mevcutHesaplaBuroyaKatil(){
