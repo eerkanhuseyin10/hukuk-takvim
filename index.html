@@ -99,17 +99,8 @@
     <div class="profil-row"><span class="profil-row-label">Toplam kayıt</span><span class="profil-row-val" id="profil-kayit">—</span></div>
     <div class="profil-btn-row">
       <button onclick="closeProfil();openProfilimModal()" class="btn btn-primary" style="width:100%;margin-bottom:8px;">👤 Profilim</button>
-      <button data-role-manager onclick="closeProfil();openKullaniciYonetimi()" class="btn" style="width:100%;margin-bottom:8px;display:none;">👥 Kullanıcılar ve Yetkiler</button>
-      <button data-role-invite onclick="closeProfil();openDavetPenceresi()" class="btn" style="width:100%;margin-bottom:8px;display:none;">✉️ Tek Kullanımlık Davet</button>
-      <button data-role-manager onclick="closeProfil();openAcilisMesajiAyari()" class="btn" style="width:100%;margin-bottom:8px;display:none;">✨ Açılış Mesajı / Dua</button>
-      <button data-role-manager onclick="closeProfil();openIslemGunlugu()" class="btn" style="width:100%;margin-bottom:8px;display:none;">🕘 İşlem Günlüğü</button>
-      <button onclick="closeProfil();openListeYonetim()" class="btn" style="width:100%;margin-bottom:8px;">⚙️ Liste Yönetimi</button>
-      <button onclick="closeProfil();openDisaAktar()" class="btn" style="width:100%;margin-bottom:8px;">↓ Yedek ve Dışa Aktar</button>
-      <button onclick="closeProfil();openBildirimAyarlari()" class="btn" style="width:100%;margin-bottom:8px;">🔔 Bildirim Ayarları</button>
-      <button id="guncelleme-denetle-btn" onclick="closeProfil();guncellemeDenetle()" class="btn" style="width:100%;margin-bottom:8px;display:none;">↻ Güncellemeyi Denetle</button>
+      <button onclick="closeProfil();openAyarlarMerkezi()" class="btn" style="width:100%;margin-bottom:8px;">⚙️ Ayarlar</button>
       <button onclick="closeProfil();hakkindaPenceresi()" class="btn" style="width:100%;margin-bottom:8px;">ⓘ Hakkında ve Kullanım Koşulları</button>
-      <button onclick="closeProfil();kvkkAydinlatmaPenceresi()" class="btn" style="width:100%;margin-bottom:8px;">🛡️ KVKK Aydınlatma Metni</button>
-      <button onclick="closeProfil();openNotlar()" class="btn" style="width:100%;margin-bottom:8px;">💡 Geliştirme Notları</button>
       <button onclick="cikisYap()" class="btn" style="width:100%;color:#ef4444;border-color:rgba(239,68,68,0.3);">↪ Çıkış Yap</button>
     </div>
   </div>
@@ -226,7 +217,7 @@
 
 <div class="app" style="display:none;">
 <!-- SIDEBAR (masaüstü) -->
-<div class="sidebar">
+<div class="sidebar" id="desktop-sidebar">
   <div class="sidebar-header" style="padding:16px 20px;display:flex;align-items:center;gap:13px;cursor:pointer;" onclick="location.reload()">
     <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNDAgMjQwIj48cmVjdCB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgcng9IjQ0IiBmaWxsPSIjMWExYTFhIi8+PHJlY3QgeD0iNTIiIHk9IjcwIiB3aWR0aD0iMTM2IiBoZWlnaHQ9IjExOCIgcng9IjEwIiBmaWxsPSJub25lIiBzdHJva2U9IiNkNGFmNzAiIHN0cm9rZS13aWR0aD0iMyIgb3BhY2l0eT0iMC41Ii8+PHJlY3QgeD0iNTIiIHk9IjcwIiB3aWR0aD0iMTM2IiBoZWlnaHQ9IjM2IiByeD0iMTAiIGZpbGw9IiNkNGFmNzAiIG9wYWNpdHk9IjAuNyIvPjxyZWN0IHg9Ijg0IiB5PSI1NCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjI4IiByeD0iNSIgZmlsbD0iI2Q0YWY3MCIvPjxyZWN0IHg9IjE0NiIgeT0iNTQiIHdpZHRoPSIxMCIgaGVpZ2h0PSIyOCIgcng9IjUiIGZpbGw9IiNkNGFmNzAiLz48Y2lyY2xlIGN4PSI4NCIgY3k9IjEzNiIgcj0iNiIgZmlsbD0iI2Q0YWY3MCIvPjxjaXJjbGUgY3g9IjExMCIgY3k9IjEzNiIgcj0iNiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC4zIi8+PGNpcmNsZSBjeD0iMTM2IiBjeT0iMTM2IiByPSI2IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjMiLz48Y2lyY2xlIGN4PSI4NCIgY3k9IjE2MiIgcj0iNiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC4zIi8+PGNpcmNsZSBjeD0iMTEwIiBjeT0iMTYyIiByPSI2IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjMiLz48Y2lyY2xlIGN4PSIxMzYiIGN5PSIxNjIiIHI9IjYiIGZpbGw9IiNkNGFmNzAiIG9wYWNpdHk9IjAuNyIvPjwvc3ZnPg==" style="width:44px;height:44px;border-radius:10px;flex-shrink:0;" alt="logo">
     <div>
@@ -235,19 +226,19 @@
     </div>
   </div>
   <nav class="nav">
-    <button class="nav-item active" onclick="showView('takvim',this)">
+    <button class="nav-item active" title="Takvim" onclick="showView('takvim',this)">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="14" height="13" rx="1.5"/><path d="M5 1v2M11 1v2M1 6h14"/></svg>Takvim
     </button>
-    <button class="nav-item" onclick="showView('dashboard',this)">
+    <button class="nav-item" title="Özet" onclick="showView('dashboard',this)">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>Özet
     </button>
-    <button class="nav-item" onclick="showView('liste',this)">
+    <button class="nav-item" title="İşler" onclick="showView('liste',this)">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h10M3 8h10M3 12h6"/></svg>İşler
     </button>
-    <button class="nav-item" onclick="showView('buro',this)">
+    <button class="nav-item" title="Büro Kartları" onclick="showView('buro',this)">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="5" r="3"/><path d="M1 14c0-3 1.8-5 4-5s4 2 4 5M10 3h5v10h-4"/></svg>Büro Kartları
     </button>
-    <button class="nav-item" data-role-finance onclick="maliSekmesiniAc(this)">
+    <button class="nav-item" title="Mali Takip" data-role-finance onclick="maliSekmesiniAc(this)">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="14" height="10" rx="2"/><path d="M1 6h14M10 10h3"/></svg>Mali Takip
     </button>
   </nav>
@@ -266,6 +257,7 @@
 <div class="main">
   <div class="topbar">
     <div class="topbar-left">
+      <button id="sidebar-toggle" class="sidebar-toggle" onclick="sidebarDaraltToggle()" title="Sol menüyü daralt" aria-label="Sol menüyü daralt">☰</button>
       <span class="topbar-title" id="topbar-title">Takvim</span>
     </div>
     <div style="display:flex;align-items:center;gap:10px;">

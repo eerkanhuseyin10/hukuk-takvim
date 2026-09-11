@@ -14,7 +14,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .app{display:flex;height:100vh;overflow:hidden;position:fixed;width:100%;top:0;left:0;}
 
 /* SIDEBAR - masaüstü */
-.sidebar{width:230px;min-width:230px;background:var(--navy);display:flex;flex-direction:column;transition:transform .25s;}
+.sidebar{width:230px;min-width:230px;background:var(--navy);display:flex;flex-direction:column;transition:width .2s,min-width .2s;overflow:hidden;}
 .sidebar-header{padding:22px 20px 18px;border-bottom:1px solid rgba(255,255,255,0.1);}
 .sidebar-header h1{font-size:15px;font-weight:600;color:#fff;}
 .sidebar-header p{font-size:11px;color:rgba(255,255,255,0.5);margin-top:3px;}
@@ -34,6 +34,16 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;}
 .topbar-title{font-size:15px;font-weight:600;}
 .topbar-left{display:flex;align-items:center;gap:10px;}
+.sidebar-toggle{width:32px;height:32px;border:1px solid var(--border2);border-radius:9px;background:var(--surface);color:var(--text);cursor:pointer;font-size:17px;line-height:1;display:flex;align-items:center;justify-content:center;}
+.sidebar-toggle:hover{background:var(--surface2);}
+.app.sidebar-collapsed .sidebar{width:68px;min-width:68px;}
+.app.sidebar-collapsed .sidebar-header{justify-content:center!important;padding-left:10px!important;padding-right:10px!important;}
+.app.sidebar-collapsed .sidebar-header>div{display:none;}
+.app.sidebar-collapsed .nav-item{font-size:0;justify-content:center;gap:0;padding-left:0;padding-right:0;border-left-width:3px;}
+.app.sidebar-collapsed .nav-item svg{width:19px;height:19px;}
+.app.sidebar-collapsed .sidebar-footer{padding:14px 8px;text-align:center;}
+.app.sidebar-collapsed .sync-status{justify-content:center;}
+.app.sidebar-collapsed .sync-status span,.app.sidebar-collapsed #bildirim-btn{display:none;}
 .hamburger{display:none;background:none;border:none;cursor:pointer;padding:4px;color:var(--text);}
 .btn{padding:7px 14px;font-size:13px;border:1px solid var(--border2);border-radius:var(--radius);cursor:pointer;background:transparent;color:var(--text);font-family:inherit;transition:all .15s;white-space:nowrap;}
 .btn:hover{background:var(--surface2);}
@@ -334,6 +344,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   .cal-grid{min-height:300px;}
 }
 @media(max-width:768px){
+  .sidebar-toggle{display:none;}
   .sidebar{display:none;}
   .hamburger{display:none;}
   .mobile-nav{display:block;}
