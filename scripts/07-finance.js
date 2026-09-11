@@ -1,26 +1,9 @@
 /* Sekreter renderer: 07-finance.js */
-let MALI_HAREKETLER=[],OFIS_MALI_HAREKETLER=[],MALI_ORTAKLAR=[],MALI_AYARLAR=[],MALI_MAKBUZLAR=[],MALI_KILIT_ACIK=false,MALI_NAV_EL=null;
-async function maliSifreOzet(s){const b=new TextEncoder().encode(String(s));const h=await crypto.subtle.digest('SHA-256',b);return [...new Uint8Array(h)].map(x=>x.toString(16).padStart(2,'0')).join('');}
+let MALI_HAREKETLER=[],OFIS_MALI_HAREKETLER=[],MALI_ORTAKLAR=[],MALI_AYARLAR=[],MALI_MAKBUZLAR=[];
 async function maliSekmesiniAc(el){
   if(!_buro||!['yonetici','ortak'].includes(_buro.rol)){alert('Mali Takip yalnızca büro yöneticisi ve ortaklar tarafından kullanılabilir.');return;}
-  if(MALI_KILIT_ACIK){showView('mali',el);return;}MALI_NAV_EL=el;
-  const{data,error}=await sb.from('mali_ayarlar').select('buro_id,sifre_ozeti,created_by').eq('buro_id',_buro.id).maybeSingle();
-  if(error){alert('Mali erişim ayarı okunamadı: '+error.message);return;}maliSifrePenceresi(data||null);
+  showView('mali',el);
 }
-function maliSifrePenceresi(ayar){
-  let o=document.getElementById('mali-sifre-overlay');if(!o){o=document.createElement('div');o.id='mali-sifre-overlay';o.className='modal-overlay';o.style.zIndex='570';document.body.appendChild(o);}o.onclick=e=>{if(e.target===o)o.style.display='none';};
-  const kurulum=!ayar,yonetici=ayar&&String(ayar.created_by)===String(_user.id);o.dataset.ozet=ayar?.sifre_ozeti||'';
-  o.innerHTML=`<div class="modal" style="max-width:430px;"><div class="modal-header"><div><h2>🔒 Mali Takip</h2><div style="font-size:11px;color:var(--text2);margin-top:3px;">${kurulum?'İlk kullanım için ortak bir mali erişim şifresi oluşturun.':'Devam etmek için mali erişim şifresini girin.'}</div></div><button class="btn" onclick="document.getElementById('mali-sifre-overlay').style.display='none'">✕</button></div><div class="modal-body"><div class="fg"><label>${kurulum?'Yeni şifre':'Şifre'}</label><input id="mali-sifre" type="password" autocomplete="new-password"></div>${kurulum?'<div class="fg"><label>Şifreyi tekrar yazın</label><input id="mali-sifre-tekrar" type="password" autocomplete="new-password"></div>':''}<button class="save-btn" onclick="maliSifreDogrula(${kurulum})">${kurulum?'Şifreyi Oluştur':'Mali Takibi Aç'}</button>${yonetici?'<button class="btn" style="width:100%;margin-top:9px;" onclick="maliSifreSifirlamaPenceresi()">Şifremi Unuttum</button>':''}<div id="mali-sifre-msg" style="font-size:12px;margin-top:8px;"></div></div></div>`;o.style.display='flex';setTimeout(()=>document.getElementById('mali-sifre')?.focus(),50);
-}
-async function maliSifreDogrula(kurulum){
-  const o=document.getElementById('mali-sifre-overlay'),s=document.getElementById('mali-sifre').value,msg=document.getElementById('mali-sifre-msg');if(s.length<4){msg.textContent='Şifre en az 4 karakter olmalıdır.';return;}const hash=await maliSifreOzet(s);
-  if(kurulum){if(s!==document.getElementById('mali-sifre-tekrar').value){msg.textContent='Şifreler aynı değil.';return;}const{error}=await sb.from('mali_ayarlar').insert({buro_id:_buro.id,sifre_ozeti:hash,created_by:_user.id});if(error){msg.textContent='Şifre kaydedilemedi: '+error.message;return;}}
-  else if(hash!==o.dataset.ozet){msg.textContent='Şifre yanlış.';return;}
-  MALI_KILIT_ACIK=true;o.style.display='none';showView('mali',MALI_NAV_EL);
-}
-function maliSifreSifirlamaPenceresi(){const o=document.getElementById('mali-sifre-overlay');o.innerHTML=`<div class="modal" style="max-width:430px;"><div class="modal-header"><div><h2>Yeni Mali Şifre</h2><div style="font-size:11px;color:var(--text2);margin-top:3px;">Şifreyi oluşturan yönetici hesabıyla giriş yaptığınız doğrulandı.</div></div><button class="btn" onclick="o=document.getElementById('mali-sifre-overlay');o.style.display='none'">✕</button></div><div class="modal-body"><div class="fg"><label>Yeni şifre</label><input id="mali-yeni-sifre" type="password"></div><div class="fg"><label>Yeni şifreyi tekrar yazın</label><input id="mali-yeni-sifre-tekrar" type="password"></div><button class="save-btn" onclick="maliSifreyiSifirla()">Yeni Şifreyi Kaydet</button><div id="mali-sifre-msg" style="font-size:12px;margin-top:8px;"></div></div></div>`;}
-async function maliSifreyiSifirla(){const s=document.getElementById('mali-yeni-sifre').value,t=document.getElementById('mali-yeni-sifre-tekrar').value,msg=document.getElementById('mali-sifre-msg');if(s.length<4){msg.textContent='Şifre en az 4 karakter olmalıdır.';return;}if(s!==t){msg.textContent='Şifreler aynı değil.';return;}const hash=await maliSifreOzet(s),{error}=await sb.from('mali_ayarlar').update({sifre_ozeti:hash,updated_at:new Date().toISOString()}).eq('buro_id',_buro.id).eq('created_by',_user.id);if(error){msg.textContent='Şifre değiştirilemedi: '+error.message;return;}MALI_KILIT_ACIK=true;document.getElementById('mali-sifre-overlay').style.display='none';showView('mali',MALI_NAV_EL);}
-function maliKilitle(){MALI_KILIT_ACIK=false;showView('takvim',document.querySelector('.nav-item[onclick*="takvim"]'));}
 let AKTIF_MALI_ALT_SEKME='genel';
 function maliAltSekmeAc(ad,btn){AKTIF_MALI_ALT_SEKME=ad||'genel';document.querySelectorAll('.mali-alt-panel').forEach(x=>x.style.display=x.dataset.maliPanel===AKTIF_MALI_ALT_SEKME?'block':'none');document.querySelectorAll('[data-mali-tab]').forEach(x=>{const aktif=x.dataset.maliTab===AKTIF_MALI_ALT_SEKME;x.style.background=aktif?'var(--navy)':'var(--surface)';x.style.color=aktif?'white':'var(--text)';x.style.borderColor=aktif?'var(--navy)':'var(--border2)';});if(!btn)document.querySelector(`[data-mali-tab="${AKTIF_MALI_ALT_SEKME}"]`)?.scrollIntoView({block:'nearest',inline:'nearest'});}
 async function maliTakipYukle(){

@@ -102,6 +102,7 @@
       <button data-role-manager onclick="closeProfil();openKullaniciYonetimi()" class="btn" style="width:100%;margin-bottom:8px;display:none;">👥 Kullanıcılar ve Yetkiler</button>
       <button data-role-invite onclick="closeProfil();openDavetPenceresi()" class="btn" style="width:100%;margin-bottom:8px;display:none;">✉️ Tek Kullanımlık Davet</button>
       <button data-role-manager onclick="closeProfil();openAcilisMesajiAyari()" class="btn" style="width:100%;margin-bottom:8px;display:none;">✨ Açılış Mesajı / Dua</button>
+      <button data-role-manager onclick="closeProfil();openIslemGunlugu()" class="btn" style="width:100%;margin-bottom:8px;display:none;">🕘 İşlem Günlüğü</button>
       <button onclick="closeProfil();openListeYonetim()" class="btn" style="width:100%;margin-bottom:8px;">⚙️ Liste Yönetimi</button>
       <button onclick="closeProfil();openDisaAktar()" class="btn" style="width:100%;margin-bottom:8px;">↓ Yedek ve Dışa Aktar</button>
       <button onclick="closeProfil();openBildirimAyarlari()" class="btn" style="width:100%;margin-bottom:8px;">🔔 Bildirim Ayarları</button>
@@ -408,7 +409,7 @@
     <div class="view" id="view-mali">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
         <div><div style="font-size:16px;font-weight:700;">Mali Takip</div><div style="font-size:11px;color:var(--text2);margin-top:3px;">Dosya bazında ücret, tahsilat ve masraf durumu</div></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;"><select id="mali-yil" onchange="renderMaliTakip()" style="padding:8px;border:1px solid var(--border2);border-radius:9px;background:var(--surface);"></select><button class="btn" onclick="altinFiyatlariniOtomatikGetir()">Altını Otomatik Al</button><button class="btn" onclick="maliExcelIndir()">Excel / Numbers</button><button class="btn" onclick="maliKilitle()">🔒 Kilitle</button><button class="btn" onclick="maliTakipYukle()">↻ Yenile</button></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;"><select id="mali-yil" onchange="renderMaliTakip()" style="padding:8px;border:1px solid var(--border2);border-radius:9px;background:var(--surface);"></select><button class="btn" onclick="altinFiyatlariniOtomatikGetir()">Altını Otomatik Al</button><button class="btn" onclick="maliExcelIndir()">Excel / Numbers</button><button class="btn" onclick="maliTakipYukle()">↻ Yenile</button></div>
       </div>
       <div id="mali-alt-sekmeler" style="display:flex;gap:7px;overflow-x:auto;padding-bottom:8px;margin-bottom:12px;border-bottom:1px solid var(--border);">
         <button class="btn" data-mali-tab="genel" onclick="maliAltSekmeAc('genel',this)">Genel Bakış</button><button class="btn" data-mali-tab="ofis" onclick="maliAltSekmeAc('ofis',this)">Ofis &amp; Ortaklık</button><button class="btn" data-mali-tab="dosya" onclick="maliAltSekmeAc('dosya',this)">Dosya Takibi</button><button class="btn" data-mali-tab="kdv" onclick="maliAltSekmeAc('kdv',this)">Makbuz &amp; KDV</button>
@@ -808,5 +809,6 @@
   <script src="./scripts/06-office-cases.js"></script>
   <script src="./scripts/07-finance.js"></script>
   <script src="./scripts/08-export-bootstrap.js"></script>
+  <script src="./scripts/09-audit-log.js"></script>
 </body>
 </html>
