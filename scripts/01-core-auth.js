@@ -8,6 +8,28 @@ let _user = null;
 let _buro = null; // Giriş sonrası buroBilgisiYukle() ile doldurulur
 let _platformAdmin=false;
 const ROL_ADLARI={platform_admini:'Platform Admini',yonetici:'Yönetici',ortak:'Ortak',calisan:'Çalışan',uye:'Çalışan'};
+
+function metinGirisPenceresi({baslik='Bilgi Girin',aciklama='',etiket='Açıklama',yerTutucu='',deger='',zorunlu=false}={}){
+  return new Promise(resolve=>{
+    let o=document.getElementById('metin-giris-overlay');
+    if(!o){o=document.createElement('div');o.id='metin-giris-overlay';o.className='modal-overlay';o.style.zIndex='700';document.body.appendChild(o);}
+    let kapandi=false;
+    const kapat=sonuc=>{if(kapandi)return;kapandi=true;o.style.display='none';resolve(sonuc);};
+    o.innerHTML=`<div class="modal" style="max-width:480px;">
+      <div class="modal-header"><div><h2>${esc(baslik)}</h2>${aciklama?`<div style="font-size:11px;color:var(--text2);margin-top:4px;">${esc(aciklama)}</div>`:''}</div><button type="button" class="btn" id="metin-giris-kapat">✕</button></div>
+      <div class="modal-body"><div class="fg"><label for="metin-giris-alani">${esc(etiket)}</label><textarea id="metin-giris-alani" rows="4" placeholder="${esc(yerTutucu)}">${esc(deger)}</textarea></div><div id="metin-giris-hata" style="min-height:18px;color:#b42318;font-size:11px;"></div><div style="display:flex;justify-content:flex-end;gap:8px;"><button type="button" class="btn" id="metin-giris-iptal">Vazgeç</button><button type="button" class="save-btn" id="metin-giris-kaydet" style="width:auto;padding:10px 22px;">Kaydet</button></div></div>
+    </div>`;
+    o.style.display='flex';
+    const alan=o.querySelector('#metin-giris-alani');
+    const kaydet=()=>{const sonuc=alan.value.trim();if(zorunlu&&!sonuc){o.querySelector('#metin-giris-hata').textContent='Bu alan boş bırakılamaz.';alan.focus();return;}kapat(sonuc);};
+    o.querySelector('#metin-giris-kapat').onclick=()=>kapat(null);
+    o.querySelector('#metin-giris-iptal').onclick=()=>kapat(null);
+    o.querySelector('#metin-giris-kaydet').onclick=kaydet;
+    o.onclick=e=>{if(e.target===o)kapat(null);};
+    alan.onkeydown=e=>{if((e.metaKey||e.ctrlKey)&&e.key==='Enter')kaydet();};
+    setTimeout(()=>alan.focus(),30);
+  });
+}
 async function buroBilgisiYukle(){
   if(!_user)return false;
   _platformAdmin=false;_buro=null;

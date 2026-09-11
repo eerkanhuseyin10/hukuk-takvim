@@ -824,9 +824,8 @@ async function toggleTamamlandi(id){
     await loadRecords();return;
   }
   // Tamamlandı yaparken açıklama her zaman zorunlu
-  const not_metni=prompt('⚠️ Açıklama zorunludur.\n\nBu iş hakkında kısa bir not girin:');
+  const not_metni=await metinGirisPenceresi({baslik:'İşi Tamamla',aciklama:'Tamamlanan işin dosya geçmişinde anlaşılır olması için kısa bir açıklama yazın.',etiket:'Yapılan işlem',yerTutucu:'Örn. Dilekçe sunuldu, müvekkile bilgi verildi…',zorunlu:true});
   if(not_metni===null) return;
-  if(!not_metni.trim()){alert('Açıklama girilmeden tamamlandı işaretlenemez.');return;}
   const _eskiNot1=rec.not?rec.not+'\n':'';
   const{error}=await sb.from('kayitlar').update({tamamlandi:true,not_alani:_eskiNot1+sentenceCase(not_metni.trim())}).eq('id',id);
   if(error){alert('Hata: '+error.message);return;}
