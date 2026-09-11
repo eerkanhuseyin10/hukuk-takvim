@@ -4,6 +4,7 @@ async function guncellemeDenetle(){if(!window.sekreterDesktop?.checkForUpdates){
 document.addEventListener('DOMContentLoaded',masaustuAraclariniGoster);
 // ── YEDEK VE DIŞA AKTAR ────────────────────────────────────────────────
 function openDisaAktar(){
+  if(!_buro||!['yonetici','ortak'].includes(_buro.rol)){alert('Yedekleme ve dışa aktarma yalnızca yönetici veya ortaklara açıktır.');return;}
   let overlay=document.getElementById('disa-aktar-overlay');
   if(!overlay){
     overlay=document.createElement('div');
