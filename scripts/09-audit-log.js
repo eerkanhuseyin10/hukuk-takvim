@@ -6,6 +6,7 @@ async function guvenlikOlayiKaydet(olay,oturumdaBirKez=false){
   const anahtar=`sekreter_guvenlik_${_buro.id}_${_user.id}_${olay}`;
   if(oturumdaBirKez){try{if(sessionStorage.getItem(anahtar))return;}catch(e){}}
   const{error}=await sb.rpc('sekreter_guvenlik_olayi_kaydet',{olay});
+  if(!error&&olay==='oturum_acildi')sb.rpc('sekreter_eski_islem_gunluklerini_temizle').then(()=>{});
   if(!error&&oturumdaBirKez)try{sessionStorage.setItem(anahtar,'1');}catch(e){}
 }
 function islemGunluguTarih(v){try{return new Date(v).toLocaleString('tr-TR',{dateStyle:'medium',timeStyle:'short'});}catch(e){return '—';}}
