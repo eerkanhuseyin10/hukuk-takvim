@@ -184,21 +184,22 @@ async function shareKayitCard(id){
     const canvas=kayitKartCanvas(r,logoImg);
     const blob=await canvasToBlob(canvas);
     const fileName='is-karti-'+(r.dava||getBaslik(r)||r.id).toString().replace(/[^a-zA-Z0-9ğüşöçıİĞÜŞÖÇ-]+/g,'-').slice(0,45)+'.png';
-    const file=new File([blob],fileName,{type:'image/png'});
-    if(navigator.canShare && navigator.canShare({files:[file]}) && navigator.share){
-      await navigator.share({title:getBaslik(r),text:'İş kartı',files:[file]});
+    if(window.sekreterDesktop?.savePng){
+      const sonuc=await window.sekreterDesktop.savePng(fileName,await blob.arrayBuffer());
+      if(sonuc?.saved)alert('İş kartı kaydedildi:\n'+sonuc.filePath);
       return;
     }
     const a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);
+    const blobUrl=URL.createObjectURL(blob);
+    a.href=blobUrl;
     a.download=fileName;
+    a.style.display='none';
     document.body.appendChild(a);a.click();a.remove();
-    setTimeout(()=>URL.revokeObjectURL(a.href),1500);
-    alert('İş kartı PNG olarak indirildi. WhatsApp’ta görsel olarak paylaşabilirsiniz.');
+    setTimeout(()=>URL.revokeObjectURL(blobUrl),10000);
+    alert('İş kartı PNG olarak indirildi. İndirilenler klasöründen istediğiniz yerde paylaşabilirsiniz.');
   }catch(err){
     console.error(err);
-    const url='https://wa.me/?text='+encodeURIComponent(kayitPaylasimMetni(r));
-    window.open(url,'_blank');
+    alert('İş kartı kaydedilemedi: '+(err?.message||'Bilinmeyen hata'));
   }
 }
 
@@ -582,4 +583,3 @@ function filtreleKidemTablosu(q){
     tr.style.display=tr.dataset.arama.includes(q)?'':'none';
   });
 }
-
