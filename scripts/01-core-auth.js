@@ -511,7 +511,7 @@ async function kayitOl(){
   if(_koMod==='yeni'&&!buroAdi){setAuthMsg('Büro adı zorunludur.','#f87171');return;}
   if(_koMod==='katil'&&!buroKodu){setAuthMsg('Büro kodu zorunludur.','#f87171');return;}
   setAuthMsg('Kayıt oluşturuluyor...','rgba(255,255,255,0.5)');
-  const meta=_koMod==='yeni'?{buro_adi:buroAdi}:{};
+  const meta=_koMod==='yeni'?{kayit_tipi:'yeni_buro',buro_adi:buroAdi}:{kayit_tipi:'davet',davet_kodu:buroKodu.toUpperCase()};
   if(_koMod==='katil')try{localStorage.setItem('sekreter_bekleyen_davet',buroKodu.toUpperCase());}catch(e){}
   const{data,error}=await sb.auth.signUp({email,password:sifre,options:{data:meta}});
   if(error){setAuthMsg('Hata: '+error.message,'#f87171');return;}
