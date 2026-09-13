@@ -413,6 +413,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .platform-update-card,.platform-notice-card{border:1px solid #ead7b0;background:#fffaf0;border-radius:13px;padding:14px;margin-bottom:10px;font-size:12px;line-height:1.55;overflow-wrap:anywhere;}
 .platform-update-card b,.platform-notice-card b{display:block;font-size:14px;margin-bottom:5px;}
 .platform-update-card .btn{display:inline-block;margin-top:10px;text-decoration:none;}
+.platform-delete-btn{margin-top:9px;color:#b42318;border-color:#fda29b;font-size:10px;padding:5px 9px;}
+.platform-delete-btn:hover{background:#fff1f0;}
 
 @media(max-width:768px){
   .modal-overlay,.referans-detay-overlay{padding:8px;align-items:flex-end;}
