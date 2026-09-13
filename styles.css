@@ -398,4 +398,44 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .share-card-btn{color:#7a5c1e;border-color:#ead7b0;background:#fffaf0;}
 .share-card-btn:hover{background:#fef3c7;color:#7a5c1e;}
 
+/* PLATFORM YÖNETİMİ */
+.platform-admin-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.platform-health{display:flex;align-items:center;gap:18px;flex-wrap:wrap;background:#111;color:#fff;border-radius:14px;padding:12px 15px;margin-bottom:12px;font-size:11px;}
+.platform-health span{display:flex;align-items:center;gap:5px;}
+.platform-health i{width:8px;height:8px;border-radius:50%;background:#4ade80;box-shadow:0 0 0 4px rgba(74,222,128,.12);}
+.platform-settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.platform-settings-section{border:1px solid var(--border);border-radius:13px;padding:14px;min-width:0;}
+.platform-settings-section h3{font-size:14px;margin-bottom:12px;}
+.platform-settings-full{grid-column:1/-1;}
+.platform-check{display:flex;gap:8px;align-items:center;font-size:12px;margin:2px 0 13px;}
+.platform-announcement-row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;border:1px solid var(--border);border-radius:11px;padding:11px;font-size:12px;line-height:1.5;overflow-wrap:anywhere;}
+.platform-announcement-row small{display:block;color:var(--text3);margin-top:4px;}
+.platform-update-card,.platform-notice-card{border:1px solid #ead7b0;background:#fffaf0;border-radius:13px;padding:14px;margin-bottom:10px;font-size:12px;line-height:1.55;overflow-wrap:anywhere;}
+.platform-update-card b,.platform-notice-card b{display:block;font-size:14px;margin-bottom:5px;}
+.platform-update-card .btn{display:inline-block;margin-top:10px;text-decoration:none;}
+
+@media(max-width:768px){
+  .modal-overlay,.referans-detay-overlay{padding:8px;align-items:flex-end;}
+  .modal,.referans-detay-modal,.platform-settings-modal,.platform-notice-modal{width:100%!important;max-width:none!important;max-height:92dvh!important;border-radius:18px 18px 0 0!important;overflow:auto!important;}
+  .modal-header,.referans-detay-header{position:sticky;top:0;background:var(--surface);z-index:2;padding:14px 16px!important;}
+  .modal-body{padding:14px!important;}
+  .platform-admin-main{width:100%;height:100dvh;overflow:auto;padding:14px!important;}
+  .platform-admin-header{display:block!important;margin-bottom:14px!important;}
+  .platform-admin-header h1{font-size:22px!important;overflow-wrap:anywhere;}
+  .platform-admin-actions{display:grid!important;grid-template-columns:1fr 1fr;margin-top:14px;width:100%;}
+  .platform-admin-actions .btn{width:100%;padding:10px 6px;font-size:11px;overflow:hidden;text-overflow:ellipsis;}
+  .platform-health{display:grid;grid-template-columns:1fr;padding:13px;gap:9px;}
+  #platform-admin-icerik>div:first-child{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+  #platform-admin-icerik>div:nth-child(2){grid-template-columns:1fr!important;}
+  #platform-kullanici-ara{width:100%!important;margin-top:9px;}
+  .platform-settings-grid{grid-template-columns:1fr;}
+  .platform-settings-full{grid-column:auto;}
+  .platform-announcement-row{display:block;}
+  .platform-announcement-row .btn{width:100%;margin-top:9px;}
+  .form-grid{grid-template-columns:1fr!important;}
+  .profil-overlay{align-items:flex-end;justify-content:center;padding:8px;}
+  .profil-card{width:100%;max-width:420px;max-height:90dvh;overflow:auto;border-radius:18px 18px 10px 10px;}
+  input,select,textarea,button{max-width:100%;}
+}
+
 @keyframes spin{to{transform:rotate(360deg);}}
