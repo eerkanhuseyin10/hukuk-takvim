@@ -406,13 +406,14 @@
     <div class="view" id="view-mali">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
         <div><div style="font-size:16px;font-weight:700;">Mali Takip</div><div style="font-size:11px;color:var(--text2);margin-top:3px;">Dosya bazında ücret, tahsilat ve masraf durumu</div></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;"><select id="mali-yil" onchange="renderMaliTakip()" style="padding:8px;border:1px solid var(--border2);border-radius:9px;background:var(--surface);"></select><button class="btn" onclick="altinFiyatlariniOtomatikGetir()">Altını Otomatik Al</button><button class="btn" onclick="maliExcelIndir()">Excel / Numbers</button><button class="btn" onclick="maliTakipYukle()">↻ Yenile</button></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;"><select id="mali-yil" onchange="renderMaliTakip()" style="padding:8px;border:1px solid var(--border2);border-radius:9px;background:var(--surface);"></select><button class="btn" onclick="altinFiyatlariniOtomatikGetir()">Altını Otomatik Al</button><button class="btn" onclick="maliExcelIndir()">Excel / Numbers</button><button id="mali-yenile-btn" class="btn" onclick="maliTakipYenile(this)">↻ Yenile</button></div>
       </div>
       <div id="mali-alt-sekmeler" style="display:flex;gap:7px;overflow-x:auto;padding-bottom:8px;margin-bottom:12px;border-bottom:1px solid var(--border);">
         <button class="btn" data-mali-tab="genel" onclick="maliAltSekmeAc('genel',this)">Genel Bakış</button><button class="btn" data-mali-tab="ofis" onclick="maliAltSekmeAc('ofis',this)">Ofis &amp; Ortaklık</button><button class="btn" data-mali-tab="dosya" onclick="maliAltSekmeAc('dosya',this)">Dosya Takibi</button><button class="btn" data-mali-tab="kdv" onclick="maliAltSekmeAc('kdv',this)">Makbuz &amp; KDV</button>
       </div>
       <div class="mali-alt-panel" data-mali-panel="genel">
       <div id="mali-genel-ozet" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:9px;margin-bottom:14px;"></div>
+      <div class="section-title">Beklenen Tahsilatlar</div><div id="mali-beklenen-tahsilat" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:9px;margin-bottom:16px;"></div>
       <div class="section-title">Aylık Ofis Geliri</div><div id="mali-aylik-ozet" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:7px;margin-bottom:16px;"></div>
       <div class="section-title">Aylık Gider Özeti</div><div id="mali-aylik-gider-ozet" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:7px;margin-bottom:16px;"></div>
       </div><div class="mali-alt-panel" data-mali-panel="ofis" style="display:none;">
