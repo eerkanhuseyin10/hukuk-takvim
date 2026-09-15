@@ -1,13 +1,13 @@
 /* Sekreter renderer: 01-core-auth.js */
-const SUPABASE_URL='https://uocdxifomlrbzorizrud.supabase.co';
-const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvY2R4aWZvbWxyYnpvcml6cnVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzI1MTEsImV4cCI6MjA4OTAwODUxMX0.Vf0hXl-s96DEvGDF3gHNgGyd8EQvvuF8p-XzWmJcv9M';
+const SUPABASE_URL='https://jdxcdmmbdchuhjhfxoiw.supabase.co';
+const SUPABASE_KEY='sb_publishable_vkZiUf8Rg5Un8s-C1fMupw_N3ymJKzR';
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 // ── AUTH & PROFİL SİSTEMİ ────────────────────────────────────────
 let _user = null;
 let _buro = null; // Giriş sonrası buroBilgisiYukle() ile doldurulur
 let _platformAdmin=false;
-const UYGULAMA_SURUMU='1.0.20';
+const UYGULAMA_SURUMU='1.0.21';
 const ROL_ADLARI={platform_admini:'Platform Admini',yonetici:'Yönetici',ortak:'Ortak',calisan:'Çalışan',uye:'Çalışan'};
 const KULLANIM_KOSULU_SURUMU='2.0';
 const AYDINLATMA_METNI_SURUMU='2.0';
@@ -340,8 +340,8 @@ async function hizliNotKaydet(){
   if(data)GELISTIRME_NOTLARI.unshift(data);
   closeHizliNot();
 }
-const SB_URL = 'https://uocdxifomlrbzorizrud.supabase.co';
-const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvY2R4aWZvbWxyYnpvcml6cnVkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0MzI1MTEsImV4cCI6MjA4OTAwODUxMX0.Vf0hXl-s96DEvGDF3gHNgGyd8EQvvuF8p-XzWmJcv9M';
+const SB_URL = 'https://jdxcdmmbdchuhjhfxoiw.supabase.co';
+const SB_KEY = 'sb_publishable_vkZiUf8Rg5Un8s-C1fMupw_N3ymJKzR';
 
 function showApp(){
   document.getElementById('auth-overlay').style.display='none';
