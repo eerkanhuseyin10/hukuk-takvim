@@ -339,6 +339,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .mobile-nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 9px;background:none;border:none;cursor:pointer;color:var(--text3);font-family:inherit;font-size:9.5px;font-weight:500;}
 .mobile-nav-item.active{color:var(--navy);}
 .mobile-nav-item svg{width:22px;height:22px;}
+.native-mobile body{overscroll-behavior:none;-webkit-user-select:none;user-select:none;}
+.native-mobile input,.native-mobile textarea,.native-mobile [contenteditable="true"]{-webkit-user-select:text;user-select:text;}
+.native-mobile .topbar{padding-top:max(0px,env(safe-area-inset-top));}
+.native-mobile .mobile-nav{padding-bottom:max(8px,env(safe-area-inset-bottom));}
 
 /* RESPONSIVE */
 @media(orientation:landscape) and (max-width:900px){
