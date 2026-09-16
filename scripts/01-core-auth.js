@@ -524,21 +524,25 @@ function koModSec(mod){
   }
 }
 async function kayitOl(){
-  const email=(document.getElementById('ko-email').value||'').trim();
+  const adSoyad=(document.getElementById('ko-ad-soyad').value||'').trim().replace(/\s+/g,' ');
+  const email=(document.getElementById('ko-email').value||'').trim().toLocaleLowerCase('tr-TR');
   const sifre=document.getElementById('ko-sifre').value||'';
   const sifre2=document.getElementById('ko-sifre2').value||'';
   const buroAdi=(document.getElementById('ko-buro-adi').value||'').trim();
   const buroKodu=(document.getElementById('ko-buro-kodu').value||'').trim();
+  if(adSoyad.length<3){setAuthMsg('Ad ve soyad zorunludur.','#f87171');return;}
   if(!email||!sifre){setAuthMsg('E-posta ve şifre zorunludur.','#f87171');return;}
   if(sifre.length<6){setAuthMsg('Şifre en az 6 karakter olmalıdır.','#f87171');return;}
   if(sifre!==sifre2){setAuthMsg('Şifreler eşleşmiyor.','#f87171');return;}
   if(_koMod==='yeni'&&!buroAdi){setAuthMsg('Büro adı zorunludur.','#f87171');return;}
   if(_koMod==='katil'&&!buroKodu){setAuthMsg('Büro kodu zorunludur.','#f87171');return;}
-  setAuthMsg('Kayıt oluşturuluyor...','rgba(255,255,255,0.5)');
-  const meta=_koMod==='yeni'?{kayit_tipi:'yeni_buro',buro_adi:buroAdi}:{kayit_tipi:'davet',davet_kodu:buroKodu.toUpperCase()};
+  const btn=document.getElementById('ko-kayit-btn');if(btn){btn.disabled=true;btn.textContent='Kod gönderiliyor...';}
+  setAuthMsg('Hesap oluşturuluyor ve doğrulama kodu gönderiliyor...','rgba(255,255,255,0.5)');
+  const meta=_koMod==='yeni'?{full_name:adSoyad,kayit_tipi:'yeni_buro',buro_adi:buroAdi}:{full_name:adSoyad,kayit_tipi:'davet',davet_kodu:buroKodu.toUpperCase()};
   if(_koMod==='katil')try{localStorage.setItem('sekreter_bekleyen_davet',buroKodu.toUpperCase());}catch(e){}
   const{data,error}=await sb.auth.signUp({email,password:sifre,options:{data:meta}});
-  if(error){setAuthMsg('Hata: '+error.message,'#f87171');return;}
+  if(btn){btn.disabled=false;btn.textContent='Kayıt Ol ve Kodu Gönder';}
+  if(error){setAuthMsg(authEpostaHatasi(error),'#f87171');return;}
   if(data.session){
     // E-posta onayı kapalıysa direkt oturum açılır
     _user=data.user;
@@ -570,7 +574,15 @@ async function emailKayitKodunuYenidenGonder(){
   if(!email){setAuthMsg('Önce e-posta adresinizi yazın.','#f87171');return;}
   setAuthMsg('Yeni kod gönderiliyor...','rgba(255,255,255,0.5)');
   const{error}=await sb.auth.resend({type:'signup',email});
-  setAuthMsg(error?'Kod gönderilemedi: '+error.message:'✓ Yeni doğrulama kodu gönderildi.',error?'#f87171':'#4ade80');
+  setAuthMsg(error?authEpostaHatasi(error):'✓ Yeni doğrulama kodu gönderildi. Gereksiz/spam klasörünü de kontrol edin.',error?'#f87171':'#4ade80');
+}
+
+function authEpostaHatasi(error){
+  const m=String(error?.message||error||''),k=m.toLocaleLowerCase('tr-TR');
+  if(k.includes('email address not authorized'))return'Bu adrese e-posta gönderilemedi. Supabase özel SMTP kurulumu henüz yapılmamış.';
+  if(k.includes('rate limit')||k.includes('too many'))return'Çok kısa sürede fazla e-posta istendi. Bir süre bekleyip tekrar deneyin.';
+  if(k.includes('already registered')||k.includes('already been registered'))return'Bu e-posta adresiyle daha önce hesap oluşturulmuş. Giriş yapın veya şifremi unuttum seçeneğini kullanın.';
+  return'E-posta gönderilemedi: '+m;
 }
 
 function setAuthMsg(msg, color){
