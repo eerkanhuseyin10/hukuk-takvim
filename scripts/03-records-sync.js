@@ -603,19 +603,20 @@ document.addEventListener('keydown', function(e){
 
 // ── E-DURUŞMA TALEBİ OTOMATİK OLUŞTUR ───────────────────────────
 // Mahkemenin hangi şehirde olduğunu tespit et
-function isDurusmaMuaf(mahkeme){
-  if(!mahkeme) return false;
-  const muafSehirler=['İzmir','Karşıyaka','Balıkesir','Savaştepe','Soma'];
-  return muafSehirler.some(s=>mahkeme.toLowerCase().includes(s.toLowerCase()));
+function eDurusmaMetinNorm(metin){return String(metin||'').toLocaleLowerCase('tr-TR').normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
+function isDurusmaMuaf(mahkeme,muafYerler){
+  const ad=eDurusmaMetinNorm(mahkeme);
+  return !!ad&&(muafYerler||[]).some(yer=>ad.includes(eDurusmaMetinNorm(yer)));
 }
 function isCezaDavasi(dal){
   return dal==='ceza';
 }
 
 async function eDurusmaTalebiOlustur(rec){
-  // Koşul: muaf şehirde değil, ceza değil, duruşma tipi
-  if(!rec.date) return;
-  if(isDurusmaMuaf(rec.mahkeme)) return;
+  if(!rec.date||!_buro?.id) return;
+  const{data:ayar,error:ayarHatasi}=await sb.from('buro_ayarlari').select('e_durusma_otomatik,e_durusma_muaf_yerler').eq('buro_id',_buro.id).maybeSingle();
+  if(ayarHatasi||!ayar?.e_durusma_otomatik) return;
+  if(isDurusmaMuaf(rec.mahkeme,ayar.e_durusma_muaf_yerler)) return;
   if(isCezaDavasi(rec.dal)) return;
   // Randevu, arabuluculuk, keşif, tevkil, cmk gibi özel tiplerde de oluşturma
   const ozelTipler=['arabuluculuk','randevu','kesif','tevkil','cmk','tahkim'];
@@ -665,6 +666,8 @@ async function eDurusmaTalebiOlustur(rec){
   const dbRec=localToDB({...yeniRec,buroId:_buro?_buro.id:null});
   dbRec.hesap_detay=yeniRec.hesap_detay;
   dbRec.saat=sonGunSaat;
+  const{data:mevcut}=await sb.from('kayitlar').select('id').eq('buro_id',_buro.id).eq('date',sonGunStr).eq('istipi','E-Duruşma Talebi').eq('baslik',baslik).limit(1).maybeSingle();
+  if(mevcut)return;
   await sb.from('kayitlar').insert(dbRec);
 }
 
