@@ -1,5 +1,5 @@
 /* Sekreter renderer: 10-legal-texts.js — yasal metinler */
-const YASAL_METIN_TARIHI='14 Eylül 2026';
+const YASAL_METIN_TARIHI='16 Eylül 2026';
 const yasalKutu=(baslik,icerik)=>`<section style="border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:11px;"><h3 style="color:var(--text);font-size:14px;margin:0 0 8px;">${baslik}</h3>${icerik}</section>`;
 const yasalGiris=()=>`<div style="font-size:12px;line-height:1.7;color:var(--text2);"><p style="margin-top:0;"><b>Sekreter</b>, hukuk bürolarının takvim, iş, müvekkil, dava dosyası, evrak ve mali kayıtlarını büro içindeki yetkili kullanıcılarla yönetmesine yardımcı olan web ve masaüstü uygulamasıdır.</p>`;
 
@@ -17,12 +17,12 @@ function kullanimKosullariHTML(){return yasalGiris()+
   '</div>';}
 
 function gizlilikPolitikasiHTML(){return yasalGiris()+
-  yasalKutu('Veriler nerede tutulur?','<p>Hesaplar ve büro kayıtları, internet üzerinden ortak kullanım sağlamak amacıyla Supabase bulut altyapısında tutulur. Masaüstü uygulaması yerel çalışan ayrı bir veri kasası değildir; web ve masaüstü aynı büro verilerine bağlanır.</p>')+
+  yasalKutu('Veriler nerede tutulur?','<p>Hesaplar ve büro kayıtları, internet üzerinden ortak kullanım sağlamak amacıyla Supabase bulut altyapısının <b>Central EU (Frankfurt), Almanya</b> bölgesinde tutulur. Bu kullanım Türkiye dışına veri aktarımı niteliğindedir. Masaüstü uygulaması yerel çalışan ayrı bir veri kasası değildir; web ve masaüstü aynı büro verilerine bağlanır.</p>')+
   yasalKutu('Hangi veriler bulunur?','<p>Hesap ve rol bilgileri; takvim ve iş kayıtları; müvekkil ve dava dosyası bilgileri; yüklenen evraklar; işlem geçmişi; büro mali kayıtları; davet, oturum ve güvenlik günlükleri işlenebilir.</p>')+
   yasalKutu('Veriler hangi amaçlarla kullanılır?','<p>Veriler hizmeti sunmak, kullanıcıyı doğrulamak, büro içi yetkilendirmeyi sağlamak, kayıtları eşitlemek, güvenlik olaylarını incelemek, yedek/dışa aktarma olanağı sağlamak ve hukuki yükümlülükleri yerine getirmek amacıyla kullanılır. Kullanıcı içeriği reklam amacıyla kullanılmaz ve yapay zekâ modeli eğitmek için işlenmez.</p>')+
   yasalKutu('Kimler erişebilir?','<p>Büro içeriğine yalnızca aynı büronun rolüne göre yetkilendirilmiş kullanıcıları erişebilir. Platform yöneticisi panelinde büroların özel müvekkil, dosya, evrak ve mali içeriği gösterilmez. Bununla birlikte güvenlik, teknik destek veya hukuki zorunluluk halinde gerekli ve ölçülü teknik inceleme yapılması gerekebilir.</p>')+
   yasalKutu('Üçüncü taraf hizmetler','<p>Kimlik doğrulama, veritabanı, dosya saklama ve teknik hizmetler için Supabase altyapısı kullanılır. Dosya dışa aktarıldığında veya kullanıcı başka bir hizmete gönderdiğinde ilgili üçüncü tarafın koşulları ayrıca uygulanır.</p>')+
-  yasalKutu('Saklama, silme ve yedek','<p>Veriler hesap veya büro ilişkisi sürdükçe ve amaç için gerekli olduğu sürece saklanır. Uygulamadaki silme araçları asıl kayıtları siler; teknik sistemler ve yedeklerdeki kopyalar güvenli silme döngüsü içinde ortadan kalkabilir. Kullanıcının cihazına indirdiği yedek ve dosyaların güvenliği kullanıcıya aittir.</p>')+
+  yasalKutu('Saklama, silme ve yedek','<p>Hesap ve büro içerikleri ilişki sürdükçe; işlem/güvenlik günlükleri en fazla 2 yıl; kullanılmış, iptal edilmiş veya süresi dolmuş davet kayıtları en fazla 30 gün; çözümlenmiş destek bildirimleri en fazla 2 yıl saklanır. Uygulamadaki silme araçları aktif kaydı kaldırır. Ücretsiz altyapı planında sağlayıcı tarafından indirilebilir otomatik veritabanı yedeği bulunmadığından büro yöneticisinin düzenli dışa aktarma yapması önerilir. Kullanıcının cihazına indirdiği yedek ve dosyaların güvenliği kullanıcıya aittir.</p>')+
   yasalKutu('Güvenlik','<p>Rol tabanlı erişim, satır düzeyinde veri ayrımı, oturum yönetimi ve işlem günlükleri kullanılır. Hiçbir internet hizmeti mutlak güvenlik garantisi veremez. Şüpheli erişim veya veri ihlali belirtisi derhal <b>av.huseyin.erkan@gmail.com</b> adresine bildirilmelidir.</p>')+
   '</div>';}
 

@@ -40,6 +40,7 @@
       <button class="buro-btn" onclick="emailGiris()">Giriş Yap</button>
       <div class="buro-or">veya</div>
       <button class="buro-link" onclick="authEkrani('kayitol')">Hesabın yok mu? Kayıt Ol</button>
+      <button class="buro-link" onclick="authEkrani('onay')" style="margin-top:8px;">Doğrulama kodum var</button>
     </div>
 
     <!-- ŞİFREMİ UNUTTUM FORMU -->
@@ -77,6 +78,18 @@
       <button class="buro-btn" onclick="kayitOl()">Kayıt Ol</button>
       <div class="buro-or">veya</div>
       <button class="buro-link" onclick="authEkrani('giris')">Giriş sayfasına dön</button>
+    </div>
+
+    <!-- E-POSTA DOĞRULAMA FORMU -->
+    <div id="auth-onay-form" style="display:none;">
+      <div style="font-size:13px;color:rgba(255,255,255,0.65);margin-bottom:16px;line-height:1.6;">E-posta adresinize gönderilen 6 haneli doğrulama kodunu girin. Büro, e-posta doğrulandıktan sonra oluşturulur veya davete katılım tamamlanır.</div>
+      <input class="buro-input" id="auth-onay-email" type="email" placeholder="E-posta adresiniz" autocomplete="email" style="margin-bottom:10px;">
+      <input class="buro-input" id="auth-onay-kod" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="6 haneli doğrulama kodu" maxlength="8" style="margin-bottom:14px;letter-spacing:6px;text-align:center;font-size:18px;font-weight:700;" onkeydown="if(event.key==='Enter')emailKayitKodunuDogrula()">
+      <button class="buro-btn" onclick="emailKayitKodunuDogrula()">E-postamı Doğrula</button>
+      <div style="display:flex;justify-content:center;gap:14px;margin-top:14px;">
+        <button class="buro-link" onclick="emailKayitKodunuYenidenGonder()">Kodu Yeniden Gönder</button>
+        <button class="buro-link" onclick="authEkrani('giris')">Girişe Dön</button>
+      </div>
     </div>
 
     <div id="auth-msg" style="margin-top:14px;font-size:12px;color:rgba(255,255,255,0.5);min-height:16px;text-align:center;"></div>
