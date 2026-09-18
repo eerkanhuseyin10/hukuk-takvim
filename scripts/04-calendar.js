@@ -703,7 +703,7 @@ async function openKayitModal(id){
   const isMazeretTakip = r.type==='genel' && !r.tamamlandi && (r.baslik||'').toLocaleLowerCase('tr-TR').includes('duruşma tarihi');
   if(bagliDosya){
     const dosyaAkisi=await dosyaEkBilgilerHTML(bagliDosya.id);
-    body+=`<div style="margin-top:14px;padding:12px;background:var(--navy-light);border:1px solid #c5d5ea;border-radius:11px;"><div style="margin-bottom:10px;"><div style="font-size:10px;font-weight:700;color:var(--navy);">DOSYA AKIŞI · ${esc(bagliDosya.dosya_no||'Numarasız')}</div><div style="font-size:10px;color:var(--text2);margin-top:2px;">Bu dosyadaki evraklar ve yapılan işlemler</div></div><div style="background:var(--surface);border-radius:9px;padding:10px;">${dosyaAkisi}</div></div>`;
+    body+=`<div style="margin-top:14px;padding:12px;background:var(--navy-light);border:1px solid #c5d5ea;border-radius:11px;"><div style="margin-bottom:10px;"><div style="font-size:10px;font-weight:700;color:var(--navy);">DOSYA AKIŞI · ${esc(bagliDosya.dosya_no||'Numarasız')}</div><div style="font-size:10px;color:var(--text2);margin-top:2px;">Bu dosyada yapılan işlemler</div></div><div style="background:var(--surface);border-radius:9px;padding:10px;">${dosyaAkisi}</div></div>`;
   }
   else body+=`<div style="margin-top:14px;padding:10px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;font-size:11px;color:#9a3412;">Bu kayıt henüz bir dosya kartına bağlı değil. Düzenle bölümünden dava dosyasını seçip kaydedin.</div>`;
   body+=`<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;padding-top:4px;">
@@ -1028,4 +1028,3 @@ function swipeStart(e){_swipeStartY=e.touches[0].clientY;}
 function swipeEnd(e,closeFn){
   // Swipe ile kapatma kaldırıldı — sadece çarpı butonu ile kapanır
 }
-
