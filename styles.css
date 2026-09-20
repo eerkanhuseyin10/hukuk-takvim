@@ -343,6 +343,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .mobile-calendar-toolbar{display:none;}
 .mobile-calendar-brand-row{display:flex;align-items:center;gap:9px;}
 .mobile-calendar-brand{margin-right:auto;font-size:18px;font-weight:850;letter-spacing:.16em;color:#b58736;}
+.sekreter-topbar-title{font-weight:850;letter-spacing:.16em;color:#b58736;}
 .mobile-calendar-search-toggle{width:38px;height:38px;border:1px solid var(--border);border-radius:11px;background:var(--surface2);color:var(--text);font-size:25px;line-height:1;display:flex;align-items:center;justify-content:center;}
 #mobile-app-splash{display:none;}
 .native-mobile body{overscroll-behavior:none;-webkit-user-select:none;user-select:none;}

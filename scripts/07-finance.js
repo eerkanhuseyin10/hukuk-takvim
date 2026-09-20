@@ -108,7 +108,7 @@ function showView(v,el){
   document.querySelectorAll('.nav-item,.mobile-nav-item').forEach(x=>x.classList.remove('active'));
   document.getElementById('view-'+v).classList.add('active');
   if(el)el.classList.add('active');
-  document.getElementById('topbar-title').textContent={dashboard:'Özet',takvim:'Takvim',liste:'İşler',buro:'Büro Kartları',mali:'Mali Takip'}[v]||'Takvim';
+  document.getElementById('topbar-title').textContent='SEKRETER';
   if(v==='takvim')renderCal();
   if(v==='liste')renderListe();
   if(v==='dashboard')renderDashboard();
