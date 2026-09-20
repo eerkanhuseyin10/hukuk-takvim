@@ -445,7 +445,7 @@ function renderCal(){
     const order={sure:0,durusma:1,tekrar:2,genel:3};
     return (order[a.type]??9)-(order[b.type]??9);
   }):[];
-    const gorunenSinir=calendarView==='week'?8:3;
+    const gorunenSinir=calendarView==='week'?20:3;
     const eh=evs.slice(0,gorunenSinir).map(r=>{
     let cls=r.tamamlandi?'ev-tamamlandi':(r.type==='tekrar'||r.tekrarAnaId)?'ev-tekrar':('ev-'+r.type);
     let prefix=r.tamamlandi?'✓ ':(r.tekrarTipi||r.tekrarAnaId)?'↻ ':'';

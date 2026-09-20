@@ -339,6 +339,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .mobile-nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 9px;background:none;border:none;cursor:pointer;color:var(--text3);font-family:inherit;font-size:9.5px;font-weight:500;}
 .mobile-nav-item.active{color:var(--navy);}
 .mobile-nav-item svg{width:22px;height:22px;}
+.mobile-nav-toggle{display:none;}
+#mobile-app-splash{display:none;}
 .native-mobile body{overscroll-behavior:none;-webkit-user-select:none;user-select:none;}
 .native-mobile input,.native-mobile textarea,.native-mobile [contenteditable="true"]{-webkit-user-select:text;user-select:text;}
 .native-mobile .topbar{padding-top:max(0px,env(safe-area-inset-top));}
@@ -374,6 +376,16 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   .cal-view-btn{flex:1;}
   .cal-grid.week-view .cal-cell{min-height:300px;padding:3px;}
 }
+
+@media(max-width:768px){
+  .native-mobile .topbar{display:flex;padding:8px 12px;min-height:48px;}.native-mobile .topbar-new-record{display:none;}.native-mobile .main:has(#view-takvim.active) .topbar{display:none;}.native-mobile .content{padding:10px 10px 24px;}
+  .native-mobile .cal-search-bar{display:grid;grid-template-columns:minmax(0,1fr) 38px;gap:8px;align-items:center;margin-bottom:8px;}.native-mobile .cal-search-bar input{width:100%;min-width:0;height:38px;padding:8px 10px;font-size:12px;}.native-mobile .cal-search-bar>.btn{display:none;}.native-mobile .mobile-search-avatar{width:38px!important;height:38px!important;font-size:14px!important;box-shadow:0 1px 4px rgba(15,23,42,.18);}.native-mobile .cal-nav-bar{margin-bottom:8px;}
+  .native-mobile .mobile-nav{display:block;transition:transform .24s ease,opacity .2s ease;transform:translateY(0);box-shadow:0 -6px 22px rgba(15,23,42,.12);}.native-mobile .mobile-nav.collapsed{transform:translateY(calc(100% + 18px));opacity:0;pointer-events:none;}.native-mobile .mobile-nav-toggle{display:flex;position:fixed;right:14px;bottom:max(14px,env(safe-area-inset-bottom));z-index:110;width:48px;height:48px;border:0;border-radius:50%;background:var(--navy);box-shadow:0 5px 18px rgba(15,23,42,.28);align-items:center;justify-content:center;flex-direction:column;gap:4px;padding:0;transition:bottom .24s ease,transform .2s ease;}.native-mobile .mobile-nav-toggle span{display:block;width:19px;height:2px;border-radius:2px;background:#d4af70;}.native-mobile.mobile-nav-open .mobile-nav-toggle{bottom:calc(75px + env(safe-area-inset-bottom));transform:rotate(90deg);}
+  .native-mobile .cal-grid.week-view .cal-cell{min-height:520px;overflow-y:auto;}.native-mobile .cal-grid.week-view .cal-event{font-size:10px;padding:3px 4px;margin-bottom:2px;}
+  .native-mobile #mobile-app-splash{display:flex;position:fixed;inset:0;z-index:2000;background:#111315;align-items:center;justify-content:center;flex-direction:column;color:#fff;opacity:0;transition:opacity .35s ease;}.native-mobile #mobile-app-splash.show{opacity:1;}.native-mobile #mobile-app-splash.closing{opacity:0;}.native-mobile #mobile-app-splash img{width:112px;height:112px;border-radius:27px;object-fit:cover;animation:splashIconIn .7s cubic-bezier(.2,.8,.2,1) both;box-shadow:0 14px 45px rgba(0,0,0,.35);}.native-mobile #mobile-app-splash div{margin-top:20px;font-size:22px;font-weight:800;letter-spacing:.22em;color:#d4af70;animation:splashTextIn .7s .16s both;}.native-mobile #mobile-app-splash small{margin-top:7px;color:rgba(255,255,255,.58);font-size:10px;letter-spacing:.06em;animation:splashTextIn .7s .25s both;}
+}
+@keyframes splashIconIn{from{opacity:0;transform:scale(.72) translateY(14px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes splashTextIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 .auth-overlay{position:fixed;inset:0;background:#111;z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
 .auth-card{background:#1a1a1a;border:1px solid rgba(212,175,112,0.2);border-radius:20px;padding:40px 36px;width:100%;max-width:380px;text-align:center;}

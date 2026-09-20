@@ -279,9 +279,9 @@
     <div class="topbar-left">
       <span class="topbar-title" id="topbar-title">Takvim</span>
     </div>
-    <div style="display:flex;align-items:center;gap:10px;">
+    <div class="topbar-actions" style="display:flex;align-items:center;gap:10px;">
       <div id="topbar-av" onclick="openProfil()" style="width:34px;height:34px;border-radius:50%;background:#d4af70;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#1a1a1a;cursor:pointer;flex-shrink:0;user-select:none;">?</div>
-      <button class="btn btn-primary" onclick="openModal(null)">+ Yeni Kayıt</button>
+      <button class="btn btn-primary topbar-new-record" onclick="openModal(null)">+ Yeni Kayıt</button>
     </div>
   </div>
 
@@ -466,7 +466,7 @@
 </div>
 
 <!-- MOBİL ALT MENÜ -->
-<nav class="mobile-nav">
+<nav class="mobile-nav collapsed" id="mobile-nav">
   <div class="mobile-nav-inner">
     <button class="mobile-nav-item active" onclick="showView('takvim',this)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg>
@@ -494,6 +494,9 @@
     </button>
   </div>
 </nav>
+<button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle" onclick="mobileNavToggle()" aria-label="Menüyü aç veya kapat"><span></span><span></span><span></span></button>
+
+<div id="mobile-app-splash" aria-hidden="true"><img src="./assets/sekreter-app-icon-v2.png" alt=""><div>SEKRETER</div><small>Hukuk Takvimi ve Büro Yönetimi</small></div>
 
 <!-- TAKVİM DETAY PANEL -->
 <div class="cal-detail-overlay" id="cal-detail-overlay" onclick="closeCalDetail()"></div>
