@@ -450,7 +450,7 @@
       <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin:16px 0 10px;"><div class="section-title" style="margin:0;">Ortaklık Makbuzları ve KDV</div><button class="btn btn-primary" onclick="openMakbuzFormu()">＋ Makbuz Ekle</button></div>
       <div id="makbuz-kdv-ozet" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:9px;margin-bottom:10px;"></div>
       <div class="section-title">Aylık Makbuz KDV Dağılımı</div><div id="makbuz-kdv-aylik" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:9px;margin-bottom:12px;"></div>
-      <div class="filter-bar makbuz-filtreleri" style="margin-bottom:9px;"><select id="makbuz-ay-filtre" onchange="renderMaliTakip()"><option value="">Tüm Aylar</option><option value="1">Ocak</option><option value="2">Şubat</option><option value="3">Mart</option><option value="4">Nisan</option><option value="5">Mayıs</option><option value="6">Haziran</option><option value="7">Temmuz</option><option value="8">Ağustos</option><option value="9">Eylül</option><option value="10">Ekim</option><option value="11">Kasım</option><option value="12">Aralık</option></select><select id="makbuz-ortak-filtre" onchange="renderMaliTakip()"><option value="">Tüm Ortaklar</option></select><input id="makbuz-metin-filtre" type="search" placeholder="Makbuz no veya açıklama ara..." oninput="renderMaliTakip()"></div>
+      <div class="filter-bar makbuz-filtreleri" style="margin-bottom:9px;"><select id="makbuz-ay-filtre" onchange="makbuzMobilListesiniHazirla()"><option value="">Tüm Aylar</option><option value="1">Ocak</option><option value="2">Şubat</option><option value="3">Mart</option><option value="4">Nisan</option><option value="5">Mayıs</option><option value="6">Haziran</option><option value="7">Temmuz</option><option value="8">Ağustos</option><option value="9">Eylül</option><option value="10">Ekim</option><option value="11">Kasım</option><option value="12">Aralık</option></select><select id="makbuz-ortak-filtre" onchange="makbuzMobilListesiniHazirla()"><option value="">Tüm Ortaklar</option></select><input id="makbuz-metin-filtre" type="search" placeholder="Makbuz no veya açıklama ara..." oninput="makbuzMobilListesiniHazirla()"></div>
       <div id="makbuz-mobile-list"></div>
       <div class="table-wrap makbuz-desktop-table" style="margin-bottom:18px;"><table class="list-table"><thead><tr><th>Tarih</th><th>Makbuzu Kesen</th><th>Makbuz No</th><th>Açıklama</th><th>Matrah</th><th>KDV</th><th>Tevkifat</th><th>İşlem</th></tr></thead><tbody id="makbuz-tbody"></tbody></table></div>
       </div><div class="mali-alt-panel" data-mali-panel="dosya" style="display:none;">
@@ -826,8 +826,8 @@
     <div class="kayit-modal-body" id="km-body"></div>
   </div>
 </div>
-  <script src="../../node_modules/@supabase/supabase-js/dist/umd/supabase.js"></script>
-  <script src="../../node_modules/xlsx/dist/xlsx.full.min.js"></script>
+  <script src="./vendor/supabase.js"></script>
+  <script src="./vendor/xlsx.full.min.js"></script>
   <script src="./scripts/01-core-auth.js"></script>
   <script src="./scripts/02-catalogs-forms.js"></script>
   <script src="./scripts/03-records-sync.js"></script>
