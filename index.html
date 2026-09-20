@@ -289,7 +289,13 @@
       <button class="btn btn-primary topbar-new-record" onclick="openModal(null)">+ Yeni Kayıt</button>
     </div>
   </div>
-  <div id="mobile-calendar-toolbar" class="mobile-calendar-toolbar"></div>
+  <div id="mobile-calendar-toolbar" class="mobile-calendar-toolbar">
+    <div class="mobile-calendar-brand-row">
+      <div class="mobile-calendar-brand">SEKRETER</div>
+      <button type="button" class="mobile-calendar-search-toggle" onclick="mobileCalendarSearchToggle()" aria-label="Takvimde ara">⌕</button>
+      <div id="mobile-calendar-avatar-slot"></div>
+    </div>
+  </div>
 
   <div class="content">
     <!-- ÖZET -->
@@ -415,12 +421,12 @@
     </div>
     <!-- REFERANS -->
     <div class="view" id="view-buro">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+      <div class="buro-kart-baslik" style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
         <div><div style="font-size:16px;font-weight:700;">Müvekkiller ve Dosyalar</div><div style="font-size:11px;color:var(--text2);margin-top:3px;">Büro rehberi ve dava dosyası kartları</div></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn" onclick="mevcutMuvekkilleriOnizle()">Mevcut Müvekkilleri Aktar</button><button class="btn" onclick="mevcutDosyalariOnizle()">Mevcut Dosyaları Aktar</button><button data-role-manager class="btn" style="display:none;" onclick="openKartBirlestir('muvekkil')">Müvekkil Birleştir</button><button data-role-manager class="btn" style="display:none;" onclick="openKartBirlestir('dosya')">Dosya Birleştir</button><button class="btn" onclick="openMuvekkilKartFormu()">+ Müvekkil</button><button class="btn btn-primary" onclick="openDosyaKartFormu()">+ Dosya</button></div>
+        <div class="buro-kart-islemler" style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn" onclick="mevcutMuvekkilleriOnizle()">Mevcut Müvekkilleri Aktar</button><button class="btn" onclick="mevcutDosyalariOnizle()">Mevcut Dosyaları Aktar</button><button data-role-manager class="btn" style="display:none;" onclick="openKartBirlestir('muvekkil')">Müvekkil Birleştir</button><button data-role-manager class="btn" style="display:none;" onclick="openKartBirlestir('dosya')">Dosya Birleştir</button><button class="btn" onclick="openMuvekkilKartFormu()">+ Müvekkil</button><button class="btn btn-primary" onclick="openDosyaKartFormu()">+ Dosya</button></div>
       </div>
       <div class="filter-bar"><input id="buro-kart-arama" type="text" placeholder="Müvekkil, dosya no, mahkeme veya konu ara..." oninput="renderBuroKartlari()"></div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;overflow:auto;padding-bottom:12px;">
+      <div class="buro-kart-kolonlari" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;overflow:auto;padding-bottom:12px;">
         <section><div class="section-title">Müvekkiller <span id="muvekkil-kart-sayi"></span></div><div id="muvekkil-kart-list" class="list-surface"></div></section>
         <section><div class="section-title">Dava Dosyaları <span id="dosya-kart-sayi"></span></div><div id="dosya-kart-list" class="list-surface"></div></section>
       </div>

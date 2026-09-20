@@ -341,6 +341,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .mobile-nav-item svg{width:22px;height:22px;}
 .mobile-nav-toggle{display:none;}
 .mobile-calendar-toolbar{display:none;}
+.mobile-calendar-brand-row{display:flex;align-items:center;gap:9px;}
+.mobile-calendar-brand{margin-right:auto;font-size:18px;font-weight:850;letter-spacing:.16em;color:#b58736;}
+.mobile-calendar-search-toggle{width:38px;height:38px;border:1px solid var(--border);border-radius:11px;background:var(--surface2);color:var(--text);font-size:25px;line-height:1;display:flex;align-items:center;justify-content:center;}
 #mobile-app-splash{display:none;}
 .native-mobile body{overscroll-behavior:none;-webkit-user-select:none;user-select:none;}
 .native-mobile input,.native-mobile textarea,.native-mobile [contenteditable="true"]{-webkit-user-select:text;user-select:text;}
@@ -383,22 +386,42 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   .native-mobile .content{padding:7px 10px 24px;}
   .native-mobile .mobile-calendar-toolbar{display:none;background:var(--surface);border-bottom:1px solid var(--border);padding:7px 10px;flex-shrink:0;}
   .native-mobile .main:has(#view-takvim.active) .mobile-calendar-toolbar{display:block;}
-  .native-mobile .cal-search-bar{display:grid;grid-template-columns:minmax(0,1fr) 38px;gap:8px;align-items:center;margin-bottom:8px;}
+  .native-mobile .cal-search-bar{display:none;grid-template-columns:minmax(0,1fr);gap:8px;align-items:center;margin:8px 0 1px;}
+  .native-mobile .cal-search-bar.open{display:grid;}
   .native-mobile .cal-search-bar input{width:100%;min-width:0;height:38px;padding:8px 10px;font-size:12px;}
   .native-mobile .cal-search-bar>.btn{display:none;}
   .native-mobile .mobile-search-avatar{width:38px!important;height:38px!important;font-size:14px!important;box-shadow:0 1px 4px rgba(15,23,42,.18);}
   .native-mobile .cal-nav-bar{margin-bottom:8px;}
+  .native-mobile #view-takvim{overflow:auto;}
+  .native-mobile .cal-wrap{min-width:560px;overflow:visible;height:auto;min-height:100%;}
+  .native-mobile .cal-grid{flex:none;grid-auto-rows:minmax(112px,auto);min-height:auto;}
+  .native-mobile .cal-cell{min-height:112px;padding:5px;}
+  .native-mobile .cal-event{font-size:10px;padding:3px 4px;margin-bottom:2px;line-height:1.25;}
   .native-mobile .mobile-nav{display:block;transition:transform .24s ease,opacity .2s ease;transform:translateY(0);box-shadow:0 -6px 22px rgba(15,23,42,.12);}
   .native-mobile .mobile-nav.collapsed{transform:translateY(calc(100% + 18px));opacity:0;pointer-events:none;}
   .native-mobile .mobile-nav-toggle{display:flex;position:fixed;right:14px;bottom:max(14px,env(safe-area-inset-bottom));z-index:110;width:48px;height:48px;border:0;border-radius:50%;background:var(--navy);box-shadow:0 5px 18px rgba(15,23,42,.28);align-items:center;justify-content:center;flex-direction:column;gap:4px;padding:0;transition:bottom .24s ease,transform .2s ease;}
   .native-mobile .mobile-nav-toggle span{display:block;width:19px;height:2px;border-radius:2px;background:#d4af70;}
   .native-mobile.mobile-nav-open .mobile-nav-toggle{bottom:calc(75px + env(safe-area-inset-bottom));transform:rotate(90deg);}
-  .native-mobile .cal-grid.week-view .cal-cell{min-height:410px;overflow-y:auto;padding:5px;}
+  .native-mobile .cal-grid.week-view{grid-auto-rows:minmax(460px,auto);}
+  .native-mobile .cal-grid.week-view .cal-cell{min-height:460px;overflow-y:auto;padding:6px;}
   .native-mobile .cal-grid.week-view .cal-event{font-size:10px;padding:4px 5px;margin-bottom:3px;line-height:1.25;}
   .native-mobile #mobile-app-splash{display:flex;position:fixed;inset:0;z-index:2000;background:#111315;align-items:center;justify-content:center;flex-direction:column;color:#fff;opacity:0;transition:opacity .35s ease;}
   .native-mobile #mobile-app-splash.show{opacity:1;}.native-mobile #mobile-app-splash.closing{opacity:0;}
   .native-mobile #mobile-app-splash img{width:112px;height:112px;border-radius:27px;object-fit:cover;animation:splashIconIn .7s cubic-bezier(.2,.8,.2,1) both;box-shadow:0 14px 45px rgba(0,0,0,.35);}
   .native-mobile #mobile-app-splash div{margin-top:20px;font-size:22px;font-weight:800;letter-spacing:.22em;color:#d4af70;animation:splashTextIn .7s .16s both;}.native-mobile #mobile-app-splash small{margin-top:7px;color:rgba(255,255,255,.58);font-size:10px;letter-spacing:.06em;animation:splashTextIn .7s .25s both;}
+}
+
+.buro-kisi-karti,.buro-dosya-karti{width:100%;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;text-align:left;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s;}
+.buro-kisi-karti:hover,.buro-dosya-karti:hover{border-color:#d4af70;box-shadow:0 5px 16px rgba(15,23,42,.08);transform:translateY(-1px);}
+.buro-kisi-karti{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:11px;align-items:center;padding:12px;border-radius:13px;margin-bottom:8px;}
+.buro-kart-ikon{width:42px;height:42px;border-radius:12px;background:#f6ead2;color:#8b6426;font-size:17px;font-weight:800;display:flex;align-items:center;justify-content:center;}
+.buro-kart-metin{min-width:0;}.buro-kart-metin b,.buro-kart-metin small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}.buro-kart-metin b{font-size:13px;}.buro-kart-metin small{font-size:10px;color:var(--text2);margin-top:5px;}
+.buro-kart-sayac{min-width:34px;text-align:center;font-size:15px;font-weight:750;color:#8b6426;}.buro-kart-sayac small{display:block;font-size:9px;color:var(--text3);font-weight:600;}
+.buro-dosya-karti{display:flex;flex-direction:column;gap:6px;padding:13px;border-radius:13px;margin-bottom:8px;}
+.buro-dosya-ust,.buro-dosya-alt{display:flex;align-items:center;justify-content:space-between;gap:9px;}.buro-dosya-ust b{font-size:14px;}.buro-dosya-mahkeme{font-size:11px;font-weight:650;line-height:1.35;}.buro-dosya-alt small{font-size:10px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}.buro-dosya-alt strong{font-size:10px;color:#8b6426;white-space:nowrap;}
+@media(max-width:768px){
+  .buro-kart-baslik{align-items:flex-start!important;}.buro-kart-islemler{width:100%;display:flex!important;overflow-x:auto;flex-wrap:nowrap!important;padding-bottom:3px;scrollbar-width:none;}.buro-kart-islemler::-webkit-scrollbar{display:none;}.buro-kart-islemler .btn{flex:0 0 auto;}
+  .buro-kart-kolonlari{grid-template-columns:1fr!important;gap:18px!important;overflow:visible!important;}.buro-kart-kolonlari .list-surface{border:0;background:transparent;overflow:visible;}
 }
 @keyframes splashIconIn{from{opacity:0;transform:scale(.72) translateY(14px)}to{opacity:1;transform:scale(1) translateY(0)}}
 @keyframes splashTextIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
