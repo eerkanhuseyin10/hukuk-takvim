@@ -4,11 +4,6 @@
   if(!cap?.isNativePlatform?.())return;
   document.documentElement.classList.add('native-mobile');
 
-  const nav=document.getElementById('mobile-nav');
-  const navToggle=document.getElementById('mobile-nav-toggle');
-  window.mobileNavToggle=()=>{const aciliyor=nav?.classList.contains('collapsed');nav?.classList.toggle('collapsed',!aciliyor);document.documentElement.classList.toggle('mobile-nav-open',!!aciliyor);navToggle?.setAttribute('aria-expanded',String(!!aciliyor));};
-  nav?.addEventListener('click',e=>{if(!e.target.closest('.mobile-nav-item'))return;setTimeout(()=>{nav.classList.add('collapsed');document.documentElement.classList.remove('mobile-nav-open');navToggle?.setAttribute('aria-expanded','false');},180);});
-
   const avatar=document.getElementById('topbar-av'),arama=document.querySelector('.cal-search-bar'),mobilArac=document.getElementById('mobile-calendar-toolbar');
   if(arama&&mobilArac){arama.classList.add('mobile-calendar-search');mobilArac.appendChild(arama);}
   const avatarSlot=document.getElementById('mobile-calendar-avatar-slot');
