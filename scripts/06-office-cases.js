@@ -19,7 +19,7 @@ function renderBuroKartlari(){
   const dl=DAVA_DOSYALARI.filter(d=>[d.dosya_no,d.mahkeme,d.konu,d.notlar].some(x=>norm(x).includes(q)));
   document.getElementById('muvekkil-kart-sayi').textContent='('+ml.length+')';document.getElementById('dosya-kart-sayi').textContent='('+dl.length+')';
   document.getElementById('muvekkil-kart-list').innerHTML=ml.length?ml.map(m=>{
-    const isler=records.filter(r=>String(r.muvekkilId||'')===String(m.id)||norm(r.muvekkil)===norm(m.ad));
+    const isler=records.filter(r=>String(r.muvekkilId||'')===String(m.id)||kayitMuvekkilAdlari(r).some(ad=>muvekkilAdiAnahtari(ad)===muvekkilAdiAnahtari(m.ad)));
     return `<div style="padding:12px 13px;border-bottom:1px solid var(--border);cursor:pointer;" onclick="openBuroKartDetay('muvekkil',${m.id})"><div style="display:flex;justify-content:space-between;gap:8px;"><b style="font-size:13px;">${esc(m.ad)}</b><span style="font-size:11px;color:var(--text3);">${isler.length} iş</span></div><div style="font-size:11px;color:var(--text2);margin-top:4px;">${esc([m.telefon,m.email].filter(Boolean).join(' · ')||'İletişim bilgisi yok')}</div></div>`;
   }).join(''):'<div class="empty-state" style="padding:18px;">Henüz müvekkil kartı yok.</div>';
   document.getElementById('dosya-kart-list').innerHTML=dl.length?dl.map(d=>{
@@ -121,7 +121,7 @@ async function openBuroKartDetay(tur,id){
       const m=MUVEKKIL_KARTLARI.find(x=>String(x.id)===String(id));if(!m)throw new Error('Müvekkil bulunamadı.');
       const{data:baglar,error}=await sb.from('dava_dosyasi_muvekkilleri').select('dava_dosyasi_id').eq('muvekkil_id',id);if(error)throw error;
       const idler=new Set((baglar||[]).map(x=>String(x.dava_dosyasi_id))),dosyalar=DAVA_DOSYALARI.filter(d=>idler.has(String(d.id)));
-      const isler=records.filter(r=>String(r.muvekkilId||'')===String(id)||muvekkilAdiAnahtari(r.muvekkil)===muvekkilAdiAnahtari(m.ad));
+      const isler=records.filter(r=>String(r.muvekkilId||'')===String(id)||kayitMuvekkilAdlari(r).some(ad=>muvekkilAdiAnahtari(ad)===muvekkilAdiAnahtari(m.ad)));
       const geciken=isler.filter(r=>!r.tamamlandi&&new Date(r.date+'T12:00:00')<new Date(new Date().setHours(0,0,0,0))).length;
       o.innerHTML=`<div class="modal" style="max-width:720px;"><div class="modal-header"><div><h2>${esc(m.ad)}</h2><div style="font-size:11px;color:var(--text2);margin-top:2px;">${dosyalar.length} dosya · ${isler.length} iş · ${geciken} geciken</div></div><button class="btn" onclick="closeBuroKartDetay()">✕</button></div><div class="modal-body"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;margin-bottom:16px;">${[['Telefon',m.telefon],['E-posta',m.email],['Kimlik / Vergi No',m.kimlik_vergi_no],['Adres',m.adres]].map(x=>`<div style="background:var(--surface2);border-radius:9px;padding:9px 11px;"><div style="font-size:10px;color:var(--text3);">${x[0]}</div><div style="font-size:12px;margin-top:2px;white-space:pre-wrap;">${esc(x[1]||'—')}</div></div>`).join('')}</div>${m.notlar?`<div style="font-size:12px;padding:10px;background:#fffaf0;border-radius:9px;margin-bottom:15px;white-space:pre-wrap;">${esc(m.notlar)}</div>`:''}<div class="section-title">Bağlı Dosyalar</div><div class="list-surface" style="margin-bottom:16px;">${dosyalar.length?dosyalar.map(d=>`<div style="padding:9px 11px;border-bottom:1px solid var(--border);cursor:pointer;" onclick="openBuroKartDetay('dosya',${d.id})"><b style="font-size:12px;">${esc(d.dosya_no||'Dosya')}</b><div style="font-size:10px;color:var(--text2);margin-top:2px;">${esc([d.mahkeme,d.konu].filter(Boolean).join(' · '))}</div></div>`).join(''):'<div class="empty-state" style="padding:14px;">Bağlı dosya yok.</div>'}</div><div class="section-title">Takvim Kayıtları</div><div class="list-surface">${kartDetayKayitlariHTML(isler)}</div><button class="btn btn-primary" style="width:100%;margin-top:14px;" onclick="closeBuroKartDetay();openMuvekkilKartFormu(${m.id})">Müvekkil Bilgilerini Düzenle</button></div></div>`;
     }else{
@@ -217,12 +217,20 @@ async function buroKartiKaydet(tur,id){
 }
 
 function muvekkilAdiAnahtari(ad){return String(ad||'').trim().replace(/\s+/g,' ').toLocaleLowerCase('tr-TR');}
+function kayitMuvekkilAdlari(r){
+  const bagliIds=new Set(r?.davaDosyasiId?DOSYA_MUVEKKIL_BAGLARI.filter(x=>String(x.dava_dosyasi_id)===String(r.davaDosyasiId)).map(x=>String(x.muvekkil_id)):[]);
+  const bagliAdlar=MUVEKKIL_KARTLARI.filter(m=>bagliIds.has(String(m.id))).map(m=>String(m.ad||'').trim()).filter(Boolean);
+  const metinAdlari=String(r?.muvekkil||'').split(/[,;\n]+/).map(x=>x.trim().replace(/\s+/g,' ')).filter(Boolean);
+  return [...new Map([...bagliAdlar,...metinAdlari].map(ad=>[muvekkilAdiAnahtari(ad),ad])).values()];
+}
 function mevcutMuvekkilAktarimPlani(){
   const adHaritasi=new Map();
   records.filter(r=>r.muvekkil&&r.muvekkil.trim()).forEach(r=>{
-    const ad=r.muvekkil.trim().replace(/\s+/g,' '),key=muvekkilAdiAnahtari(ad);
-    if(!adHaritasi.has(key))adHaritasi.set(key,{ad,kayitlar:[]});
-    adHaritasi.get(key).kayitlar.push(r);
+    kayitMuvekkilAdlari(r).forEach(ad=>{
+      const key=muvekkilAdiAnahtari(ad);
+      if(!adHaritasi.has(key))adHaritasi.set(key,{ad,kayitlar:[]});
+      if(!adHaritasi.get(key).kayitlar.some(x=>String(x.id)===String(r.id)))adHaritasi.get(key).kayitlar.push(r);
+    });
   });
   const mevcut=new Map(MUVEKKIL_KARTLARI.map(m=>[muvekkilAdiAnahtari(m.ad),m]));
   return [...adHaritasi.entries()].map(([key,x])=>({...x,key,mevcut:mevcut.get(key)||null})).sort((a,b)=>a.ad.localeCompare(b.ad,'tr'));
@@ -245,9 +253,10 @@ async function mevcutMuvekkilleriAktar(){
     const{data:kartlar,error:kartHata}=await sb.from('muvekkiller').select('id,ad').eq('buro_id',_buro.id);if(kartHata)throw kartHata;
     const kartMap=new Map((kartlar||[]).map(k=>[muvekkilAdiAnahtari(k.ad),k.id]));
     let baglanan=0;
+    const ilkKart=new Map();
     for(const x of plan){
       const kartId=kartMap.get(x.key);if(!kartId)continue;
-      const ids=x.kayitlar.map(r=>r.id);
+      const ids=x.kayitlar.filter(r=>!ilkKart.has(String(r.id))).map(r=>{ilkKart.set(String(r.id),kartId);return r.id;});
       for(let i=0;i<ids.length;i+=100){const parca=ids.slice(i,i+100),{error}=await sb.from('kayitlar').update({muvekkil_id:kartId}).in('id',parca);if(error)throw error;baglanan+=parca.length;}
     }
     msg.textContent='✓ '+baglanan+' kayıt müvekkil kartlarına bağlandı.';btn.textContent='Tamamlandı';await buroKartlariYukle();setTimeout(()=>{document.getElementById('muvekkil-aktar-overlay').style.display='none';},1200);
@@ -281,7 +290,10 @@ async function mevcutDosyalariAktar(){
     for(const x of plan){
       const kartId=kartMap.get(x.key);if(!kartId)continue;const ids=x.kayitlar.map(r=>r.id);
       for(let i=0;i<ids.length;i+=100){const parca=ids.slice(i,i+100),{error}=await sb.from('kayitlar').update({dava_dosyasi_id:kartId}).in('id',parca);if(error)throw error;baglanan+=parca.length;}
-      x.kayitlar.filter(r=>r.muvekkilId).forEach(r=>iliskiler.push({dava_dosyasi_id:kartId,muvekkil_id:r.muvekkilId}));
+      x.kayitlar.forEach(r=>{
+        kayitMuvekkilAdlari(r).forEach(ad=>{const m=MUVEKKIL_KARTLARI.find(y=>muvekkilAdiAnahtari(y.ad)===muvekkilAdiAnahtari(ad));if(m)iliskiler.push({dava_dosyasi_id:kartId,muvekkil_id:m.id});});
+        if(r.muvekkilId)iliskiler.push({dava_dosyasi_id:kartId,muvekkil_id:r.muvekkilId});
+      });
     }
     if(iliskiler.length){const benzersiz=[...new Map(iliskiler.map(x=>[x.dava_dosyasi_id+'|'+x.muvekkil_id,x])).values()];const{error}=await sb.from('dava_dosyasi_muvekkilleri').upsert(benzersiz,{onConflict:'dava_dosyasi_id,muvekkil_id',ignoreDuplicates:true});if(error)throw error;}
     msg.textContent='✓ '+baglanan+' kayıt dava dosyalarına bağlandı.';btn.textContent='Tamamlandı';await loadRecords();await buroKartlariYukle();setTimeout(()=>{document.getElementById('dosya-aktar-overlay').style.display='none';},1200);
