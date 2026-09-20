@@ -83,7 +83,7 @@ async function uyapIcsAktar(){
     const mMap=new Map(MUVEKKIL_KARTLARI.map(x=>[uyapIcsAnahtar(x.ad),x]));
     const yeniM=[];aktarilacaklar.flatMap(x=>x.temsil).forEach(x=>{const k=uyapIcsAnahtar(x.name);if(k&&!mMap.has(k)){mMap.set(k,{ad:x.name});yeniM.push({buro_id:_buro.id,ad:x.name,created_by:_user.id});}});
     if(yeniM.length){const{error}=await sb.from('muvekkiller').insert(yeniM);if(error)throw error;}
-    const{data:ml,error:mh}=await sb.from('muvekkiller').select('*').eq('buro_id',_buro.id);if(mh)throw mh;mMap.clear();(ml||[]).forEach(x=>mMap.set(uyapIcsAnahtar(x.ad),x));
+    const{data:ml,error:mh}=await sb.from('muvekkiller').select('id,buro_id,ad').eq('buro_id',_buro.id);if(mh)throw mh;mMap.clear();(ml||[]).forEach(x=>mMap.set(uyapIcsAnahtar(x.ad),x));
     const dKey=x=>uyapIcsAnahtar(x.mahkeme)+'|'+uyapIcsAnahtar(x.dosya_no||x.dava),dMap=new Map(DAVA_DOSYALARI.map(x=>[dKey(x),x])),yeniD=[];
     aktarilacaklar.forEach(x=>{const k=dKey(x);if(!dMap.has(k)){dMap.set(k,{mahkeme:x.mahkeme,dosya_no:x.dava});yeniD.push({buro_id:_buro.id,mahkeme:x.mahkeme,dosya_no:x.dava,konu:x.dosyaTuru||null,hukuk_alani:uyapIcsDalEtiketi(uyapIcsDal(x.dosyaTuru,x.mahkeme,x.islem)),karsi_taraf:x.diger.map(y=>y.name).join(', ')||null,durum:'acik',created_by:_user.id});}});
     if(yeniD.length){const{error}=await sb.from('dava_dosyalari').insert(yeniD);if(error)throw error;}
