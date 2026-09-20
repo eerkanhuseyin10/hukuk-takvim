@@ -214,7 +214,7 @@ function renderListe(){
   if(fs)f=f.filter(r=>(getBaslik(r)+r.muvekkil+r.dava+r.mahkeme).toLowerCase().includes(fs));
   f.sort((a,b)=>durum==='tamamlandi'?new Date(b.date)-new Date(a.date):new Date(a.date)-new Date(b.date));
   const tb=document.getElementById('liste-tbody');
-  if(!f.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:18px;">Kayıt yok</td></tr>';return;}
+  if(!f.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:18px;">Kayıt yok</td></tr>';renderListeMobil([]);return;}
   let html='';
   f.forEach(r=>{
     const rowStyle=r.tamamlandi?'opacity:0.45;text-decoration:line-through;':'';
@@ -239,8 +239,10 @@ function renderListe(){
       html+=`<tr class="detail-row"><td colspan="7">${dh}</td></tr>`;
     }
   });
-  tb.innerHTML=html;
+  tb.innerHTML=html;renderListeMobil(f);
 }
+
+function renderListeMobil(kayitlar){const c=document.getElementById('liste-mobile-cards');if(!c)return;if(!kayitlar.length){c.innerHTML='<div class="liste-mobile-bos">Filtreye uygun kayıt bulunamadı.</div>';return;}c.innerHTML=kayitlar.map(r=>{const detay=openDetailId===r.id,mahkemeNot=[r.mahkeme,r.not].filter(Boolean).map(esc).join(' · ');return `<article class="liste-mobile-kart${r.tamamlandi?' tamamlandi':''}"><button type="button" class="liste-mobile-ana" onclick="toggleDetail(${r.id})"><div class="liste-mobile-tarih"><b>${formatDate(r.date)}</b>${r.saat?`<span>${esc(r.saat)}</span>`:''}</div><div class="liste-mobile-icerik"><div class="liste-mobile-baslik">${getBaslik(r)}</div><div class="liste-mobile-etiketler"><span class="badge badge-${r.type==='tekrar'?'tekrar-type':r.type}">${typeLabel(r.type,r.dal)}</span>${r.dal?`<span>${dalLabel(r.dal)}</span>`:''}</div>${r.muvekkil?`<div class="liste-mobile-bilgi"><small>Müvekkil</small>${esc(r.muvekkil)}</div>`:''}${r.dava?`<div class="liste-mobile-bilgi"><small>Dosya</small>${esc(r.dava)}</div>`:''}</div><span class="liste-mobile-ok">${detay?'⌃':'⌄'}</span></button>${detay?`<div class="liste-mobile-detay">${mahkemeNot||'Ek açıklama bulunmuyor.'}</div>`:''}<div class="liste-mobile-islemler"><button class="icon-btn" onclick="toggleTamamlandi(${r.id})">${r.tamamlandi?'↩ Geri Al':'✓ Tamamla'}</button><button class="icon-btn" onclick="shareKayitCard(${r.id})">📤 Paylaş</button><button class="icon-btn" onclick="openModal(records.find(x=>x.id===${r.id}))">Düzenle</button><button class="icon-btn del" onclick="deleteRecord(${r.id})">Sil</button></div></article>`;}).join('');}
 
 function renderTamamlanan(){
   const fs=(document.getElementById('filter-tamamlanan').value||'').toLowerCase();

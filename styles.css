@@ -419,6 +419,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .platform-update-card .btn{display:inline-block;margin-top:10px;text-decoration:none;}
 .platform-more-btn{width:30px;height:30px;flex:0 0 30px;border:1px solid var(--border);border-radius:9px;background:#fff;color:#667085;cursor:pointer;font-size:13px;font-weight:800;line-height:1;display:inline-flex;align-items:center;justify-content:center;letter-spacing:1px;}
 .platform-more-btn:hover{background:var(--surface2);color:var(--text);border-color:var(--border2);}
+#liste-mobile-cards{display:none;}
 
 @media(max-width:768px){
   .modal-overlay,.referans-detay-overlay{padding:8px;align-items:flex-end;}
@@ -442,6 +443,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   .profil-overlay{align-items:flex-end;justify-content:center;padding:8px;}
   .profil-card{width:100%;max-width:420px;max-height:90dvh;overflow:auto;border-radius:18px 18px 10px 10px;}
   input,select,textarea,button{max-width:100%;}
+  #view-liste .filter-bar{display:grid;grid-template-columns:1fr 1fr;gap:7px;}#view-liste .filter-bar input{grid-column:1/-1;width:100%;}#view-liste .filter-bar select{width:100%;min-width:0;}
+  #liste-mobile-cards{display:grid;grid-template-columns:1fr;gap:9px;}#view-liste .liste-desktop-table{display:none;}
+  .liste-mobile-kart{background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:0 1px 2px rgba(15,23,42,.04);overflow:hidden;}.liste-mobile-kart.tamamlandi{opacity:.62;}
+  .liste-mobile-ana{appearance:none;width:100%;display:grid;grid-template-columns:74px minmax(0,1fr) 18px;gap:10px;align-items:start;padding:13px;border:0;background:transparent;color:var(--text);font:inherit;text-align:left;touch-action:manipulation;}.liste-mobile-tarih b,.liste-mobile-tarih span{display:block;}.liste-mobile-tarih b{font-size:11px;}.liste-mobile-tarih span{font-size:10px;color:var(--text2);margin-top:3px;}.liste-mobile-baslik{font-size:13px;font-weight:700;line-height:1.35;overflow-wrap:anywhere;}.liste-mobile-kart.tamamlandi .liste-mobile-baslik{text-decoration:line-through;}.liste-mobile-etiketler{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:6px;font-size:10px;color:var(--text2);}.liste-mobile-bilgi{font-size:11px;margin-top:7px;overflow-wrap:anywhere;}.liste-mobile-bilgi small{display:block;font-size:9px;text-transform:uppercase;color:var(--text3);font-weight:700;margin-bottom:2px;}.liste-mobile-ok{color:var(--text3);font-size:15px;text-align:right;}.liste-mobile-detay{margin:0 13px;padding:10px;background:var(--surface2);border-radius:8px;font-size:11px;color:var(--text2);overflow-wrap:anywhere;}.liste-mobile-islemler{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:10px 13px 13px;}.liste-mobile-islemler .icon-btn{width:100%;min-height:38px;white-space:normal;}.liste-mobile-bos{padding:22px;text-align:center;color:var(--text3);background:var(--surface2);border-radius:12px;}
 }
 
 
