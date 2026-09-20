@@ -446,7 +446,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
 
 /* MALİ TAKİP — TELEFON YERLEŞİMİ */
-#ofis-mali-mobile-list{display:none;}
+#ofis-mali-mobile-list,#makbuz-mobile-list,#dosya-mali-mobile-list{display:none;}
 .ofis-ay-karti{cursor:pointer;}
 @media(max-width:768px){
   #view-mali{min-width:0;overflow:hidden;}
@@ -473,6 +473,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   .ofis-hareket-meta{display:flex;justify-content:space-between;gap:10px;margin-top:10px;padding-top:8px;border-top:1px solid var(--border);font-size:10px;color:var(--text3);}
   .ofis-hareket-karti .action-btns{display:grid!important;grid-template-columns:1fr 1fr;gap:7px;min-width:0!important;margin-top:10px;}.ofis-hareket-karti .action-btns .icon-btn{width:100%;min-height:38px;}
   .ofis-hareket-bos{padding:18px;text-align:center;color:var(--text3);background:var(--surface2);border-radius:12px;}
+  #makbuz-mobile-list,#dosya-mali-mobile-list{display:grid;grid-template-columns:1fr;gap:9px;margin:10px 0 22px;}.makbuz-desktop-table,.dosya-mali-desktop-table{display:none!important;}
+  .mali-kayit-karti{padding:13px;background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:0 1px 2px rgba(15,23,42,.04);}.mali-kayit-ust{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}.mali-kayit-ust>div{min-width:0;}.mali-kayit-ust b{display:block;font-size:13px;overflow-wrap:anywhere;}.mali-kayit-ust small{display:block;font-size:10px;color:var(--text3);margin-bottom:3px;}.mali-kayit-ust strong{font-size:15px;white-space:nowrap;}.mali-kayit-aciklama{margin-top:10px;padding:9px;background:var(--surface2);border-radius:8px;}.mali-kayit-aciklama b,.mali-kayit-aciklama span{display:block;font-size:11px;overflow-wrap:anywhere;}.mali-kayit-aciklama span{color:var(--text2);margin-top:3px;}.mali-kayit-rakamlar{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px;}.mali-kayit-rakamlar span{padding:8px;background:var(--surface2);border-radius:8px;font-size:11px;font-weight:700;overflow-wrap:anywhere;}.mali-kayit-rakamlar small{display:block;color:var(--text3);font-size:9px;font-weight:600;margin-bottom:3px;}.mali-kayit-islemler .action-btns,.mali-kayit-islemler{display:grid!important;grid-template-columns:1fr 1fr;gap:7px;min-width:0!important;margin-top:10px;}.mali-kayit-islemler .icon-btn{width:100%;min-height:38px;margin:0!important;white-space:normal;}
   #ucret-anlasmalari-list{grid-template-columns:1fr!important;}
   #view-mali .filter-bar{display:grid;grid-template-columns:1fr;gap:7px;}
   #view-mali .filter-bar input,#view-mali .filter-bar select{width:100%;min-width:0;}
