@@ -446,6 +446,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
 
 /* MALİ TAKİP — TELEFON YERLEŞİMİ */
+#ofis-mali-mobile-list{display:none;}
+.ofis-ay-karti{cursor:pointer;}
 @media(max-width:768px){
   #view-mali{min-width:0;overflow:hidden;}
   #view-mali .mali-page-head{display:block!important;margin-bottom:10px!important;}
@@ -454,7 +456,23 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   #mali-alt-sekmeler{width:calc(100% + 24px);margin-left:-12px!important;padding:4px 12px 10px!important;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;}
   #mali-alt-sekmeler .btn{scroll-snap-align:start;min-width:max-content;padding:9px 14px;}
   .mali-alt-panel{padding:2px 0 24px!important;overflow-x:hidden!important;}
-  #mali-genel-ozet,#mali-aylik-ozet,#mali-aylik-gider-ozet,#ortaklik-ozet,#makbuz-kdv-ozet,#makbuz-kdv-aylik,#ofis-kisisel-ozet,#ofis-mali-filtre-toplam{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+  #mali-genel-ozet,#mali-aylik-ozet,#mali-aylik-gider-ozet,#makbuz-kdv-ozet,#makbuz-kdv-aylik,#ofis-kisisel-ozet,#ofis-mali-filtre-toplam{grid-template-columns:repeat(2,minmax(0,1fr))!important;}
+  .ofis-mali-baslik{display:block!important;}
+  .ofis-mali-islemler{display:grid!important;grid-template-columns:1fr!important;margin-top:9px;}
+  .ofis-mali-islemler .btn{width:100%;min-height:42px;}
+  #ortaklik-ozet{grid-template-columns:1fr!important;}
+  .ofis-ay-karti{width:100%;padding:13px!important;touch-action:manipulation;}
+  .ofis-ay-karti.secili{border-color:#d5a94e!important;background:#fffaf0!important;box-shadow:0 0 0 2px rgba(213,169,78,.14);}
+  #ofis-mali-mobile-list{display:grid;grid-template-columns:1fr;gap:9px;margin:12px 0 22px;scroll-margin-top:12px;}
+  .ofis-mali-desktop-table{display:none!important;}
+  .ofis-hareket-karti{padding:13px;background:var(--surface);border:1px solid var(--border);border-left:4px solid #94a3b8;border-radius:12px;box-shadow:0 1px 2px rgba(15,23,42,.04);}
+  .ofis-hareket-karti.gelir{border-left-color:#22a06b;}.ofis-hareket-karti.gider{border-left-color:#dc4c4c;}
+  .ofis-hareket-ust{display:flex;align-items:center;justify-content:space-between;gap:12px;}.ofis-hareket-ust b{font-size:16px;}
+  .ofis-hareket-karti.gelir .badge{color:#166534;background:#ecfdf5;}.ofis-hareket-karti.gider .badge{color:#991b1b;background:#fef2f2;}
+  .ofis-hareket-kategori{font-size:13px;font-weight:700;margin-top:10px;}.ofis-hareket-aciklama{font-size:11px;color:var(--text2);margin-top:4px;overflow-wrap:anywhere;}
+  .ofis-hareket-meta{display:flex;justify-content:space-between;gap:10px;margin-top:10px;padding-top:8px;border-top:1px solid var(--border);font-size:10px;color:var(--text3);}
+  .ofis-hareket-karti .action-btns{display:grid!important;grid-template-columns:1fr 1fr;gap:7px;min-width:0!important;margin-top:10px;}.ofis-hareket-karti .action-btns .icon-btn{width:100%;min-height:38px;}
+  .ofis-hareket-bos{padding:18px;text-align:center;color:var(--text3);background:var(--surface2);border-radius:12px;}
   #ucret-anlasmalari-list{grid-template-columns:1fr!important;}
   #view-mali .filter-bar{display:grid;grid-template-columns:1fr;gap:7px;}
   #view-mali .filter-bar input,#view-mali .filter-bar select{width:100%;min-width:0;}
@@ -473,7 +491,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   #view-mali .section-title{font-size:11px;}
 }
 @media(max-width:390px){
-  #mali-genel-ozet,#mali-aylik-ozet,#mali-aylik-gider-ozet,#ortaklik-ozet,#makbuz-kdv-ozet,#makbuz-kdv-aylik,#ofis-kisisel-ozet,#ofis-mali-filtre-toplam{grid-template-columns:1fr!important;}
+  #mali-genel-ozet,#mali-aylik-ozet,#mali-aylik-gider-ozet,#makbuz-kdv-ozet,#makbuz-kdv-aylik,#ofis-kisisel-ozet,#ofis-mali-filtre-toplam{grid-template-columns:1fr!important;}
 }
 
 @keyframes spin{to{transform:rotate(360deg);}}
