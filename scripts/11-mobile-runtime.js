@@ -9,7 +9,8 @@
   window.mobileNavToggle=()=>{const aciliyor=nav?.classList.contains('collapsed');nav?.classList.toggle('collapsed',!aciliyor);document.documentElement.classList.toggle('mobile-nav-open',!!aciliyor);navToggle?.setAttribute('aria-expanded',String(!!aciliyor));};
   nav?.addEventListener('click',e=>{if(!e.target.closest('.mobile-nav-item'))return;setTimeout(()=>{nav.classList.add('collapsed');document.documentElement.classList.remove('mobile-nav-open');navToggle?.setAttribute('aria-expanded','false');},180);});
 
-  const avatar=document.getElementById('topbar-av'),arama=document.querySelector('.cal-search-bar');
+  const avatar=document.getElementById('topbar-av'),arama=document.querySelector('.cal-search-bar'),mobilArac=document.getElementById('mobile-calendar-toolbar');
+  if(arama&&mobilArac)mobilArac.appendChild(arama);
   if(avatar&&arama){const kopya=avatar.cloneNode(true);kopya.id='mobile-search-avatar';kopya.classList.add('mobile-search-avatar');arama.appendChild(kopya);new MutationObserver(()=>{kopya.textContent=avatar.textContent;}).observe(avatar,{childList:true,characterData:true,subtree:true});}
 
   const splash=document.getElementById('mobile-app-splash');
@@ -19,7 +20,7 @@
   if(app?.addListener){
     app.addListener('backButton',()=>{
       const acik=[...document.querySelectorAll('.modal-overlay')].reverse().find(x=>getComputedStyle(x).display!=='none');
-      if(acik){acik.style.display='none';return;}
+      if(acik){const ayarlaraDon=acik.dataset?.returnToSettings==='true';acik.style.display='none';if(ayarlaraDon&&typeof openAyarlarMerkezi==='function')setTimeout(openAyarlarMerkezi,80);return;}
       const aktif=document.querySelector('.view.active')?.id;
       if(aktif&&aktif!=='view-takvim'){
         const takvim=document.querySelector('.mobile-nav-item[onclick*="takvim"]');
