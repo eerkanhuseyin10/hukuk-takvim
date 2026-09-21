@@ -1,5 +1,6 @@
 /* Sekreter renderer: 06-office-cases.js */
-let MUVEKKIL_KARTLARI=[],DAVA_DOSYALARI=[],DOSYA_MUVEKKIL_BAGLARI=[];
+let MUVEKKIL_KARTLARI=[],DAVA_DOSYALARI=[],DOSYA_MUVEKKIL_BAGLARI=[],BURO_KART_AKTIF_SEKME='muvekkil';
+function buroKartSekmeAc(sekme){BURO_KART_AKTIF_SEKME=sekme==='dosya'?'dosya':'muvekkil';document.querySelectorAll('[data-buro-kart-panel]').forEach(p=>p.style.display=p.dataset.buroKartPanel===BURO_KART_AKTIF_SEKME?'block':'none');document.querySelectorAll('[data-buro-kart-tab]').forEach(b=>{const aktif=b.dataset.buroKartTab===BURO_KART_AKTIF_SEKME;b.classList.toggle('btn-primary',aktif);});}
 async function buroKartlariYukle(){
   if(!_buro)return;
   const[m,d]=await Promise.all([
@@ -26,6 +27,7 @@ function renderBuroKartlari(){
     const isler=records.filter(r=>String(r.davaDosyasiId||'')===String(d.id)||norm(r.dava)===norm(d.dosya_no));
     return `<button type="button" class="buro-dosya-karti" onclick="openBuroKartDetay('dosya',${d.id})"><span class="buro-dosya-ust"><b>${esc(d.dosya_no||'Dosya numarası yok')}</b><span class="badge">${esc(d.durum||'açık')}</span></span><span class="buro-dosya-mahkeme">${esc(d.mahkeme||'Mahkeme bilgisi yok')}</span><span class="buro-dosya-alt"><small>${esc(d.konu||'Konu belirtilmedi')}</small><strong>${isler.length} iş ›</strong></span></button>`;
   }).join(''):'<div class="empty-state" style="padding:18px;">Henüz dava dosyası kartı yok.</div>';
+  buroKartSekmeAc(BURO_KART_AKTIF_SEKME);
 }
 function closeBuroKartDetay(){const o=document.getElementById('buro-kart-detay-overlay');if(o)o.style.display='none';}
 function kartYonetimButonlariniEkle(tur,id){

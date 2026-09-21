@@ -421,6 +421,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   .buro-kart-baslik{align-items:flex-start!important;}.buro-kart-islemler{width:100%;display:flex!important;overflow-x:auto;flex-wrap:nowrap!important;padding-bottom:3px;scrollbar-width:none;}.buro-kart-islemler::-webkit-scrollbar{display:none;}.buro-kart-islemler .btn{flex:0 0 auto;}
   .buro-kart-kolonlari{grid-template-columns:1fr!important;gap:18px!important;overflow:visible!important;}.buro-kart-kolonlari .list-surface{border:0;background:transparent;overflow:visible;}
 }
+.buro-kart-sekmeler{display:flex;gap:7px;margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:9px;overflow-x:auto;}.buro-kart-sekmeler .btn{min-width:max-content}.buro-panel-baslik{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:13px 0 9px}.buro-panel-baslik .section-title{margin:0}.buro-kart-kolonlari>section{max-width:100%}
 @keyframes splashIconIn{from{opacity:0;transform:scale(.72) translateY(14px)}to{opacity:1;transform:scale(1) translateY(0)}}
 @keyframes splashTextIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
