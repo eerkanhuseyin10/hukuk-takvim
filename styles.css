@@ -496,8 +496,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   .platform-announcement-row{display:block;}
   .platform-announcement-row .btn{width:100%;margin-top:9px;}
   .form-grid{grid-template-columns:1fr!important;}
-  .profil-overlay{align-items:flex-end;justify-content:center;padding:8px;}
-  .profil-card{width:100%;max-width:420px;max-height:90dvh;overflow:auto;border-radius:18px 18px 10px 10px;}
+  .profil-overlay{align-items:flex-start;justify-content:flex-end;padding:58px 8px 8px;background:rgba(15,23,42,.18);}
+  .profil-card{width:min(310px,calc(100vw - 24px));max-height:calc(100dvh - 70px);overflow:auto;border-radius:14px;box-shadow:0 14px 38px rgba(15,23,42,.24);}
+  .profil-card::before{content:"";position:absolute;top:50px;right:31px;width:15px;height:15px;background:var(--navy);transform:rotate(45deg);border-left:1px solid var(--border);border-top:1px solid var(--border);}
+  .profil-header{padding:15px 16px;}.profil-avatar{width:42px;height:42px;}.profil-row{padding:9px 15px;font-size:12px;}.profil-btn-row{padding:11px 14px;}.profil-btn-row .btn{min-height:38px;text-align:left;padding:8px 12px;}
   input,select,textarea,button{max-width:100%;}
   #view-liste .filter-bar{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
   #view-liste .filter-bar input{grid-column:1/-1;width:100%;}

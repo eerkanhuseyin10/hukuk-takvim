@@ -75,7 +75,7 @@ function ayarButonu(etiket,islem){return `<button class="btn" style="width:100%;
 function ayarAltSayfaAc(ac){document.getElementById('ayarlar-merkezi-overlay').style.display='none';ac();setTimeout(()=>{const gorunen=[...document.querySelectorAll('.modal-overlay')].reverse().find(x=>x.id!=='ayarlar-merkezi-overlay'&&getComputedStyle(x).display!=='none');if(gorunen)gorunen.dataset.returnToSettings='true';},30);}
 function openAyarlarMerkezi(){
   let o=document.getElementById('ayarlar-merkezi-overlay');if(!o){o=document.createElement('div');o.id='ayarlar-merkezi-overlay';o.className='modal-overlay';o.style.zIndex='680';document.body.appendChild(o);}const yonetici=_buro?.rol==='yonetici',davet=_buro&&['yonetici','ortak'].includes(_buro.rol);
-  const buro=[yonetici?ayarButonu('👥 Kullanıcılar ve Yetkiler','openKullaniciYonetimi()'):'',davet?ayarButonu('✉️ Tek Kullanımlık Davet','openDavetPenceresi()'):'',yonetici?ayarButonu('✨ Açılış Mesajı / Dua','openAcilisMesajiAyari()'):'',yonetici?ayarButonu('💻 Otomatik E-Duruşma Talebi','openEDurusmaAyari()'):''].join('');
+  const buro=[yonetici?ayarButonu('👥 Kullanıcılar ve Yetkiler','openKullaniciYonetimi()'):'',davet?ayarButonu('✉️ Tek Kullanımlık Davet','openDavetPenceresi()'):'',yonetici?ayarButonu('✨ Açılış Mesajı','openAcilisMesajiAyari()'):'',yonetici?ayarButonu('💻 Otomatik E-Duruşma Talebi','openEDurusmaAyari()'):''].join('');
   const guvenlik=[yonetici?ayarButonu('🕘 İşlem ve Erişim Günlüğü','openIslemGunlugu()'):'',ayarButonu('🔔 Bildirim Ayarları','openBildirimAyarlari()')].join('');
   const uygulama=[ayarButonu('📋 Liste Yönetimi','openListeYonetim()')].join('');
   o.innerHTML=`<div class="modal" style="max-width:620px;"><div class="modal-header"><div><h2>Ayarlar</h2><div style="font-size:11px;color:var(--text2);margin-top:3px;">Büro, güvenlik ve uygulama seçenekleri</div></div><button class="btn" onclick="document.getElementById('ayarlar-merkezi-overlay').style.display='none'">✕</button></div><div class="modal-body" style="display:grid;gap:11px;max-height:75vh;overflow:auto;">${buro?ayarGrubu('Büro Yönetimi',buro):''}${ayarGrubu('Veri ve Güvenlik',guvenlik)}${ayarGrubu('Uygulama',uygulama)}</div></div>`;o.style.display='flex';o.onclick=e=>{if(e.target===o)o.style.display='none';};
@@ -87,7 +87,7 @@ async function openDavetPenceresi(){
 }
 async function davetKoduOlustur(){const btn=document.getElementById('davet-olustur-btn'),sonuc=document.getElementById('davet-kod-sonuc');btn.disabled=true;btn.textContent='Oluşturuluyor…';const{data,error}=await sb.rpc('sekreter_davet_olustur');btn.disabled=false;btn.textContent='Yeni Davet Kodu Oluştur';if(error){sonuc.innerHTML=`<div style="color:#b42318;font-size:12px;">${esc(error.message)}</div>`;return;}sonuc.innerHTML=`<div style="text-align:center;border:1px solid var(--border);border-radius:12px;padding:15px;"><div style="font-size:10px;color:var(--text3);">DAVET KODU</div><b style="font-family:monospace;font-size:23px;letter-spacing:2px;display:block;margin:8px;">${esc(data)}</b><button class="btn" onclick="navigator.clipboard.writeText('${esc(data)}');this.textContent='✓ Kopyalandı'">Kodu Kopyala</button><div style="font-size:10px;color:var(--text3);margin-top:9px;">24 saat içinde tek kişi kullanabilir.</div></div>`;}
 async function buroAcilisMesajiniYukle(){if(!_buro)return;const{data}=await sb.from('buro_ayarlari').select('acilis_mesaji,goster').eq('buro_id',_buro.id).maybeSingle();const el=document.getElementById('acilis-mesaji');if(el)el.textContent=data?.goster&&data?.acilis_mesaji?data.acilis_mesaji:'Sekreter hazırlanıyor…';}
-async function openAcilisMesajiAyari(){if(_buro?.rol!=='yonetici')return;const{data}=await sb.from('buro_ayarlari').select('acilis_mesaji,goster').eq('buro_id',_buro.id).maybeSingle();let o=document.getElementById('acilis-ayari-overlay');if(!o){o=document.createElement('div');o.id='acilis-ayari-overlay';o.className='modal-overlay';o.style.zIndex='650';document.body.appendChild(o);}o.innerHTML=`<div class="modal" style="max-width:500px;"><div class="modal-header"><h2>Açılış Mesajı / Dua</h2><button class="btn" onclick="document.getElementById('acilis-ayari-overlay').style.display='none'">✕</button></div><div class="modal-body"><label style="display:flex;gap:8px;margin-bottom:12px;"><input id="acilis-goster" type="checkbox" ${data?.goster?'checked':''}> Açılışta özel mesajı göster</label><div class="fg"><label>Mesaj veya dua</label><textarea id="acilis-metin" rows="5" maxlength="500" placeholder="Büronuza özel açılış mesajını yazın…">${esc(data?.acilis_mesaji||'')}</textarea></div><button class="save-btn" onclick="acilisMesajiKaydet()">Kaydet</button></div></div>`;o.style.display='flex';}
+async function openAcilisMesajiAyari(){if(_buro?.rol!=='yonetici')return;const{data}=await sb.from('buro_ayarlari').select('acilis_mesaji,goster').eq('buro_id',_buro.id).maybeSingle();let o=document.getElementById('acilis-ayari-overlay');if(!o){o=document.createElement('div');o.id='acilis-ayari-overlay';o.className='modal-overlay';o.style.zIndex='650';document.body.appendChild(o);}o.innerHTML=`<div class="modal" style="max-width:500px;"><div class="modal-header"><h2>Açılış Mesajı</h2><button class="btn" onclick="document.getElementById('acilis-ayari-overlay').style.display='none'">✕</button></div><div class="modal-body"><label style="display:flex;gap:8px;margin-bottom:12px;"><input id="acilis-goster" type="checkbox" ${data?.goster?'checked':''}> Açılışta özel mesajı göster</label><div class="fg"><label>Mesaj</label><textarea id="acilis-metin" rows="5" maxlength="500" placeholder="Büronuza özel açılış mesajını yazın…">${esc(data?.acilis_mesaji||'')}</textarea></div><button class="save-btn" onclick="acilisMesajiKaydet()">Kaydet</button></div></div>`;o.style.display='flex';}
 async function acilisMesajiKaydet(){const mesaj=(document.getElementById('acilis-metin').value||'').trim(),goster=document.getElementById('acilis-goster').checked;if(goster&&!mesaj){alert('Gösterilecek mesajı yazın.');return;}const{error}=await sb.from('buro_ayarlari').upsert({buro_id:_buro.id,acilis_mesaji:mesaj||null,goster,updated_at:new Date().toISOString(),updated_by:_user.id},{onConflict:'buro_id'});if(error){alert('Kaydedilemedi: '+error.message);return;}document.getElementById('acilis-ayari-overlay').style.display='none';alert('✓ Açılış ayarı kaydedildi.');}
 async function openEDurusmaAyari(){
   if(_buro?.rol!=='yonetici')return;
@@ -303,6 +303,21 @@ async function openNotlar(){
 }
 function closeNotlar(){
   document.getElementById('notlar-overlay').style.display='none';
+}
+function openDestekTalebi(){
+  let o=document.getElementById('destek-talebi-overlay');
+  if(!o){o=document.createElement('div');o.id='destek-talebi-overlay';o.className='modal-overlay';o.style.zIndex='650';o.addEventListener('click',e=>{if(e.target===o)o.style.display='none';});document.body.appendChild(o);}
+  o.innerHTML=`<div class="modal" style="max-width:500px;"><div class="modal-header"><div><h2>Bize Ulaşın</h2><div style="font-size:11px;color:var(--text2);margin-top:3px;">Talebinizi doğrudan Sekreter ekibine iletin.</div></div><button class="btn" onclick="document.getElementById('destek-talebi-overlay').style.display='none'">✕</button></div><div class="modal-body"><div class="fg"><label>Konu</label><select id="destek-konusu"><option>Teknik Destek</option><option>Hata Bildirimi</option><option>Öneri</option><option>Diğer</option></select></div><div class="fg"><label>Mesajınız</label><textarea id="destek-mesaji" rows="6" maxlength="1500" placeholder="Size nasıl yardımcı olabiliriz?"></textarea></div><button class="save-btn" onclick="destekTalebiGonder()">Gönder</button><button class="btn" style="width:100%;margin-top:8px;" onclick="document.getElementById('destek-talebi-overlay').style.display='none';openNotlar()">Gönderdiğim Talepler</button><div id="destek-talebi-msg" style="min-height:18px;margin-top:9px;font-size:12px;"></div></div></div>`;
+  o.style.display='flex';setTimeout(()=>document.getElementById('destek-mesaji')?.focus(),40);
+}
+async function destekTalebiGonder(){
+  const konu=document.getElementById('destek-konusu')?.value||'Diğer',mesaj=(document.getElementById('destek-mesaji')?.value||'').trim(),msg=document.getElementById('destek-talebi-msg');
+  if(!mesaj){msg.textContent='Lütfen mesajınızı yazın.';msg.style.color='#b42318';return;}
+  if(!_buro||!_user)return;
+  const yazan=_user.user_metadata?.full_name||_user.email?.split('@')[0]||null;
+  const{data,error}=await sb.from('gelistirme_notlari').insert({buro_id:_buro.id,user_id:_user.id,not_metni:`[${konu}] ${mesaj}`,yazan,durum:'acik'}).select().maybeSingle();
+  if(error){msg.textContent='Talep gönderilemedi: '+error.message;msg.style.color='#b42318';return;}
+  if(data)GELISTIRME_NOTLARI.unshift(data);msg.textContent='✓ Talebiniz gönderildi.';msg.style.color='#15803d';document.getElementById('destek-mesaji').value='';
 }
 async function notEkle(){
   const inp=document.getElementById('not-yeni');
@@ -682,7 +697,7 @@ async function authSonrasiIslem(){
   await buroAcilisMesajiniYukle();
   showApp();
   const sad = document.getElementById('sidebar-buro-ad');
-  if(sad) sad.textContent = _buro.ad;
+  if(sad) sad.textContent = String(_buro.ad||'Büro').toLocaleUpperCase('tr-TR');
   rolArayuzunuUygula();
   await guvenlikOlayiKaydet('oturum_acildi',true);
   await ozelSecenekleriYukle();
