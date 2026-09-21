@@ -15,8 +15,8 @@
 <body>
 <div id="loading-overlay" style="position:fixed;inset:0;background:#111;z-index:2000;display:flex;align-items:center;justify-content:center;">
   <div style="text-align:center;max-width:380px;padding:0 28px;">
-    <div style="width:40px;height:40px;border:3px solid rgba(212,175,112,0.2);border-top-color:#d4af70;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 20px;"></div>
-    <div id="acilis-mesaji" style="font-size:19px;line-height:1.65;color:rgba(212,175,112,0.92);font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-style:italic;letter-spacing:0.2px;">Sekreter hazırlanıyor…</div>
+    <img src="./assets/sekreter-icon.svg" alt="" style="width:112px;height:112px;border-radius:24px;display:block;margin:0 auto 20px;box-shadow:0 14px 42px rgba(0,0,0,.35);">
+    <div id="acilis-mesaji" style="font-size:18px;line-height:1.65;color:rgba(255,255,255,.78);font-weight:650;letter-spacing:.02em;">Sekreter hazırlanıyor…</div>
   </div>
 </div>
 
@@ -282,7 +282,7 @@
 <div class="main">
   <div class="topbar">
     <div class="topbar-left">
-      <span class="topbar-title sekreter-topbar-title" id="topbar-title">SEKRETER</span>
+      <img class="topbar-brand-icon" src="./assets/sekreter-icon.svg" alt=""><span class="topbar-title sekreter-topbar-title" id="topbar-title">SEKRETER</span>
     </div>
     <div class="topbar-actions" style="display:flex;align-items:center;gap:10px;">
       <div id="topbar-av" onclick="openProfil()" style="width:34px;height:34px;border-radius:50%;background:#d4af70;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#1a1a1a;cursor:pointer;flex-shrink:0;user-select:none;">?</div>
@@ -291,7 +291,7 @@
   </div>
   <div id="mobile-calendar-toolbar" class="mobile-calendar-toolbar">
     <div class="mobile-calendar-brand-row">
-      <div class="mobile-calendar-brand">SEKRETER</div>
+      <img class="mobile-calendar-brand-icon" src="./assets/sekreter-icon.svg" alt=""><div class="mobile-calendar-brand">SEKRETER</div>
       <button type="button" class="mobile-calendar-search-toggle" onclick="mobileCalendarSearchToggle()" aria-label="Takvimde ara">⌕</button>
       <div id="mobile-calendar-avatar-slot"></div>
     </div>
@@ -423,19 +423,19 @@
     <div class="view" id="view-buro">
       <div class="buro-kart-baslik" style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
         <div><div style="font-size:16px;font-weight:700;">Müvekkiller ve Dosyalar</div><div style="font-size:11px;color:var(--text2);margin-top:3px;">Büro rehberi ve dava dosyası kartları</div></div>
-        <div class="buro-kart-islemler" style="display:flex;gap:8px;flex-wrap:wrap;"><button data-role-manager class="btn" style="display:none;" onclick="openKartBirlestir('muvekkil')">Müvekkil Birleştir</button><button data-role-manager class="btn" style="display:none;" onclick="openKartBirlestir('dosya')">Dosya Birleştir</button><button class="btn" onclick="openMuvekkilKartFormu()">+ Müvekkil</button><button class="btn btn-primary" onclick="openDosyaKartFormu()">+ Dosya</button></div>
+        <div class="buro-kart-islemler" style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn" onclick="openMuvekkilKartFormu()">+ Müvekkil</button><button class="btn btn-primary" onclick="openDosyaKartFormu()">+ Dosya</button></div>
       </div>
       <div class="buro-kart-sekmeler"><button class="btn" data-buro-kart-tab="muvekkil" onclick="buroKartSekmeAc('muvekkil')">Müvekkiller <span id="muvekkil-kart-sayi"></span></button><button class="btn" data-buro-kart-tab="dosya" onclick="buroKartSekmeAc('dosya')">Dava Dosyaları <span id="dosya-kart-sayi"></span></button></div>
       <div class="buro-kart-kolonlari" style="padding-bottom:12px;">
-        <section data-buro-kart-panel="muvekkil"><div class="buro-panel-baslik"><div class="section-title">Müvekkiller</div><button class="btn" onclick="mevcutMuvekkilleriOnizle()">Mevcut Müvekkilleri Aktar</button></div><div class="filter-bar buro-panel-arama"><input id="buro-muvekkil-arama" type="search" placeholder="Müvekkil ara..." oninput="renderBuroKartlari()"></div><div id="muvekkil-kart-list" class="list-surface"></div></section>
-        <section data-buro-kart-panel="dosya" style="display:none;"><div class="buro-panel-baslik"><div class="section-title">Dava Dosyaları</div><button class="btn" onclick="mevcutDosyalariOnizle()">Mevcut Dosyaları Aktar</button></div><div class="filter-bar buro-panel-arama"><input id="buro-dosya-arama" type="search" placeholder="Dosya no, mahkeme veya konu ara..." oninput="renderBuroKartlari()"></div><div id="dosya-kart-list" class="list-surface"></div></section>
+        <section data-buro-kart-panel="muvekkil"><div class="buro-panel-baslik"><div class="section-title">Müvekkiller</div><div><button data-role-manager class="btn" style="display:none;" onclick="openKartBirlestir('muvekkil')">Müvekkil Birleştir</button> <button class="btn" onclick="mevcutMuvekkilleriOnizle()">Mevcut Müvekkilleri Aktar</button></div></div><div class="filter-bar buro-panel-arama"><input id="buro-muvekkil-arama" type="search" placeholder="Müvekkil ara..." oninput="renderBuroKartlari()"></div><div id="muvekkil-kart-list" class="list-surface"></div></section>
+        <section data-buro-kart-panel="dosya" style="display:none;"><div class="buro-panel-baslik"><div class="section-title">Dava Dosyaları</div><div><button data-role-manager class="btn" style="display:none;" onclick="openKartBirlestir('dosya')">Dosya Birleştir</button> <button class="btn" onclick="mevcutDosyalariOnizle()">Mevcut Dosyaları Aktar</button></div></div><div class="filter-bar buro-panel-arama"><input id="buro-dosya-arama" type="search" placeholder="Dosya no, mahkeme veya konu ara..." oninput="renderBuroKartlari()"></div><div id="dosya-kart-list" class="list-surface"></div></section>
       </div>
     </div>
     <!-- MALİ TAKİP -->
     <div class="view" id="view-mali">
       <div class="mali-page-head" style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
         <div><div style="font-size:16px;font-weight:700;">Mali Takip</div><div style="font-size:11px;color:var(--text2);margin-top:3px;">Dosya bazında ücret, tahsilat ve masraf durumu</div></div>
-        <div class="mali-page-actions" style="display:flex;gap:8px;flex-wrap:wrap;"><select id="mali-yil" onchange="renderMaliTakip()" style="padding:8px;border:1px solid var(--border2);border-radius:9px;background:var(--surface);"></select><button class="btn" onclick="altinFiyatlariniOtomatikGetir()">Altını Otomatik Al</button><button class="btn" onclick="maliExcelIndir()">Excel / Numbers</button><button id="mali-yenile-btn" class="btn" onclick="maliTakipYenile(this)">↻ Yenile</button></div>
+        <div class="mali-page-actions" style="display:flex;gap:8px;flex-wrap:wrap;"><select id="mali-yil" onchange="renderMaliTakip()" style="padding:8px;border:1px solid var(--border2);border-radius:9px;background:var(--surface);"></select><button class="btn" onclick="openMaliAyarlari()">⚙ Mali Ayarları</button><button class="btn" onclick="maliExcelIndir()">Excel / Numbers</button><button id="mali-yenile-btn" class="btn" onclick="maliTakipYenile(this)">↻ Yenile</button></div>
       </div>
       <div id="mali-alt-sekmeler" style="display:flex;gap:7px;overflow-x:auto;padding-bottom:8px;margin-bottom:12px;border-bottom:1px solid var(--border);">
         <button class="btn" data-mali-tab="genel" onclick="maliAltSekmeAc('genel',this)">Genel Bakış</button><button class="btn" data-mali-tab="ofis" onclick="maliAltSekmeAc('ofis',this)">Ofis &amp; Ortaklık</button><button class="btn" data-mali-tab="dosya" onclick="maliAltSekmeAc('dosya',this)">Dosya Takibi</button><button class="btn" data-mali-tab="kdv" onclick="maliAltSekmeAc('kdv',this)">Makbuz &amp; KDV</button>
@@ -445,7 +445,7 @@
       <div class="section-title">Aylık Ofis Geliri</div><div id="mali-aylik-ozet" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:7px;margin-bottom:16px;"></div>
       <div class="section-title">Aylık Gider Özeti</div><div id="mali-aylik-gider-ozet" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:7px;margin-bottom:16px;"></div>
       </div><div class="mali-alt-panel" data-mali-panel="ofis" style="display:none;">
-      <div class="ofis-mali-baslik" style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin:16px 0 10px;"><div class="section-title" style="margin:0;">Ofis Gelir–Gider ve Ortaklık</div><div class="ofis-mali-islemler" style="display:flex;gap:7px;flex-wrap:wrap;"><button class="btn" onclick="openOfisMaliFormu('gelir','Dosyasız İş / Danışmanlık')">＋ Dosyasız İş Geliri</button><button class="btn" onclick="openOfisMaliFormu('gelir','CMK')">＋ Ortağa CMK / Tevkil Geliri</button><button class="btn" onclick="aylikGiderOzelKalemleriniHazirla();openAylikGiderFormu();setTimeout(aylikGiderIciKalemButonuEkle,20)">＋ Aylık Gider Gir</button><button class="btn" onclick="openOrtaklikAyarlariV2()">Ortakları ve Payları Düzenle</button></div></div>
+      <div class="ofis-mali-baslik" style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin:16px 0 10px;"><div class="section-title" style="margin:0;">Ofis Gelir–Gider ve Ortaklık</div><div class="ofis-mali-islemler" style="display:flex;gap:7px;flex-wrap:wrap;"><button class="btn" onclick="openOfisMaliFormu('gelir','Dosyasız İş / Danışmanlık')">＋ Dosyasız İş Geliri</button><button class="btn" onclick="openOfisMaliFormu('gelir','CMK')">＋ Ortağa CMK / Tevkil Geliri</button><button class="btn" onclick="aylikGiderOzelKalemleriniHazirla();openAylikGiderFormu();setTimeout(aylikGiderIciKalemButonuEkle,20)">＋ Aylık Gider Gir</button></div></div>
       <div id="ortaklik-ozet" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:9px;margin-bottom:12px;"></div>
       <div class="filter-bar" style="margin-bottom:9px;"><select id="ofis-mali-ay-filtre" onchange="renderMaliTakip()"><option value="">Tüm Aylar</option><option value="1">Ocak</option><option value="2">Şubat</option><option value="3">Mart</option><option value="4">Nisan</option><option value="5">Mayıs</option><option value="6">Haziran</option><option value="7">Temmuz</option><option value="8">Ağustos</option><option value="9">Eylül</option><option value="10">Ekim</option><option value="11">Kasım</option><option value="12">Aralık</option></select><select id="ofis-kisisel-filtre" onchange="renderMaliTakip()"><option value="">Ortak Ofis Gelir–Giderleri</option></select><select id="ofis-mali-tur-filtre" onchange="renderMaliTakip()"><option value="">Gelir ve Gider</option><option value="gelir">Yalnız Gelirler</option><option value="gider">Yalnız Giderler</option></select><input id="ofis-mali-metin-filtre" type="search" placeholder="Kategori, ortak veya açıklama ara..." oninput="renderMaliTakip()"></div>
       <div id="ofis-kisisel-ozet" style="display:none;grid-template-columns:repeat(2,minmax(140px,1fr));gap:8px;margin-bottom:10px;"></div>
@@ -456,11 +456,11 @@
       <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin:16px 0 10px;"><div class="section-title" style="margin:0;">Ortaklık Makbuzları ve KDV</div><button class="btn btn-primary" onclick="openMakbuzFormu()">＋ Makbuz Ekle</button></div>
       <div id="makbuz-kdv-ozet" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:9px;margin-bottom:10px;"></div>
       <div class="section-title">Aylık Makbuz KDV Dağılımı</div><div id="makbuz-kdv-aylik" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:9px;margin-bottom:12px;"></div>
-      <div class="filter-bar makbuz-filtreleri" style="margin-bottom:9px;"><select id="makbuz-ay-filtre" onchange="makbuzMobilListesiniHazirla()"><option value="">Tüm Aylar</option><option value="1">Ocak</option><option value="2">Şubat</option><option value="3">Mart</option><option value="4">Nisan</option><option value="5">Mayıs</option><option value="6">Haziran</option><option value="7">Temmuz</option><option value="8">Ağustos</option><option value="9">Eylül</option><option value="10">Ekim</option><option value="11">Kasım</option><option value="12">Aralık</option></select><select id="makbuz-ortak-filtre" onchange="makbuzMobilListesiniHazirla()"><option value="">Tüm Ortaklar</option></select><input id="makbuz-metin-filtre" type="search" placeholder="Makbuz no veya açıklama ara..." oninput="makbuzMobilListesiniHazirla()"></div>
+      <div class="filter-bar makbuz-filtreleri" style="margin-bottom:9px;"><select id="makbuz-ay-filtre" onchange="renderMaliTakip()"><option value="">Tüm Aylar</option><option value="1">Ocak</option><option value="2">Şubat</option><option value="3">Mart</option><option value="4">Nisan</option><option value="5">Mayıs</option><option value="6">Haziran</option><option value="7">Temmuz</option><option value="8">Ağustos</option><option value="9">Eylül</option><option value="10">Ekim</option><option value="11">Kasım</option><option value="12">Aralık</option></select><select id="makbuz-ortak-filtre" onchange="renderMaliTakip()"><option value="">Tüm Ortaklar</option></select><input id="makbuz-metin-filtre" type="search" placeholder="Makbuz no veya açıklama ara..." oninput="renderMaliTakip()"></div>
       <div id="makbuz-mobile-list"></div>
       <div class="table-wrap makbuz-desktop-table" style="margin-bottom:18px;"><table class="list-table"><thead><tr><th>Tarih</th><th>Makbuzu Kesen</th><th>Makbuz No</th><th>Açıklama</th><th>Matrah</th><th>KDV</th><th>Tevkifat</th><th>İşlem</th></tr></thead><tbody id="makbuz-tbody"></tbody></table></div>
       </div><div class="mali-alt-panel" data-mali-panel="dosya" style="display:none;">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin:16px 0 10px;"><div class="section-title" style="margin:0;">Ücret Anlaşmalı Dosyalar</div><div style="display:flex;gap:7px;flex-wrap:wrap;"><button class="btn btn-primary" onclick="openDosyaMaliSecimFormu()">＋ Dosya Parası / Masraf Ekle</button></div></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin:16px 0 10px;"><div class="section-title" style="margin:0;">Ücret Anlaşmalı Dosyalar</div><div style="display:flex;gap:7px;flex-wrap:wrap;"><button class="btn btn-primary" onclick="openDosyaMaliSecimFormu('anlasilan')">＋ Ücret Anlaşması Ekle</button></div></div>
       <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px;"><button class="btn" data-dosya-mali-durum="devam" onclick="maliDosyaDurumSec('devam',this)">Tahsilatı Devam Edenler</button><button class="btn" data-dosya-mali-durum="tamam" onclick="maliDosyaDurumSec('tamam',this)">Tahsilatı Tamamlananlar</button><button class="btn" data-dosya-mali-durum="tumu" onclick="maliDosyaDurumSec('tumu',this)">Tüm Anlaşmalar</button></div>
       <div class="filter-bar" style="margin-bottom:10px;"><input id="mali-arama" type="search" placeholder="Ücret anlaşmalarında dosya no, mahkeme veya müvekkil ara..." oninput="renderMaliTakip()"></div>
       <div id="ucret-anlasmalari-list" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:9px;margin-bottom:12px;"></div>
@@ -507,7 +507,7 @@
   </div>
 </nav>
 
-<div id="mobile-app-splash" aria-hidden="true"><img src="./assets/sekreter-app-icon-v2.png" alt=""><div>SEKRETER</div><small>Hukuk Takvimi ve Büro Yönetimi</small></div>
+<div id="mobile-app-splash" aria-hidden="true"><img src="./assets/sekreter-icon.svg" alt=""><div>Sekreter</div><small>Sekreter hazırlanıyor…</small></div>
 
 <!-- TAKVİM DETAY PANEL -->
 <div class="cal-detail-overlay" id="cal-detail-overlay" onclick="closeCalDetail()"></div>
@@ -565,7 +565,6 @@
             <input type="date" id="f-teblig-tarihi" style="flex:1;min-width:140px;" oninput="hesapla()">
             <div class="chip-group" id="teblig-chips">
               <button class="chip" onclick="setChip('teblig','etebligat',this)">E-Teb.</button>
-              <button class="chip" onclick="setChip('teblig','tefhim',this)">Tefhim</button>
               <button class="chip" onclick="setChip('teblig','fiziki',this)">Fiziki</button>
             </div>
           </div>
@@ -591,7 +590,7 @@
           </div>
         </div>
         <div class="sure-hesap" id="sure-hesap-box"></div>
-        <button type="button" onclick="manuelSonGunAc()" style="background:none;border:none;color:var(--navy);font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;padding:4px 0 12px;text-decoration:underline;">Tebligat bilgim yok, son günü direkt gireyim</button>
+        <button type="button" onclick="manuelSonGunAc()" style="background:none;border:none;color:var(--navy);font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;padding:4px 0 12px;text-decoration:underline;">Tebligata bağlı olmayan iş için son tarihi doğrudan gir</button>
         </div>
         <div id="sure-manuel-alan" style="display:none;">
           <div class="fg">
@@ -831,8 +830,8 @@
     <div class="kayit-modal-body" id="km-body"></div>
   </div>
 </div>
-  <script src="./vendor/supabase.js"></script>
-  <script src="./vendor/xlsx.full.min.js"></script>
+  <script src="../../node_modules/@supabase/supabase-js/dist/umd/supabase.js"></script>
+  <script src="../../node_modules/xlsx/dist/xlsx.full.min.js"></script>
   <script src="./scripts/01-core-auth.js"></script>
   <script src="./scripts/02-catalogs-forms.js"></script>
   <script src="./scripts/03-records-sync.js"></script>

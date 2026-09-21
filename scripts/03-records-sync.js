@@ -726,7 +726,7 @@ async function saveRecord(){
       if(!manuelTarih){alert('Lütfen son günü girin.');return;}
       rec={type:'sure',date:manuelTarih,saat:document.getElementById('f-sure-saat').value,baslik:titleCase(selectedIstipi)||'Süreli İş',tebligTarihi:'',tebligSekli:'',dal:ST.dal||'',sureMiktar:null,sureBirim:'',istipi:selectedIstipi,istipiVal:selectedIstipi,mahkeme:titleCase(document.getElementById('f-mahkeme').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-muvekkil').value.trim()),not:sentenceCase(document.getElementById('f-not-sure').value.trim()),hesapDetay:null};
     } else {
-      if(!ST.hesaplananTarih){alert('Lütfen tebliğ tarihi, hukuk dalı, süre birimi ve miktarı girin. (Tebligat bilginiz yoksa "Tebligat bilgim yok, son günü direkt gireyim" seçeneğini kullanabilirsiniz.)');return;}
+      if(!ST.hesaplananTarih){alert('Lütfen tebliğ tarihi, hukuk dalı, süre birimi ve miktarı girin. Tebligata bağlı olmayan bir işse “Son tarihi doğrudan gir” seçeneğini kullanabilirsiniz.');return;}
       rec={type:'sure',date:ST.hesaplananTarih,saat:document.getElementById('f-sure-saat').value,baslik:titleCase(selectedIstipi)||'Süreli İş',tebligTarihi:document.getElementById('f-teblig-tarihi').value,tebligSekli:ST.teblig,dal:ST.dal,sureMiktar:parseInt(document.getElementById('f-sure-miktar').value),sureBirim:ST.birim,istipi:selectedIstipi,istipiVal:selectedIstipi,mahkeme:titleCase(document.getElementById('f-mahkeme').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-muvekkil').value.trim()),not:sentenceCase(document.getElementById('f-not-sure').value.trim()),hesapDetay:ST.hesapDetay};
     }
   }else if(ST.type==='durusma'){
