@@ -14,10 +14,10 @@ async function buroKartlariYukle(){
   MUVEKKIL_KARTLARI=m.data||[];DAVA_DOSYALARI=d.data||[];DOSYA_MUVEKKIL_BAGLARI=b.data||[];renderBuroKartlari();
 }
 function renderBuroKartlari(){
-  const q=(document.getElementById('buro-kart-arama')?.value||'').toLocaleLowerCase('tr-TR');
   const norm=s=>String(s||'').toLocaleLowerCase('tr-TR');
-  const ml=MUVEKKIL_KARTLARI.filter(m=>norm(m.ad).includes(q));
-  const dl=DAVA_DOSYALARI.filter(d=>[d.dosya_no,d.mahkeme,d.konu,d.notlar].some(x=>norm(x).includes(q)));
+  const mq=norm(document.getElementById('buro-muvekkil-arama')?.value),dq=norm(document.getElementById('buro-dosya-arama')?.value);
+  const ml=MUVEKKIL_KARTLARI.filter(m=>norm(m.ad).includes(mq));
+  const dl=DAVA_DOSYALARI.filter(d=>[d.dosya_no,d.mahkeme,d.konu,d.notlar].some(x=>norm(x).includes(dq)));
   document.getElementById('muvekkil-kart-sayi').textContent='('+ml.length+')';document.getElementById('dosya-kart-sayi').textContent='('+dl.length+')';
   document.getElementById('muvekkil-kart-list').innerHTML=ml.length?ml.map(m=>{
     const isler=records.filter(r=>String(r.muvekkilId||'')===String(m.id)||kayitMuvekkilAdlari(r).some(ad=>muvekkilAdiAnahtari(ad)===muvekkilAdiAnahtari(m.ad)));
