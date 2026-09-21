@@ -300,6 +300,9 @@
   <div class="content">
     <!-- ÖZET -->
     <div class="view" id="view-dashboard">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
+        <button id="bugunun-isleri-pdf-btn" data-role-manager class="btn" style="display:none;" onclick="bugununIsleriPdfOlustur(this)">PDF · Bugünün İşleri</button>
+      </div>
       <div class="stats-row" style="grid-template-columns:repeat(5,1fr);gap:6px;">
         <div class="stat-card" onclick="filterDashboard('hepsi')" style="border-top:3px solid var(--navy);">
           <div class="stat-label">Bu Ay</div>
@@ -464,8 +467,6 @@
       <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px;"><button class="btn" data-dosya-mali-durum="devam" onclick="maliDosyaDurumSec('devam',this)">Tahsilatı Devam Edenler</button><button class="btn" data-dosya-mali-durum="tamam" onclick="maliDosyaDurumSec('tamam',this)">Tahsilatı Tamamlananlar</button><button class="btn" data-dosya-mali-durum="tumu" onclick="maliDosyaDurumSec('tumu',this)">Tüm Anlaşmalar</button></div>
       <div class="filter-bar" style="margin-bottom:10px;"><input id="mali-arama" type="search" placeholder="Ücret anlaşmalarında dosya no, mahkeme veya müvekkil ara..." oninput="renderMaliTakip()"></div>
       <div id="ucret-anlasmalari-list" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:9px;margin-bottom:12px;"></div>
-      <div id="dosya-mali-mobile-list"></div>
-      <div class="table-wrap dosya-mali-desktop-table"><table class="list-table"><thead><tr><th>Dosya</th><th>Müvekkil</th><th>Anlaşılan</th><th>Ücret Tahsilatı</th><th>Kalan Ücret</th><th>Masraf</th><th>Masraf Tahsilatı</th><th>Kalan Masraf</th><th>İşlem</th></tr></thead><tbody id="mali-tbody"></tbody></table></div>
       </div>
       <div id="mali-hata" style="font-size:12px;color:#dc2626;margin-top:10px;"></div>
     </div>

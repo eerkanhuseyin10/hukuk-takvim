@@ -2,6 +2,20 @@
 // ── LİSTE ─────────────────────────────────────────────────────────
 function toggleDetail(id){openDetailId=openDetailId===id?null:id;renderListe();}
 
+async function bugununIsleriPdfOlustur(btn){
+  if(_buro?.rol!=='yonetici'){alert('Bu işlem yalnızca büro yöneticisine açıktır.');return;}
+  const eski=btn?.innerHTML;if(btn){btn.disabled=true;btn.textContent='PDF hazırlanıyor…';}
+  try{
+    const{data}=await sb.auth.getSession(),token=data?.session?.access_token;if(!token)throw new Error('Oturum bilgisi bulunamadı. Lütfen yeniden giriş yapın.');
+    const yanit=await fetch(`${SUPABASE_URL}/functions/v1/gunluk-is-ozeti`,{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({action:'bugunun-isleri-pdf'})});
+    if(!yanit.ok){let mesaj='PDF oluşturulamadı.';try{const j=await yanit.json();mesaj=j.error||mesaj;}catch(e){}throw new Error(mesaj);}
+    const blob=await yanit.blob(),tarih=new Date().toLocaleDateString('en-CA',{timeZone:'Europe/Istanbul'}),fileName=`bugunun-isleri-${tarih}.pdf`,dosya=new File([blob],fileName,{type:'application/pdf'});
+    if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[dosya]}))){await navigator.share({title:'Bugünün İşleri',files:[dosya]});return;}
+    const a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download=fileName;a.style.display='none';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);
+  }catch(err){if(err?.name!=='AbortError'){console.error(err);alert(err?.message||'PDF oluşturulamadı.');}}
+  finally{if(btn){btn.disabled=false;btn.innerHTML=eski||'PDF · Bugünün İşleri';}}
+}
+
 function safeText(v){
   return String(v||'').replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];});
 }
