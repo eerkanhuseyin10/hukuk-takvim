@@ -416,7 +416,7 @@ function aktifFormaDosyaYaz(d){
   const hukuk=String(d.hukuk_alani||'').toLocaleLowerCase('tr-TR'),dal=hukuk.includes('ceza')?'ceza':hukuk.includes('icra')?'icra':hukuk.includes('idare')?'idare':hukuk.includes('tahkim')?'tahkim':hukuk.includes('arabuluculuk')?'arabuluculuk':hukuk?'hukuk':'';
   const grup=ST.type==='sure'?'dal-chips':ST.type==='durusma'?'dal-chips-d':'';
   if(dal&&grup){const chip=[...document.querySelectorAll('#'+grup+' .chip')].find(x=>(x.getAttribute('onclick')||'').includes("'"+dal+"'"));if(chip)setChip(ST.type==='sure'?'dal':'dal2',dal,chip);}
-  const ozet=document.getElementById('kayit-dosya-ozet');if(ozet){const detay=[d.hukuk_alani,d.taraf_sifati&&'Sıfat: '+d.taraf_sifati,d.karsi_taraf&&'Karşı taraf: '+d.karsi_taraf].filter(Boolean);ozet.innerHTML='<b>'+esc(d.dosya_no||'Seçili dosya')+'</b>'+(detay.length?' · '+detay.map(esc).join(' · '):'')+'<br>Dosya bilgileri forma otomatik aktarıldı.';ozet.style.color='var(--navy)';}
+  const ozet=document.getElementById('kayit-dosya-ozet');if(ozet){const detay=[d.hukuk_alani,d.taraf_sifati&&'Sıfat: '+d.taraf_sifati].filter(Boolean);ozet.innerHTML='<b>'+esc(d.dosya_no||'Seçili dosya')+'</b>'+(detay.length?' · '+detay.map(esc).join(' · '):'')+'<br>Dosya bilgileri forma otomatik aktarıldı.';ozet.style.color='var(--navy)';}
 }
 function kayitMuvekkilKartiSecildi(){const id=document.getElementById('kayit-muvekkil-karti').value||null;ST.muvekkilIds=id?[id]:[];kayitMuvekkilSecimGorunumunuYenile();}
 function kayitMuvekkilCokluDegisti(){kayitMuvekkilSecimGorunumunuYenile();}

@@ -519,6 +519,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
 /* MALİ TAKİP — TELEFON YERLEŞİMİ */
 #ofis-mali-mobile-list,#makbuz-mobile-list,#dosya-mali-mobile-list{display:none;}
+#ucret-anlasmalari-list{display:none!important;}
 .ofis-ay-karti{appearance:none;text-align:left;color:var(--text);font:inherit;cursor:pointer;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;}
 .ofis-ay-karti>span:first-child{display:flex;justify-content:space-between;gap:8px;align-items:center;}
 .ofis-ay-karti small{font-size:10px;color:var(--text2);font-weight:400;}

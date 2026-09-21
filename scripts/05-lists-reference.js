@@ -175,6 +175,12 @@ function canvasToBlob(canvas){
   return new Promise(resolve=>canvas.toBlob(resolve,'image/png',0.95));
 }
 
+async function blobBase64(blob){
+  const bytes=new Uint8Array(await blob.arrayBuffer());let ikili='';
+  for(let i=0;i<bytes.length;i+=8192)ikili+=String.fromCharCode(...bytes.subarray(i,i+8192));
+  return btoa(ikili);
+}
+
 async function shareKayitCard(id){
   const r=records.find(x=>x.id===id);
   if(!r) return;
@@ -184,6 +190,17 @@ async function shareKayitCard(id){
     const canvas=kayitKartCanvas(r,logoImg);
     const blob=await canvasToBlob(canvas);
     const fileName='is-karti-'+(r.dava||getBaslik(r)||r.id).toString().replace(/[^a-zA-Z0-9ğüşöçıİĞÜŞÖÇ-]+/g,'-').slice(0,45)+'.png';
+    const plugins=window.Capacitor?.Plugins;
+    if(window.Capacitor?.isNativePlatform?.()&&plugins?.Filesystem&&plugins?.Share){
+      const yazilan=await plugins.Filesystem.writeFile({path:fileName,data:await blobBase64(blob),directory:'CACHE'});
+      await plugins.Share.share({title:'Sekreter İş Kartı',text:getBaslik(r),url:yazilan.uri,dialogTitle:'İş kartını paylaş'});
+      return;
+    }
+    const dosya=new File([blob],fileName,{type:'image/png'});
+    if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[dosya]}))){
+      await navigator.share({title:'Sekreter İş Kartı',text:getBaslik(r),files:[dosya]});
+      return;
+    }
     if(window.sekreterDesktop?.savePng){
       const sonuc=await window.sekreterDesktop.savePng(fileName,await blob.arrayBuffer());
       if(sonuc?.saved)alert('İş kartı kaydedildi:\n'+sonuc.filePath);
@@ -198,6 +215,7 @@ async function shareKayitCard(id){
     setTimeout(()=>URL.revokeObjectURL(blobUrl),10000);
     alert('İş kartı PNG olarak indirildi. İndirilenler klasöründen istediğiniz yerde paylaşabilirsiniz.');
   }catch(err){
+    if(err?.name==='AbortError')return;
     console.error(err);
     alert('İş kartı kaydedilemedi: '+(err?.message||'Bilinmeyen hata'));
   }
