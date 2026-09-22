@@ -109,10 +109,6 @@
         <div id="profil-email" style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;">—</div>
       </div>
     </div>
-    <div class="profil-row"><span class="profil-row-label">Büro</span><span class="profil-row-val" id="profil-buro">—</span></div>
-    <div class="profil-row"><span class="profil-row-label">Yetki</span><span class="profil-row-val" id="profil-rol">—</span></div>
-    <div class="profil-row"><span class="profil-row-label">Kayıt tarihi</span><span class="profil-row-val" id="profil-tarih">—</span></div>
-    <div class="profil-row"><span class="profil-row-label">Toplam kayıt</span><span class="profil-row-val" id="profil-kayit">—</span></div>
     <div class="profil-btn-row">
       <button onclick="closeProfil();openProfilimModal()" class="btn btn-primary" style="width:100%;margin-bottom:8px;">👤 Hesabım</button>
       <button onclick="closeProfil();openAyarlarMerkezi()" class="btn" style="width:100%;margin-bottom:8px;">⚙️ Ayarlar</button>
@@ -197,6 +193,10 @@
       <button class="btn" onclick="closeProfilimModal()">✕</button>
     </div>
     <div style="padding:16px 20px 24px;">
+      <div class="profil-hesap-ozeti">
+        <div><span>Büro</span><b id="profilim-buro">—</b></div><div><span>Yetki</span><b id="profilim-rol">—</b></div>
+        <div><span>Kayıt tarihi</span><b id="profilim-tarih">—</b></div><div><span>Toplam kayıt</span><b id="profilim-kayit">—</b></div>
+      </div>
       <!-- Ad Soyad -->
       <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;">Kişisel Bilgiler</div>
       <div class="fg">
@@ -240,8 +240,12 @@
 <div class="app" style="display:none;">
 <!-- SIDEBAR (masaüstü) -->
 <div class="sidebar" id="desktop-sidebar">
-  <div class="sidebar-header" style="padding:22px 20px;display:flex;align-items:center;cursor:pointer;" onclick="location.reload()">
-    <div id="sidebar-buro-ad" style="font-size:15px;font-weight:800;color:#fff;letter-spacing:.08em;text-transform:uppercase;line-height:1.35;">HUKUK BÜROSU</div>
+  <div class="sidebar-header" style="padding:16px 20px;display:flex;align-items:center;gap:13px;cursor:pointer;" onclick="location.reload()">
+    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNDAgMjQwIj48cmVjdCB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgcng9IjQ0IiBmaWxsPSIjMWExYTFhIi8+PHJlY3QgeD0iNTIiIHk9IjcwIiB3aWR0aD0iMTM2IiBoZWlnaHQ9IjExOCIgcng9IjEwIiBmaWxsPSJub25lIiBzdHJva2U9IiNkNGFmNzAiIHN0cm9rZS13aWR0aD0iMyIgb3BhY2l0eT0iMC41Ii8+PHJlY3QgeD0iNTIiIHk9IjcwIiB3aWR0aD0iMTM2IiBoZWlnaHQ9IjM2IiByeD0iMTAiIGZpbGw9IiNkNGFmNzAiIG9wYWNpdHk9IjAuNyIvPjxyZWN0IHg9Ijg0IiB5PSI1NCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjI4IiByeD0iNSIgZmlsbD0iI2Q0YWY3MCIvPjxyZWN0IHg9IjE0NiIgeT0iNTQiIHdpZHRoPSIxMCIgaGVpZ2h0PSIyOCIgcng9IjUiIGZpbGw9IiNkNGFmNzAiLz48Y2lyY2xlIGN4PSI4NCIgY3k9IjEzNiIgcj0iNiIgZmlsbD0iI2Q0YWY3MCIvPjxjaXJjbGUgY3g9IjExMCIgY3k9IjEzNiIgcj0iNiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC4zIi8+PGNpcmNsZSBjeD0iMTM2IiBjeT0iMTM2IiByPSI2IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjMiLz48Y2lyY2xlIGN4PSI4NCIgY3k9IjE2MiIgcj0iNiIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC4zIi8+PGNpcmNsZSBjeD0iMTEwIiBjeT0iMTYyIiByPSI2IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjMiLz48Y2lyY2xlIGN4PSIxMzYiIGN5PSIxNjIiIHI9IjYiIGZpbGw9IiNkNGFmNzAiIG9wYWNpdHk9IjAuNyIvPjwvc3ZnPg==" style="width:44px;height:44px;border-radius:10px;flex-shrink:0;" alt="logo">
+    <div>
+      <div style="font-size:15px;font-weight:700;color:#fff;letter-spacing:.04em;">Sekreter</div>
+      <div id="sidebar-buro-ad" style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:2px;">Hukuk Takvimi</div>
+    </div>
   </div>
   <button id="sidebar-toggle" class="sidebar-toggle" onclick="sidebarDaraltToggle()" title="Sol menüyü daralt" aria-label="Sol menüyü daralt">
     <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m12.5 5-5 5 5 5"/></svg>
@@ -278,7 +282,7 @@
 <div class="main">
   <div class="topbar">
     <div class="topbar-left">
-      <img class="topbar-brand-icon" src="./assets/sekreter-icon.svg" alt=""><span class="topbar-title sekreter-topbar-title" id="topbar-title">SEKRETER</span>
+      <span class="topbar-title sekreter-topbar-title" id="topbar-title">SEKRETER</span>
     </div>
     <div class="topbar-actions" style="display:flex;align-items:center;gap:10px;">
       <div id="topbar-av" onclick="openProfil()" style="width:34px;height:34px;border-radius:50%;background:#d4af70;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#1a1a1a;cursor:pointer;flex-shrink:0;user-select:none;">?</div>
@@ -358,12 +362,13 @@
           <span class="cal-month-label" id="cal-month-label"></span>
           <button class="btn btn-sm" onclick="changeCalendar(1)">&#8594;</button>
           <button class="btn btn-sm" onclick="takvimBuguneGit()">Bugün</button>
+          <button class="btn btn-sm desktop-calendar-search-toggle" onclick="takvimAramaToggle()" aria-label="Takvimde ara">⌕ Ara</button>
           <div class="cal-view-switch" role="tablist" aria-label="Takvim görünümü">
             <button class="cal-view-btn active" id="cal-view-month" onclick="setCalendarView('month')">Ay</button>
             <button class="cal-view-btn" id="cal-view-week" onclick="setCalendarView('week')">Hafta</button>
           </div>
         </div>
-        <div class="cal-search-bar">
+        <div class="cal-search-bar desktop-collapsible-search">
           <input type="text" id="cal-search" placeholder="🔍 Müvekkil, mahkeme, dosya no veya başlık ara..." oninput="renderTakvimArama()" autocomplete="new-password">
           <button class="btn btn-sm" onclick="clearTakvimArama()">Temizle</button>
         </div>
@@ -434,7 +439,7 @@
     <div class="view" id="view-mali">
       <div class="mali-page-head" style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
         <div><div style="font-size:16px;font-weight:700;">Mali Takip</div><div style="font-size:11px;color:var(--text2);margin-top:3px;">Dosya bazında ücret, tahsilat ve masraf durumu</div></div>
-        <div class="mali-page-actions" style="display:flex;gap:8px;flex-wrap:wrap;"><select id="mali-yil" onchange="renderMaliTakip()" style="padding:8px;border:1px solid var(--border2);border-radius:9px;background:var(--surface);"></select><button class="btn" onclick="openMaliAyarlari()">⚙ Mali Ayarları</button><button id="mali-yenile-btn" class="btn" onclick="maliTakipYenile(this)">↻ Yenile</button></div>
+        <div class="mali-page-actions" style="display:flex;gap:8px;flex-wrap:wrap;"><select id="mali-yil" onchange="renderMaliTakip()" style="padding:8px;border:1px solid var(--border2);border-radius:9px;background:var(--surface);"></select><button class="btn" onclick="openMaliAyarlari()">⚙ Ayarlar</button><button id="mali-yenile-btn" class="btn" onclick="maliTakipYenile(this)">↻ Yenile</button></div>
       </div>
       <div id="mali-alt-sekmeler" style="display:flex;gap:7px;overflow-x:auto;padding-bottom:8px;margin-bottom:12px;border-bottom:1px solid var(--border);">
         <button class="btn" data-mali-tab="genel" onclick="maliAltSekmeAc('genel',this)">Genel Bakış</button><button class="btn" data-mali-tab="ofis" onclick="maliAltSekmeAc('ofis',this)">Ofis &amp; Ortaklık</button><button class="btn" data-mali-tab="dosya" onclick="maliAltSekmeAc('dosya',this)">Dosya Takibi</button><button class="btn" data-mali-tab="kdv" onclick="maliAltSekmeAc('kdv',this)">Makbuz</button>
@@ -523,7 +528,6 @@
     <div class="modal-handle"></div>
     <div class="modal-header">
       <div style="display:flex;align-items:center;gap:8px;">
-        <button onclick="history.back()" style="background:none;border:none;cursor:pointer;padding:4px 6px 4px 0;color:var(--navy);font-size:20px;line-height:1;display:flex;align-items:center;">&#8592;</button>
         <h2 id="modal-title">Yeni Kayıt</h2>
       </div>
       <button class="btn" onclick="closeModal()">Vazgeç</button>
@@ -555,11 +559,21 @@
 
       <!-- SÜRE -->
       <div id="form-sure">
+        <div class="dosya-box">
+          <div class="dosya-box-title">İş Tipi</div>
+          <div class="fg" style="margin-bottom:0;">
+          <input class="istipi-search" id="istipi-search" type="text" placeholder="Arama veya seçiniz..." oninput="filterIstipi(this.value)" onfocus="showIstipiList()">
+          <div class="istipi-list" id="istipi-list" style="display:none;"></div>
+          <input type="hidden" id="f-istipi-val">
+          <input type="hidden" id="f-istipi-text">
+          </div>
+        </div>
         <div id="sure-oto-alanlar">
         <div class="fg">
           <label>Tebliğ Tarihi</label>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
             <input type="date" id="f-teblig-tarihi" style="flex:1;min-width:140px;" oninput="hesapla()">
+            <input type="time" id="f-sure-saat" aria-label="Saat (opsiyonel)" title="Saat (opsiyonel)" style="width:118px;flex:0 0 118px;">
             <div class="chip-group" id="teblig-chips">
               <button class="chip" onclick="setChip('teblig','etebligat',this)">E-Teb.</button>
               <button class="chip" onclick="setChip('teblig','fiziki',this)">Fiziki</button>
@@ -573,8 +587,14 @@
             <button class="chip" onclick="setChip('dal','hukuk',this)">Hukuk</button>
             <button class="chip" onclick="setChip('dal','ceza',this)">Ceza</button>
             <button class="chip" onclick="setChip('dal','icra',this)">İcra</button>
-            <button class="chip" onclick="setChip('dal','idare',this)">İdari</button>
+            <button class="chip" onclick="setChip('dal','idare',this)">İdare</button>
             <button class="chip" onclick="setChip('dal','tahkim',this)">Tahkim</button>
+            <button class="chip" onclick="setChip('dal','is',this)">İş</button>
+            <button class="chip" onclick="setChip('dal','aile',this)">Aile</button>
+            <button class="chip" onclick="setChip('dal','ticaret',this)">Ticaret</button>
+            <button class="chip" onclick="setChip('dal','tuketici',this)">Tüketici</button>
+            <button class="chip" onclick="setChip('dal','vergi',this)">Vergi</button>
+            <button class="chip" onclick="setChip('dal','arabuluculuk',this)">Arabuluculuk</button>
           </div>
         </div>
         <div class="sure-input-box">
@@ -595,19 +615,6 @@
             <input type="date" id="f-sure-son-gun-manuel">
           </div>
           <button type="button" onclick="manuelSonGunKapat()" style="background:none;border:none;color:var(--navy);font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;padding:0 0 12px;text-decoration:underline;">← Tebliğ tarihinden hesaplamaya dön</button>
-        </div>
-        <div class="fg">
-          <label>Saat (opsiyonel)</label>
-          <input type="time" id="f-sure-saat">
-        </div>
-        <div class="dosya-box">
-          <div class="dosya-box-title">İş Tipi</div>
-          <div class="fg" style="margin-bottom:0;">
-          <input class="istipi-search" id="istipi-search" type="text" placeholder="Arama veya seçiniz..." oninput="filterIstipi(this.value)" onfocus="showIstipiList()">
-          <div class="istipi-list" id="istipi-list" style="display:none;"></div>
-          <input type="hidden" id="f-istipi-val">
-          <input type="hidden" id="f-istipi-text">
-          </div>
         </div>
         <div class="dosya-box">
           <div class="dosya-box-title">Dosya Bilgileri</div>
@@ -644,7 +651,7 @@
             <button class="chip" onclick="setChip('dal2','hukuk',this)">Hukuk</button>
             <button class="chip" onclick="setChip('dal2','ceza',this)">Ceza</button>
             <button class="chip" onclick="setChip('dal2','icra',this)">İcra</button>
-            <button class="chip" onclick="setChip('dal2','idare',this)">İdari</button>
+            <button class="chip" onclick="setChip('dal2','idare',this)">İdare</button>
             <button class="chip" onclick="setChip('dal2','arabuluculuk',this)">Arabuluculuk</button>
             <button class="chip" onclick="setChip('dal2','randevu',this)">Randevu</button>
             <button class="chip" onclick="setChip('dal2','kesif',this)">Keşif</button>
@@ -683,8 +690,8 @@
           <div class="fg"><label>Saat (opsiyonel)</label><input type="time" id="f-genel-saat"></div>
         </div>
         <div class="fg"><label>Açıklama (opsiyonel)</label><textarea id="f-genel-aciklama" placeholder="Açıklama..."></textarea></div>
-        <!-- TEKRAR -->
-        <div class="fg">
+        <!-- Tekrarlayan işler ayrı sekmeden eklenir. Eski kayıtlarla uyumluluk için alanlar DOM'da saklanır. -->
+        <div class="fg" style="display:none;">
           <label>Tekrarlayan İş</label>
           <div class="chip-group" id="tekrar-chips">
             <button class="chip" onclick="setTekrar('',this)">Tekrar yok</button>
@@ -828,7 +835,7 @@
   </div>
 </div>
   <script src="./vendor/supabase.js"></script>
-  <script src="../../node_modules/xlsx/dist/xlsx.full.min.js"></script>
+  <script src="./vendor/xlsx.full.min.js"></script>
   <script src="./scripts/01-core-auth.js"></script>
   <script src="./scripts/02-catalogs-forms.js"></script>
   <script src="./scripts/03-records-sync.js"></script>

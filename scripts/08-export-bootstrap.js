@@ -1,5 +1,5 @@
 /* Sekreter renderer: 08-export-bootstrap.js */
-function masaustuAraclariniGoster(){const b=document.getElementById('guncelleme-denetle-btn');if(b)b.style.display=window.sekreterDesktop?'block':'none';}
+function masaustuAraclariniGoster(){const masaustu=Boolean(window.sekreterDesktop);document.body.classList.toggle('desktop-runtime',masaustu);const b=document.getElementById('guncelleme-denetle-btn');if(b)b.style.display=masaustu?'block':'none';}
 async function guncellemeDenetle(){if(!window.sekreterDesktop?.checkForUpdates){alert('Güncelleme denetimi yalnızca masaüstü uygulamasında kullanılabilir.');return;}await window.sekreterDesktop.checkForUpdates();}
 document.addEventListener('DOMContentLoaded',masaustuAraclariniGoster);
 // ── YEDEK VE DIŞA AKTAR ────────────────────────────────────────────────

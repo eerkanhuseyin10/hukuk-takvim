@@ -174,7 +174,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .cal-detail-header{padding:14px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surface);z-index:1;}
 .cal-detail-date{font-size:15px;font-weight:700;color:var(--navy);}
 .cal-detail-close{background:none;border:none;cursor:pointer;font-size:20px;color:var(--text3);padding:0 4px;}
-.cal-detail-items{padding:12px 18px 20px;display:flex;flex-wrap:wrap;gap:12px;}
+.cal-detail-items{padding:12px 18px 20px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:stretch;}
+.cal-detail-record{height:100%;min-width:0;display:flex;flex-direction:column}.cal-detail-record>div:last-child{flex:1;display:flex;flex-direction:column}.cal-detail-record>div:last-child>div:last-child{margin-top:auto!important}
 .cal-detail-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:13px 14px;flex:1 1 280px;min-width:240px;max-width:100%;display:flex;flex-direction:column;}
 .cal-detail-item-type{display:flex;align-items:center;gap:7px;margin-bottom:7px;flex-wrap:wrap;}
 .cal-detail-item-title{font-size:14px;font-weight:600;margin-bottom:6px;}
@@ -446,14 +447,15 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
 /* PROFİL MODAL */
 .profil-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:400;display:none;align-items:flex-start;justify-content:flex-end;padding:56px 12px 0 0;}
-.profil-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:300px;padding:0;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.18);}
-.profil-header{background:var(--navy);padding:20px;display:flex;align-items:center;gap:14px;}
-.profil-avatar{width:48px;height:48px;border-radius:50%;background:#d4af70;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#1a1a1a;flex-shrink:0;}
+.profil-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;width:250px;padding:0;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.18);}
+.profil-header{background:var(--navy);padding:14px;display:flex;align-items:center;gap:11px;}
+.profil-avatar{width:40px;height:40px;border-radius:50%;background:#d4af70;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#1a1a1a;flex-shrink:0;}
 .profil-row{display:flex;justify-content:space-between;align-items:center;padding:11px 18px;font-size:13px;border-bottom:1px solid var(--border);}
 .profil-row:last-child{border-bottom:none;}
 .profil-row-label{color:var(--text2);}
 .profil-row-val{font-weight:500;color:var(--text);text-align:right;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.profil-btn-row{padding:14px 18px;border-top:1px solid var(--border);}
+.profil-btn-row{padding:10px 12px;border-top:1px solid var(--border);}.profil-btn-row .btn{min-height:34px!important;margin-bottom:6px!important;padding:7px 9px!important;font-size:11px!important;}
+.profil-hesap-ozeti{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;padding:12px;background:var(--surface2);border-radius:11px}.profil-hesap-ozeti div{min-width:0}.profil-hesap-ozeti span{display:block;font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:3px}.profil-hesap-ozeti b{font-size:11px;overflow-wrap:anywhere}
 
 .share-card-btn{color:#7a5c1e;border-color:#ead7b0;background:#fffaf0;}
 .share-card-btn:hover{background:#fef3c7;color:#7a5c1e;}
@@ -521,7 +523,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
 /* MALİ TAKİP — TELEFON YERLEŞİMİ */
 #ofis-mali-mobile-list,#makbuz-mobile-list,#dosya-mali-mobile-list{display:none;}
-#ucret-anlasmalari-list{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(420px,1fr))!important;gap:12px!important;margin-bottom:12px;}
+#ucret-anlasmalari-list{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important;margin-bottom:12px;}
 #ucret-anlasmalari-list>div:not([style*="grid-column"]){border:1px solid #e1e4e9!important;border-radius:16px!important;background:var(--surface)!important;padding:16px 18px!important;box-shadow:0 1px 3px rgba(15,23,42,.05);}
 #ucret-anlasmalari-list>div:not([style*="grid-column"])>div:first-child{align-items:flex-start!important;min-height:48px;}
 #ucret-anlasmalari-list>div:not([style*="grid-column"])>div:first-child>div:first-child>div:first-child{font-size:11px!important;color:#9aa1ad!important;letter-spacing:.04em;font-weight:500;}
@@ -543,6 +545,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .ofis-ay-karti>span:first-child{display:flex;justify-content:space-between;gap:8px;align-items:center;}
 .ofis-ay-karti small{font-size:10px;color:var(--text2);font-weight:400;}
 .ofis-ay-ipucu{display:none;}
+.desktop-calendar-search-toggle{display:none}
+@media(min-width:769px){.desktop-runtime .sidebar-header{display:none!important}.desktop-runtime .sidebar-toggle{top:18px}.topbar-title{text-transform:uppercase;letter-spacing:.13em;color:#b28a4d;font-weight:800}.desktop-collapsible-search{display:none}.desktop-collapsible-search.open{display:flex}.desktop-calendar-search-toggle{display:inline-flex;margin-left:auto}.cal-view-switch{margin-left:8px!important}}
+@media(max-width:1180px) and (min-width:769px){#ucret-anlasmalari-list{grid-template-columns:repeat(2,minmax(0,1fr))!important}.cal-detail-items{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:768px){
   #view-mali{min-width:0;overflow:hidden;}
   #view-mali .mali-page-head{display:block!important;margin-bottom:10px!important;}
@@ -587,6 +592,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   .mali-kayit-rakamlar{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px;}.mali-kayit-rakamlar span{padding:8px;background:var(--surface2);border-radius:8px;font-size:11px;font-weight:700;overflow-wrap:anywhere;}.mali-kayit-rakamlar small{display:block;color:var(--text3);font-size:9px;font-weight:600;margin-bottom:3px;}.mali-kayit-rakamlar.dortlu{grid-template-columns:1fr 1fr;}
   .mali-kayit-islemler .action-btns,.mali-kayit-islemler{display:grid!important;grid-template-columns:1fr 1fr;gap:7px;min-width:0!important;margin-top:10px;}.mali-kayit-islemler .icon-btn{width:100%;min-height:38px;margin:0!important;white-space:normal;}
   #ucret-anlasmalari-list{grid-template-columns:1fr!important;}
+  .cal-detail-items{grid-template-columns:1fr;padding:10px 12px 18px}
   #ucret-anlasmalari-list>div:not([style*="grid-column"]){padding:15px!important;border-radius:16px!important;}
   #ucret-anlasmalari-list>div:not([style*="grid-column"])>div:first-child>div:first-child>b{font-size:18px!important;}
   #ucret-anlasmalari-list>div:not([style*="grid-column"])>div:first-child>b{font-size:18px!important;}

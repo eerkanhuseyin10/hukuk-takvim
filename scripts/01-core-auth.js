@@ -434,6 +434,10 @@ function openProfilimModal(){
     document.getElementById('profil-adsoyad-input').value=_user.user_metadata?.full_name||'';
     document.getElementById('profil-email-input').value=_user.email||'';
   }
+  const bilgiler={
+    'profilim-buro':_buro?.ad||'—','profilim-rol':ROL_ADLARI[_platformAdmin?'platform_admini':_buro?.rol]||'—',
+    'profilim-kayit':records.length+' kayıt','profilim-tarih':_user?.created_at?new Date(_user.created_at).toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'}):'—'
+  };Object.entries(bilgiler).forEach(([id,deger])=>{const el=document.getElementById(id);if(el)el.textContent=deger;});
   const sil=document.getElementById('hesap-sil-alani');if(sil)sil.style.display=_platformAdmin?'none':'block';
 }
 function closeProfilimModal(){
@@ -697,7 +701,8 @@ async function authSonrasiIslem(){
   await buroAcilisMesajiniYukle();
   showApp();
   const sad = document.getElementById('sidebar-buro-ad');
-  if(sad) sad.textContent = String(_buro.ad||'Büro').toLocaleUpperCase('tr-TR');
+  if(sad) sad.textContent = _buro.ad;
+  const ustBaslik=document.getElementById('topbar-title');if(ustBaslik)ustBaslik.textContent=String(_buro.ad||'SEKRETER').toLocaleUpperCase('tr-TR');
   rolArayuzunuUygula();
   await guvenlikOlayiKaydet('oturum_acildi',true);
   await ozelSecenekleriYukle();

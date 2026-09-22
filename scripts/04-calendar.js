@@ -19,7 +19,7 @@ function typeLabel(t,dal){
   }
   return{sure:'Süreli İş',genel:'Genel İş',tekrar:'Tekrarlayan'}[t]||t;
 }
-function dalLabel(d){return{ceza:'Ceza',hukuk:'Hukuk',idare:'İdare',icra:'İcra',tahkim:'Tahkim'}[d]||'—';}
+function dalLabel(d){return{ceza:'Ceza',hukuk:'Hukuk',idare:'İdare',icra:'İcra',tahkim:'Tahkim',is:'İş',aile:'Aile',ticaret:'Ticaret',tuketici:'Tüketici',vergi:'Vergi',arabuluculuk:'Arabuluculuk'}[d]||'—';}
 function tebligLabel(t){return{etebligat:'E-Tebligat',tefhim:'Tefhim',fiziki:'Fiziki tebligat'}[t]||t||'—';}
 function getBaslik(r){return r.baslik||r.istipi||r.not||'—';}
 function typeBadgeColor(t){return{durusma:'var(--blue-light)',sure:'var(--amber)',genel:'var(--green-light)'}[t]||'var(--border)';}
@@ -362,6 +362,15 @@ function clearTakvimArama(){
   renderTakvimArama();
 }
 
+function takvimAramaToggle(){
+  const bar=document.querySelector('.desktop-collapsible-search');
+  if(!bar)return;
+  const acilacak=!bar.classList.contains('open');
+  bar.classList.toggle('open',acilacak);
+  if(acilacak)setTimeout(()=>document.getElementById('cal-search')?.focus(),40);
+  else clearTakvimArama();
+}
+
 function renderTakvimArama(){
   const inp=document.getElementById('cal-search');
   const box=document.getElementById('cal-search-results');
@@ -500,7 +509,7 @@ function renderCalDetail(){
     const d=r.hesapDetay;
     let detHTML='';
     if(r.type==='sure'&&d) detHTML=`<div style="margin-top:8px;border-radius:8px;overflow:hidden;border:1px solid var(--border);">${buildHesapHTML(d)}</div>`;
-    return `<div style="border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:10px;${tStyle}">
+    return `<div class="cal-detail-record" style="border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;${tStyle}">
       <div style="padding:12px 14px;background:var(--surface2);display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);">
         <div style="width:10px;height:10px;border-radius:50%;background:${dot};flex-shrink:0;"></div>
         <span class="badge badge-${r.type==='tekrar'?'tekrar-type':r.type}" style="font-size:11px;">${typeLabel(r.type,r.dal)}</span>
@@ -770,14 +779,15 @@ function showMahkemeDropdown(inputId, ddId){
   const matches=val
     ? kaynak.filter(m=>m.toLocaleLowerCase('tr-TR').includes(val))
     : kaynak;
-  if(!matches.length){dd.style.display='none';return;}
-  dd.innerHTML=matches.map(m=>{
+  const tamEslesme=kaynak.some(m=>m.toLocaleLowerCase('tr-TR')===val);
+  dd.innerHTML=matches.slice(0,40).map(m=>{
     const safe=m.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
     return '<div class="mahkeme-dropdown-item" data-inputid="'+inputId+'" data-ddid="'+ddId+'" data-val="'+safe+'">'+m+'</div>';
-  }).join('');
+  }).join('')+(val&&!tamEslesme?'<div class="mahkeme-dropdown-item istipi-ekle" data-inputid="'+inputId+'" data-ddid="'+ddId+'" data-val="'+input.value.replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'" data-newcourt="1">＋ “'+esc(input.value.trim())+'” olarak yeni Mahkeme/Kurum ekle</div>':'');
   dd.querySelectorAll('.mahkeme-dropdown-item').forEach(el=>{
-    el.addEventListener('mousedown',function(e){
+    el.addEventListener('mousedown',async function(e){
       e.preventDefault();
+      if(el.dataset.newcourt==='1') await ogrenMahkeme(el.dataset.val);
       document.getElementById(el.dataset.inputid).value=el.dataset.val;
       document.getElementById(el.dataset.inputid).dispatchEvent(new Event('input',{bubbles:true}));
       document.getElementById(el.dataset.ddid).style.display='none';
