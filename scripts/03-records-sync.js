@@ -735,7 +735,7 @@ async function saveRecord(){
     rec={type:'durusma',date,baslik:(()=>{
       const mAdi=titleCase(document.getElementById('f-durusma-mahkeme-adi').value.trim());
       if(mAdi) return mAdi;
-      const ozel={tahkim:'Tahkim',arabuluculuk:'Arabuluculuk',randevu:'Randevu',kesif:'Keşif',tevkil:'Tevkil',cmk:'CMK'};
+      const ozel={is:'İş',tahkim:'Tahkim',aile:'Aile',ticaret:'Ticaret',tuketici:'Tüketici',vergi:'Vergi',arabuluculuk:'Arabuluculuk',randevu:'Randevu',kesif:'Keşif',tevkil:'Tevkil',cmk:'CMK'};
       return ozel[ST.dal2]||'Duruşma';
     })(),saat:document.getElementById('f-durusma-saat').value,dal:ST.dal2,mahkeme:ST.dal2==='randevu'?titleCase((document.getElementById('f-durusma-randevu-mahkeme')||{value:''}).value.trim()||''):titleCase(document.getElementById('f-durusma-mahkeme-adi').value.trim()),dava:yil&&no?yil+'/'+no:(no||''),muvekkil:titleCase(document.getElementById('f-durusma-muvekkil').value.trim()),not:sentenceCase(document.getElementById('f-durusma-not').value.trim()),tekrarTipi:ST_TEKRAR_D||null,tekrarBitis:ST_TEKRAR_D&&document.getElementById('f-tekrar-bitis-d').value?document.getElementById('f-tekrar-bitis-d').value:null};
   }else if(ST.type==='tekrar'){

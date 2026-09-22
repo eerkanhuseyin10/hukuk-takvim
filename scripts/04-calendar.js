@@ -14,7 +14,7 @@ function formatDate(s){if(!s)return'—';const d=new Date(s+'T12:00:00');return 
 function formatDateLong(s){if(!s)return'—';const d=new Date(s+'T12:00:00');return d.toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}
 function typeLabel(t,dal){
   if(t==='durusma'){
-    const ozel={tahkim:'Tahkim',arabuluculuk:'Arabuluculuk',randevu:'Randevu',kesif:'Keşif',tevkil:'Tevkil',cmk:'CMK'};
+    const ozel={is:'İş',tahkim:'Tahkim',aile:'Aile',ticaret:'Ticaret',tuketici:'Tüketici',vergi:'Vergi',arabuluculuk:'Arabuluculuk',randevu:'Randevu',kesif:'Keşif',tevkil:'Tevkil',cmk:'CMK'};
     return ozel[dal]||'Duruşma';
   }
   return{sure:'Süreli İş',genel:'Genel İş',tekrar:'Tekrarlayan'}[t]||t;
