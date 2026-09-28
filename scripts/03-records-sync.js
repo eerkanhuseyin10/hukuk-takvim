@@ -404,7 +404,7 @@ function renderKayitKartSecicileri(muvekkilId,dosyaId){
   kayitMuvekkilSecimGorunumunuYenile();kayitBaglantiGorunumunuGuncelle();
 }
 function kayitDosyaSecenekleriniYenile(secilecekId){
-  const ds=document.getElementById('kayit-dosya-karti');if(!ds)return;const ids=new Set((ST.muvekkilIds||[]).map(String)),dosyaIds=new Set(DOSYA_MUVEKKIL_BAGLARI.filter(b=>ids.has(String(b.muvekkil_id))).map(b=>String(b.dava_dosyasi_id))),dosyalar=ids.size?DAVA_DOSYALARI.filter(d=>dosyaIds.has(String(d.id))):[];
+  const ds=document.getElementById('kayit-dosya-karti');if(!ds)return;const ids=new Set((ST.muvekkilIds||[]).map(String)),dosyaIds=new Set(DOSYA_MUVEKKIL_BAGLARI.filter(b=>ids.has(String(b.muvekkil_id))).map(b=>String(b.dava_dosyasi_id))),dosyalar=ids.size?DAVA_DOSYALARI.filter(d=>!d.mali_gecici&&dosyaIds.has(String(d.id))):[];
   const onceki=String(secilecekId||ST.davaDosyasiId||''),placeholder=!ids.size?'Önce müvekkil seçin':dosyalar.length?'Dosya seçmek zorunlu değildir':'Bu müvekkile bağlı kayıtlı dosya yok';
   ds.innerHTML=`<option value="">${placeholder}</option>`+dosyalar.map(d=>`<option value="${d.id}">${esc((d.dosya_no||'Numarasız dosya')+(d.mahkeme?' — '+d.mahkeme:''))}</option>`).join('');ds.value=dosyalar.some(d=>String(d.id)===onceki)?onceki:'';ST.davaDosyasiId=ds.value||null;ds.disabled=!ids.size||!dosyalar.length;
 }
